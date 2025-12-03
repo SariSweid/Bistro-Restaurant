@@ -16,9 +16,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>data_base/order_order.sql</name>
+			<name>data_base/order.sql</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Documents/dumps/Order.sql/order_order.sql</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Desktop/order.sql</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
