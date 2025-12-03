@@ -26,11 +26,11 @@ DROP TABLE IF EXISTS `order`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order` (
   `order_number` int NOT NULL,
-  `order_date` date DEFAULT NULL,
-  `number_of_guests` int DEFAULT NULL,
-  `confirmation_code` int DEFAULT NULL,
-  `user_id` int DEFAULT NULL,
-  `date_of_placing_order` date DEFAULT NULL,
+  `order_date` date NOT NULL,
+  `number_of_guests` int NOT NULL,
+  `confirmation_code` int NOT NULL,
+  `user_id` int NOT NULL,
+  `date_of_placing_order` date NOT NULL,
   PRIMARY KEY (`order_number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

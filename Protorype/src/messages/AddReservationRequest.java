@@ -1,6 +1,6 @@
 package messages;
 
-import entities.Reservation;
+import Entities.Reservation;
 
 public class AddReservationRequest {
     private Reservation reservation;

@@ -48,7 +48,7 @@ public class ReservationController {
     public boolean addReservation(Reservation r) {
         if (r == null) return false;
         // Validation
-        if (r.getReservationId() <= 0) return false;
+        if (r.getReservationID() <= 0) return false;
         if (r.getDate() == null) return false;
         if (r.getNumOfGuests() <= 0) return false;
 
