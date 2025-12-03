@@ -109,7 +109,7 @@ public class Reservation {
 	//status methods
 	
 	public boolean isReservationActive() {
-		return this.status == Status.CONFIRMED || this.status == Status.PENDING;
+		return (this.status == Status.CONFIRMED) || (this.status == Status.PENDING);
 	}
 	
 	public boolean isReservationCancelled() {
