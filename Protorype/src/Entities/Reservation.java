@@ -18,7 +18,8 @@ public class Reservation {
 	}
 	
 	private int reservationID;
-	private Date date;
+	private Date reservationDate; //when the reservation was made in the site
+	private Date reservationMadeDate; //future date the customer reserved a place
 	//private LocalDate date;
 	//private LocalTime time;
 	private int numOfGuests;
@@ -28,9 +29,10 @@ public class Reservation {
 	private Integer tableID;
 	private Integer billID; //Integer and not int to initialize with null until bill is generated
 	
-	public Reservation(int reservationID, Date date, int numOfGuests, int confirmationCode, Status status, int customerID) {
+	public Reservation(int reservationID, Date reservationDate, int numOfGuests, int confirmationCode, Status status, int customerID) {
 		this.reservationID = reservationID;
-		this.date = date;
+		this.reservationDate = reservationDate;
+		this.reservationMadeDate = new Date();
 		this.numOfGuests = numOfGuests;
 		this.confirmationCode = confirmationCode;
 		this.status = status;
@@ -45,8 +47,12 @@ public class Reservation {
 		return this.reservationID;
 	}
 	
-	public Date getDate() {
-		return this.date;
+	public Date getReservationDate() {
+		return this.reservationDate;
+	}
+	
+	public Date getReservationMadedate() {
+		return this.reservationMadeDate;
 	}
 	
 	/*public LocalTime getTime() {
@@ -79,8 +85,8 @@ public class Reservation {
 	
 	//setters
 	
-	public void setDate(Date newDate) {
-		this.date = newDate;
+	public void setDate(Date newReservationDate) {
+		this.reservationDate = newReservationDate;
 	}
 	
 	/*public void setTime(LocalTime newTime) {
