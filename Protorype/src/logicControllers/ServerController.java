@@ -1,11 +1,12 @@
 package logicControllers;
 
-import DB.DBController;
+import java.util.List;
+
 import Entities.Reservation;
 import messages.AddReservationRequest;
 import messages.UpdateReservationRequest;
-import java.util.List;
-import ocsf.server.*;
+import src.ocsf.server.AbstractServer;
+import src.ocsf.server.ConnectionToClient;
 
 public class ServerController extends AbstractServer {
    

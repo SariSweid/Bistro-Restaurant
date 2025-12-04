@@ -1,13 +1,12 @@
-package client;
+package logicControllers;
 
-import Entities.Reservation;
-import javafx.application.Platform;
-import logicControllers.ReservationController;
-import messages.AddReservationRequest;
-import messages.UpdateReservationRequest;
-import ocsf.client.AbstractClient;
 import java.io.IOException;
 import java.util.List;
+
+import Entities.Reservation;
+import messages.AddReservationRequest;
+import messages.UpdateReservationRequest;
+import src.ocsf.client.AbstractClient;
 
 public class ClientHandler extends AbstractClient {
 	
