@@ -38,12 +38,11 @@ public class DBController {
 	    
 	    
 	    
-	    
 	    // func that update the order in the DB 
 	    public boolean updateReservation(int reservationId, Date newDate, int newNumGuests) {
 	    	Connection con = getConnection(); 
 	    	
-	        try (PreparedStatement pst = con.prepareStatement("UPDATE order SET order_date = ? , number_of_guests = ?  WHERE idStudent = ?")) {
+	        try (PreparedStatement pst = con.prepareStatement("UPDATE `order` SET order_date = ? , number_of_guests = ?  WHERE order_number = ?")) {
 	            pst.setDate(1, newDate);      
 	            pst.setInt(2, newNumGuests); 
 	            pst.setInt(3, reservationId);
@@ -67,7 +66,7 @@ public class DBController {
 	    	List<Reservation> reservations = new ArrayList<>(); // made new list to return
 	    	Connection con = getConnection(); //connect to DB
 	    	
-	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM order")){ // ask from DB the all Orders
+	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `order`")){ // ask from DB the all Orders
 	    		
 	    		ResultSet rs = pst.executeQuery();
 	    		
@@ -86,13 +85,21 @@ public class DBController {
 	    			
 	    		}
 	    		
+	    		for (Reservation r : reservations) {
+	    		    System.out.println(r);
+	    		}
+	    		
 	    		
 	    	} catch (SQLException e) {
 
 				e.printStackTrace();
 			}
+	    	
+	    	
 			return reservations;    	
 	    }
+}
+
 
 
 //not for prototype we will use it later
@@ -121,7 +128,6 @@ public class DBController {
 //        }
 //   }
 
-}
 	    	
 
 

@@ -26,13 +26,19 @@ DROP TABLE IF EXISTS `order`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order` (
   `order_number` int NOT NULL,
-  `order_date` date NOT NULL,
-  `number_of_guests` int NOT NULL,
-  `confirmation_code` int NOT NULL,
-  `user_id` int NOT NULL,
-  `date_of_placing_order` date NOT NULL,
+  `order_date` date DEFAULT NULL,
+  `number_of_guests` int DEFAULT NULL,
+  `confirmation_code` int DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
+  `date_of_placing_order` date DEFAULT NULL,
   PRIMARY KEY (`order_number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `order` 
+(`order_number`, `order_date`, `number_of_guests`, `confirmation_code`, `user_id`, `date_of_placing_order`)
+VALUES
+(1, '2025-12-01', 4, 1234, 7, '2025-12-02'),
+(2, '2025-12-03', 2, 5678, 8, '2025-12-03');
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -44,4 +50,4 @@ CREATE TABLE `order` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-03 10:57:08
+-- Dump completed on 2025-12-04 19:02:07

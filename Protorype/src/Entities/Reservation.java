@@ -112,6 +112,7 @@ public class Reservation {
 	public void setConfirmationCode(int newConfirmationCode) {
 		this.confirmationCode = newConfirmationCode;
 	}
+
 	
 	//setters use after the prototype
 	/*public void setStatus(Status newStatus) {
