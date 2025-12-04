@@ -80,7 +80,7 @@ public class DBController {
 	    			int user_id = rs.getInt("user_id");
 	    			Date date_of_placing_order = rs.getDate("date_of_placing_order"); 
 	    			
-	                Reservation r = new Reservation(order_number, order_date, number_of_guests, confirmation_code, null , user_id, date_of_placing_order); // problem in Constructor
+	                Reservation r = new Reservation(order_number,order_date,date_of_placing_order,number_of_guests,confirmation_code,user_id);
 	                
 	                reservations.add(r);
 	    			

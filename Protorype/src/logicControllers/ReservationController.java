@@ -42,21 +42,23 @@ public class ReservationController {
         }
     }
 
+    
+     // dont need it for prototype , we will use it later.
     /**
      * Add a new reservation. Returns true on success.
-     */
-    public boolean addReservation(Reservation r) {
-        if (r == null) return false;
-        // Validation
-        if (r.getReservationID() <= 0) return false;
-        if (r.getDate() == null) return false;
-        if (r.getNumOfGuests() <= 0) return false;
-
-        try {
-            return db.insertReservation(r);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+//     */
+//    public boolean addReservation(Reservation r) {
+//        if (r == null) return false;
+//        // Validation
+//        if (r.getReservationID() <= 0) return false;
+//        if (r.getDate() == null) return false;
+//        if (r.getNumOfGuests() <= 0) return false;
+//
+//        try {
+//            return db.insertReservation(r);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 }
