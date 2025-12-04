@@ -2,6 +2,7 @@ package Entities;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 
 public class Reservation {
 
@@ -17,24 +18,24 @@ public class Reservation {
 	}
 	
 	private int reservationID;
-	private LocalDate date;
-	private LocalTime time;
+	private Date date;
+	//private LocalDate date;
+	//private LocalTime time;
 	private int numOfGuests;
 	private int confirmationCode;
 	private Status status;
 	private final int customerID;
-	private int tableID;
+	private Integer tableID;
 	private Integer billID; //Integer and not int to initialize with null until bill is generated
 	
-	public Reservation(int reservationID, LocalDate date, LocalTime time, int numOfGuests, int confirmationCode, Status status, int customerID, int tableID) {
+	public Reservation(int reservationID, Date date, int numOfGuests, int confirmationCode, Status status, int customerID) {
 		this.reservationID = reservationID;
 		this.date = date;
-		this.time = time;
 		this.numOfGuests = numOfGuests;
 		this.confirmationCode = confirmationCode;
 		this.status = status;
 		this.customerID = customerID;
-		this.tableID = tableID;
+		this.tableID = null;
 		this.billID = null;
 	}
 	
@@ -44,13 +45,13 @@ public class Reservation {
 		return this.reservationID;
 	}
 	
-	public LocalDate getDate() {
+	public Date getDate() {
 		return this.date;
 	}
 	
-	public LocalTime getTime() {
+	/*public LocalTime getTime() {
 		return this.time;
-	}
+	}*/
 	
 	public int getNumOfGuests() {
 		return this.numOfGuests;
@@ -68,7 +69,7 @@ public class Reservation {
 		return this.customerID;
 	}
 	
-	public int getTableID() {
+	public Integer getTableID() {
 		return this.tableID;
 	}
 	
@@ -78,13 +79,13 @@ public class Reservation {
 	
 	//setters
 	
-	public void setDate(LocalDate newDate) {
+	public void setDate(Date newDate) {
 		this.date = newDate;
 	}
 	
-	public void setTime(LocalTime newTime) {
+	/*public void setTime(LocalTime newTime) {
 		this.time = newTime;
-	}
+	}*/
 	
 	public void setNumOfGuests(int newNumOfGuests) {
 		this.numOfGuests = newNumOfGuests;
@@ -98,7 +99,7 @@ public class Reservation {
 		this.status = newStatus;
 	}
 	
-	public void setTableID(int newTableID) {
+	public void setTableID(Integer newTableID) {
 		this.tableID = newTableID;
 	}
 	
