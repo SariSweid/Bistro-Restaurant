@@ -95,7 +95,7 @@ public class DBController {
 	    }
 
 
-//not for prototype
+//not for prototype we will use it later
 //	    //func that insert Reservation into the DB
 //		public boolean insertReservation(Reservation r) {
 //			Connection con = getConnection(); 
