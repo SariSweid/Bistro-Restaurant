@@ -74,53 +74,52 @@ public class DBController {
 	    		while(rs.next()) { // read from DB
 	    			
 	    			int order_number = rs.getInt("order_number");
-	    			Date order_date = rs.getDate("order_date"); // problem in Constructor
+	    			Date order_date = rs.getDate("order_date"); 
 	    			int number_of_guests = rs.getInt("number_of_guests");
 	    			int confirmation_code = rs.getInt("confirmation_code");
 	    			int user_id = rs.getInt("user_id");
-	    			LocalDate date_of_placing_order = rs.getDate("date_of_placing_order").toLocalDate(); // problem in Constructor
+	    			Date date_of_placing_order = rs.getDate("date_of_placing_order"); 
 	    			
-	               // Reservation r = new Reservation(order_number, order_date, number_of_guests,
-                                  //  confirmation_code, user_id, date_of_placing_order,null,null,null); // problem in Constructor
+	                Reservation r = new Reservation(order_number, order_date, number_of_guests, confirmation_code, null , user_id, date_of_placing_order); // problem in Constructor
 	                
 	                reservations.add(r);
 	    			
 	    		}
 	    		
-	    		return reservations;
 	    		
 	    	} catch (SQLException e) {
 
 				e.printStackTrace();
-			}    	
+			}
+			return reservations;    	
 	    }
 
 
-
-	    //func that insert Reservation into the DB
-		public boolean insertReservation(Reservation r) {
-			Connection con = getConnection(); 
-			
-			try (PreparedStatement pst = con.prepareStatement("INSERT INTO orders (order_number, order_date, number_of_guests,confirmation_code,user_id,date_of_placing_order) VALUES (?, ?, ? ,?, ?, ?)")){
-				
-	            pst.setInt(1, r.getReservationID());      
-	            pst.setDate(2, (Date) r.getDate()); 
-	            pst.setInt(3 , r.getNumOfGuests());
-	            pst.setInt(4, r.getConfirmationCode()); 
-	            pst.setInt(5, r.getCustomerID());
-	           // pst.setDate(6, java.sql.Date.valueOf(r.getDate())); // problem in Constructor
-	            
-	            int update_status = pst.executeUpdate();
-	            
-	            // we return whether the update succeeded or not
-	            return update_status > 0;				
-			}
-			
-        	catch (SQLException e) {
-        		e.printStackTrace();
-            return false;
-        }
-   }
+//not for prototype
+//	    //func that insert Reservation into the DB
+//		public boolean insertReservation(Reservation r) {
+//			Connection con = getConnection(); 
+//			
+//			try (PreparedStatement pst = con.prepareStatement("INSERT INTO orders (order_number, order_date, number_of_guests,confirmation_code,user_id,date_of_placing_order) VALUES (?, ?, ? ,?, ?, ?)")){
+//				
+//	            pst.setInt(1, r.getReservationID());      
+//	            pst.setDate(2, (Date) r.getDate()); 
+//	            pst.setInt(3 , r.getNumOfGuests());
+//	            pst.setInt(4, r.getConfirmationCode()); 
+//	            pst.setInt(5, r.getCustomerID());
+//	           // pst.setDate(6, java.sql.Date.valueOf(r.getDate())); // problem in Constructor
+//	            
+//	            int update_status = pst.executeUpdate();
+//	            
+//	            // we return whether the update succeeded or not
+//	            return update_status > 0;				
+//			}
+//			
+//        	catch (SQLException e) {
+//        		e.printStackTrace();
+//            return false;
+//        }
+//   }
 
 }
 	    	
