@@ -18,7 +18,7 @@ public class ClientHandler extends AbstractClient {
     // Constructor
     public ClientHandler(String host, int port) {
         super(host, port);
-        instance = this;
+        instance = this;fgfgfg
         
         try {
             openConnection();
