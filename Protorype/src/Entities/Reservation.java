@@ -1,10 +1,11 @@
 package Entities;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
 
-public class Reservation {
+public class Reservation implements Serializable {
 
 	//enum that represent the current status of the reservation use after the prototype
 	/*public enum Status{

@@ -50,15 +50,15 @@ public class ClientHandler extends AbstractClient {
     }
     
     
-    // ADD
-    public void addReservation(Reservation reservation) {
-        try {
-            AddReservationRequest req = new AddReservationRequest(reservation);
-            sendToServer(req);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    // ADD      not for prototype
+//    public void addReservation(Reservation reservation) {
+//        try {
+//            AddReservationRequest req = new AddReservationRequest(reservation);
+//            sendToServer(req);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     // UPDATE
     public void updateReservation(int id, java.sql.Date date, int guests) {   
