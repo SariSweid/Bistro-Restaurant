@@ -1,4 +1,6 @@
 package logicControllers;
+import gui.GuestReservationUI;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,8 +15,7 @@ public class ClientHandler extends AbstractClient {
 	// Singleton instance of ClientHandler
     public static ClientHandler instance;
 
-    private GuestReservationUI guestUI;
-
+    private GuestReservationUI guestUI; // added by tamer for wiring
     // Constructor
     public ClientHandler(String host, int port) {
         super(host, port);
@@ -43,6 +44,11 @@ public class ClientHandler extends AbstractClient {
             e.printStackTrace();
         }
     }
+    
+    public void setGuestUI(GuestReservationUI guestUI) { // added setter tamer
+        this.guestUI = guestUI;
+    }
+    
     
     // ADD
     public void addReservation(Reservation reservation) {

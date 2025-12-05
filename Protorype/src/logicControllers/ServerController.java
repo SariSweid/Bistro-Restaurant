@@ -1,6 +1,8 @@
 package logicControllers;
 
 import java.util.List;
+import gui.ServerUIController;
+
 
 import Entities.Reservation;
 import messages.AddReservationRequest;
@@ -14,6 +16,13 @@ public class ServerController extends AbstractServer {
     public static final int DEFAULT_PORT = 5555;
     
     private ReservationController reservationController;
+    
+    private ServerUIController ui;
+
+    public void setUi(ServerUIController ui) { //wiring to serveruicontroller
+        this.ui = ui;
+    }
+
    
     /**
      * Constructs a new ServerController on the specified port.
@@ -32,12 +41,22 @@ public class ServerController extends AbstractServer {
         String ip   = client.getInetAddress().getHostAddress();
         String host = client.getInetAddress().getHostName();
 
-        System.out.println("Client connected: IP=" + ip + "\nHOST=" + host);
+        String info = ip + "(" + host + ")";
+        System.out.println("Client connected: " +info); //changed (tamer)
+        
+        if(ui!=null)
+        	ui.addClient(info);
     }
     
     @Override
-    protected void clientDisconnected(ConnectionToClient client) {
-        System.out.println("Client disconnected: " + client.getInetAddress());
+    protected void clientDisconnected(ConnectionToClient client) { //changed (tamer)
+        String info = client.getInetAddress().getHostAddress() + " (" 
+                    + client.getInetAddress().getHostName() + ")";
+        System.out.println("Client disconnected: " + info);
+
+        if (ui != null) {
+            ui.removeClient(info);
+        }
     }
 
     /**
