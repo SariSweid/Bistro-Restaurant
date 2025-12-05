@@ -63,7 +63,7 @@ public class Reservation implements Serializable {
 	
 	public Date getReservationDate() {
 		return this.reservationDate;
-	}
+	}דד
 	
 	
 	public int getNumOfGuests() {
