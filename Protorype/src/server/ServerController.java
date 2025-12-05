@@ -1,9 +1,8 @@
-package logicControllers;
+package server;
 
 import java.util.List;
 import gui.ServerUIController;
-
-
+import logicControllers.ReservationController;
 import Entities.Reservation;
 import messages.AddReservationRequest;
 import messages.UpdateReservationRequest;

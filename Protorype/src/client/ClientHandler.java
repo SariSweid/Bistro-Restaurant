@@ -1,4 +1,4 @@
-package logicControllers;
+package client;
 import gui.GuestReservationUI;
 import javafx.application.Platform;
 

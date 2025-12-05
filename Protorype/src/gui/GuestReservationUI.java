@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.List;
 
 import Entities.Reservation;
+import client.ClientHandler;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,7 +13,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import logicControllers.ClientHandler;
 
 public class GuestReservationUI {
 
