@@ -73,7 +73,7 @@ public class DBController {
 	    		while(rs.next()) { // read from DB
 	    			
 	    			int order_number = rs.getInt("order_number");
-	    			Date order_date = rs.getDate("order_date"); 
+	    			Date order_date = rs.getDate("order_date"); ddddd
 	    			int number_of_guests = rs.getInt("number_of_guests");
 	    			int confirmation_code = rs.getInt("confirmation_code");
 	    			int user_id = rs.getInt("user_id");
