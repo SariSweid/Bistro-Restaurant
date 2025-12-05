@@ -26,6 +26,17 @@ public class GuestReservationUI {
 
     @FXML
     private TableColumn<Reservation, Integer> guestsColumn;
+    
+    
+    @FXML
+    private TableColumn<Reservation, String> confirmationCodeColumn;
+
+    @FXML
+    private TableColumn<Reservation, Integer> subscriberIdColumn;
+
+    @FXML
+    private TableColumn<Reservation, Date> orderDateColumn;
+
 
     @FXML
     private TextField reservationIdField;
@@ -35,6 +46,15 @@ public class GuestReservationUI {
 
     @FXML
     private TextField guestsField;
+    
+    @FXML
+    private TextField confirmationCodeField;
+
+    @FXML
+    private TextField subscriberIdField;
+
+    @FXML
+    private TextField orderDateField;
 
     @FXML
     private Label statusLabel;
@@ -59,6 +79,18 @@ public class GuestReservationUI {
         if (guestsColumn != null) {
             guestsColumn.setCellValueFactory(new PropertyValueFactory<>("numOfGuests"));
         }
+        
+        if (confirmationCodeColumn != null) {
+            confirmationCodeColumn.setCellValueFactory(new PropertyValueFactory<>("confirmationCode"));
+        }
+        if (subscriberIdColumn != null) {
+            subscriberIdColumn.setCellValueFactory(new PropertyValueFactory<>("subscriberId"));
+        }
+        if (orderDateColumn != null) {
+            orderDateColumn.setCellValueFactory(new PropertyValueFactory<>("orderDate"));
+        }
+        
+        
 
         if (reservationsTable != null) {
             reservationsTable.setItems(reservations);
@@ -69,6 +101,9 @@ public class GuestReservationUI {
                             reservationIdField.setText(String.valueOf(newSel.getReservationID()));
                             dateField.setText(String.valueOf(newSel.getReservationDate()));
                             guestsField.setText(String.valueOf(newSel.getNumOfGuests()));
+                            confirmationCodeField.setText(String.valueOf(newSel.getConfirmationCode()));
+                            subscriberIdField.setText(String.valueOf(newSel.getCustomerID()));
+                            orderDateField.setText(String.valueOf(newSel.getrReservationPlacedDate()));
                         }
                     });
         }
