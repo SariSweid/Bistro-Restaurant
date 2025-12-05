@@ -65,9 +65,6 @@ public class Reservation implements Serializable {
 		return this.reservationDate;
 	}
 	
-	public Date getrReservationPlacedDate() {
-		return this.reservationPlacedDate;
-	}
 	
 	public int getNumOfGuests() {
 		return this.numOfGuests;
@@ -82,9 +79,14 @@ public class Reservation implements Serializable {
 		return this.status;
 	}*/
 	
-	public int getCustomerID() {
-		return this.customerID;
+	public int getSubscriberId() {
+	    return this.customerID;
 	}
+
+	public Date getOrderDate() {
+	    return this.reservationPlacedDate;
+	}
+	
 	
 	//getters use after the prototype
 	/*public Integer getTableID() {

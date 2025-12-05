@@ -26,9 +26,10 @@
                     <TableColumn fx:id="idColumn" prefWidth="27.200011432170868" text="ID" />
                     <TableColumn fx:id="dateColumn" prefWidth="112.79999160766602" text="Date" />
                     <TableColumn fx:id="guestsColumn" prefWidth="64.79998779296875" text="Guests" />
-               <TableColumn fx:id="confirmation_codeColumn" prefWidth="116.00006103515625" text="confirmation code" />
-               <TableColumn fx:id="subscriber_idColumn" prefWidth="142.39996337890625" text="subscriber id" />
-               <TableColumn fx:id="date_of_placing_ordercolumn" prefWidth="75.0" text="date of placing order" />
+					<TableColumn fx:id="confirmationCodeColumn" text="Confirmation Code" />
+					<TableColumn fx:id="subscriberIdColumn" text="Subscriber ID" />
+					<TableColumn fx:id="orderDateColumn" text="Date of Placing Order" />
+               
                     <!-- you can add more columns later (name, phone, etc.) -->
                 </columns>
             </TableView>
@@ -49,6 +50,16 @@
 
                     <Label text="Guests:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                     <TextField fx:id="guestsField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    
+                    <Label text="Confirmation Code:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+					<TextField fx:id="confirmationCodeField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+					<Label text="Subscriber ID:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+					<TextField fx:id="subscriberIdField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+					<Label text="Date of Placing Order:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+					<TextField fx:id="orderDateField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    
                     
                                       
                 </children>

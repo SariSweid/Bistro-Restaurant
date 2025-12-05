@@ -102,8 +102,8 @@ public class GuestReservationUI {
                             dateField.setText(String.valueOf(newSel.getReservationDate()));
                             guestsField.setText(String.valueOf(newSel.getNumOfGuests()));
                             confirmationCodeField.setText(String.valueOf(newSel.getConfirmationCode()));
-                            subscriberIdField.setText(String.valueOf(newSel.getCustomerID()));
-                            orderDateField.setText(String.valueOf(newSel.getrReservationPlacedDate())); 
+                            subscriberIdField.setText(String.valueOf(newSel.getSubscriberId()));
+                            orderDateField.setText(String.valueOf(newSel.getOrderDate())); 
                         }
                     });
         }
