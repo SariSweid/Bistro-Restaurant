@@ -1,10 +1,9 @@
 package server;
 
 import java.util.List;
-import gui.ServerUIController;
-import logicControllers.ReservationController;
+
 import Entities.Reservation;
-import messages.AddReservationRequest;
+import logicControllers.ReservationController;
 import messages.UpdateReservationRequest;
 import src.ocsf.server.AbstractServer;
 import src.ocsf.server.ConnectionToClient;

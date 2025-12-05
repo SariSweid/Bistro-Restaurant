@@ -1,4 +1,4 @@
-package gui;
+package server;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;

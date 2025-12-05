@@ -1,18 +1,18 @@
-package gui;
+package client;
 
-import client.ClientHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+
 public class GuestApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Load the FXML
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("GuestReservationUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GuestReservationUI.fxml"));
         Parent root = loader.load();
 
         // Get UI controller

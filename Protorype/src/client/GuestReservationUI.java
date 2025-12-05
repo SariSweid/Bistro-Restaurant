@@ -1,11 +1,9 @@
-package gui;
+package client;
 
 import java.sql.Date;
 import java.util.List;
 
 import Entities.Reservation;
-import client.ClientHandler;
-import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

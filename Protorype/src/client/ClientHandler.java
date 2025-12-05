@@ -1,5 +1,4 @@
 package client;
-import gui.GuestReservationUI;
 import javafx.application.Platform;
 
 import java.io.IOException;

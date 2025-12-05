@@ -1,4 +1,4 @@
-package gui;
+package server;
 
 import java.io.IOException;
 
@@ -7,14 +7,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import server.ServerController;
 
 public class ServerApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         // 1. Load the FXML
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("ServerUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ServerUI.fxml"));
         Parent root = loader.load();
 
         // 2. Get the controller created by JavaFX
