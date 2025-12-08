@@ -1,5 +1,7 @@
 package client;
 
+import java.util.List;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,8 +20,19 @@ public class GuestApp extends Application {
         // Get UI controller
         GuestReservationUI ui = loader.getController();
 
+        //get ip address from args[0]
+        Parameters parms = getParameters();
+        List<String> list = parms.getUnnamed();
+        String host = "";
+        
         // Create client
-        ClientHandler client = new ClientHandler("localhost", 5555); // or your port
+        try {
+        	host = list.get(0);
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+			host = "localhost";
+		}
+        ClientHandler client = new ClientHandler(host, 5555); // or your port
         client.setGuestUI(ui);
 
         client.openConnection();
