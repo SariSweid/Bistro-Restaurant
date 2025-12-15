@@ -48,7 +48,7 @@ public class DBController {
 	            pst.setInt(3, reservationId);
 	            
 
-	            int update_status = pst.executeUpdate();
+	            int update_status = pst.executeUpdate();/////
 	            
 	            // we return whether the update succeeded or not
 	            return update_status > 0;
