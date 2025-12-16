@@ -1,3 +1,7 @@
-/META-INF/
-/server/
+/Entities/
 /gui/
+/logicControllers/
+/messages/
+/server/
+/src/
+/META-INF/
