@@ -87,13 +87,13 @@ public class ServerController extends AbstractServer {
     	            client.sendToClient(success ? "UPDATE_OK" : "UPDATE_FAIL");
     			}
             
-              // we dont need this for prototype we will use it later
-//       	    // =========== ADD RESERVATION ===========
-//              case AddReservationRequest add -> {
-//                System.out.println("Received add reservation request");
-//                boolean success = reservationController.addReservation(add.getReservation());
-//                client.sendToClient(success ? "ADD_OK" : "ADD_FAIL");
-//              }
+
+       	    // =========== ADD RESERVATION ===========
+              case AddReservationRequest add -> {
+                System.out.println("Received add reservation request");
+                boolean success = reservationController.addReservation(add.getReservation());
+                client.sendToClient(success ? "ADD_OK" : "ADD_FAIL");
+              }
 
             // ----------- UNKNOWN MESSAGE -----------
     			default -> {

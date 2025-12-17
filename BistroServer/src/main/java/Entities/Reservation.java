@@ -8,7 +8,7 @@ import java.util.Date;
 public class Reservation implements Serializable {
 
 	//enum that represent the current status of the reservation use after the prototype
-	/*public enum Status{
+	public enum Status{
 		PENDING,    //reservation waiting for confirmation
 		CONFIRMED,  //reservation confirmed
 		CANCELLED,  //reservation cancelled
@@ -16,7 +16,7 @@ public class Reservation implements Serializable {
 		COMPLETED,  //customer left and payed for the reservation
 		NOT_SHOWED, //customer late or not arrived 
 		WAITLIST    //the table is currently occupied, the customer is in the waitlist
-	}*/
+	}
 	
 	private int reservationID;
 	private Date reservationDate; //future date the customer reserved a place
@@ -27,23 +27,23 @@ public class Reservation implements Serializable {
 	//private LocalTime reservationPlacedTime; //use after the prototype
 	private int numOfGuests;
 	private int confirmationCode;
-	//private Status status; //use after the prototype
+	private Status status; //use after the prototype
 	private final int customerID;
 	//private Integer tableID; //use after the prototype
 	//private Integer billID; //Integer and not int to initialize with null until bill is generated //use after the prototype
 	
 	//Constructor for creating a new reservation - use after prototype
-	/*public Reservation(int reservationID, Date reservationDate, int numOfGuests, int confirmationCode, Status status, int customerID) {
+	public Reservation(int reservationID, Date reservationDate, int numOfGuests, int confirmationCode, Status status, int customerID) {
 		this.reservationID = reservationID;
 		this.reservationDate = reservationDate;
 		this.reservationPlacedDate = new Date();
 		this.numOfGuests = numOfGuests;
 		this.confirmationCode = confirmationCode;
-		//this.status = status;
+		this.status = status;
 		this.customerID = customerID;
 		//this.tableID = null;
 		//this.billID = null;
-	}*/
+	}
 	
 	//constructor for getting a reservation from the db
 	public Reservation(int reservationID, Date reservationDate, Date reservationPlacedDate, int numOfGuests, int confirmationCode, int customerID) {
@@ -73,11 +73,14 @@ public class Reservation implements Serializable {
 	public int getConfirmationCode() {
 		return this.confirmationCode;
 	}
-	
-	//getter use after the prototype
-	/*public Status getStatus() {
+
+	public int getCustomerID() {
+		return customerID;
+	}
+
+	public Status getStatus() {
 		return this.status;
-	}*/
+	}
 	
 	public int getSubscriberId() {
 	    return this.customerID;
