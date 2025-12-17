@@ -4,7 +4,7 @@ import java.util.List;
 
 import Entities.Reservation;
 import logicControllers.ReservationController;
-import messages.UpdateReservationRequest;
+import messages.*;
 import src.ocsf.server.AbstractServer;
 import src.ocsf.server.ConnectionToClient;
 
@@ -40,7 +40,7 @@ public class ServerController extends AbstractServer {
         String ip   = client.getInetAddress().getHostAddress();
         String host = client.getInetAddress().getHostName();
 
-        String info = ip + "(" + host + ")";
+        String info = ip + " (" + host + ")";
         System.out.println("Client connected: " +info); //changed (tamer)
         
         if(ui!=null)
@@ -68,45 +68,44 @@ public class ServerController extends AbstractServer {
     	System.out.println("Server received: " + (msg == null ? "null" : msg.getClass().getSimpleName() + " -> " + msg.toString()));
 
     	try {
+    		switch (msg) {
+    			// =========== GET ALL RESERVATIONS ===========
+    			case GetAllReservationsRequest req -> {
+    				System.out.println("Received get all reservations request");
+    				List<Reservation> reservations = reservationController.getAllReservations();
+    				client.sendToClient(reservations);
+    			}
     		
-    		// =========== GET ALL RESERVATIONS ===========
-            if ("GET_ALL_RESERVATIONS".equals(msg)) {
-                System.out.println("Received get_reservations request");
-                List<Reservation> reservations = reservationController.getAllReservations();
-                client.sendToClient(reservations);
-            }
-
-            // =========== UPDATE RESERVATION ===========
-            if (msg instanceof UpdateReservationRequest req) {
-                System.out.println("Received update request");
-                boolean success = reservationController.updateReservation(
-                        req.getReservationID(),
-                        req.getReservationDate(),
-                        req.getNumOfGuests()
-                );
-                client.sendToClient(success ? "UPDATE_OK" : "UPDATE_FAIL");
-            }
+    			// =========== UPDATE RESERVATION ===========
+    			case UpdateReservationRequest ur -> {
+    				System.out.println("Received update reservation request");
+    				boolean success = reservationController.updateReservation(
+    	                ur.getReservationID(),
+    	                ur.getReservationDate(),
+    	                ur.getNumOfGuests()
+    				);
+    	            client.sendToClient(success ? "UPDATE_OK" : "UPDATE_FAIL");
+    			}
             
-            
-            // we dont need this for prototype we will use it later
-//            // =========== ADD RESERVATION ===========
-//            if (msg instanceof AddReservationRequest req) {
+              // we dont need this for prototype we will use it later
+//       	    // =========== ADD RESERVATION ===========
+//              case AddReservationRequest add -> {
 //                System.out.println("Received add reservation request");
-//                boolean success = reservationController.addReservation(req.getReservation());
+//                boolean success = reservationController.addReservation(add.getReservation());
 //                client.sendToClient(success ? "ADD_OK" : "ADD_FAIL");
-//            }
+//              }
 
             // ----------- UNKNOWN MESSAGE -----------
-            client.sendToClient("UNKNOWN_REQUEST");
-        }
+    			default -> {
+    		        client.sendToClient("UNKNOWN_REQUEST");
+    		    }
+    		}
+    	}
         catch (Exception e) {
-
             e.printStackTrace();
-
             try {
                 client.sendToClient("SERVER_ERROR");
             } catch (Exception ignored) {}
         }
     }
-
 }
