@@ -38,7 +38,7 @@ public class ClientHandler extends AbstractClient {
     // SELECT
     public void getAllReservations() {
         try {
-            sendToServer("GET_ALL_RESERVATIONS");
+            sendToServer(new GetAllReservationsRequest()); // ** CHANGED **
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -122,3 +122,4 @@ public class ClientHandler extends AbstractClient {
         System.out.println("Unknown server message: " + msg);
     }
 }
+
