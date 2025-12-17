@@ -119,6 +119,10 @@ public class Reservation implements Serializable {
 		this.confirmationCode = newConfirmationCode;
 	}
 
+	public Date getReservationPlacedDate() {
+		return reservationPlacedDate;
+	}
+
 	
 	//setters use after the prototype
 	/*public void setStatus(Status newStatus) {

@@ -113,7 +113,7 @@ public class DBController {
 	            pst.setInt(3 , r.getNumOfGuests());
 	            pst.setInt(4, r.getConfirmationCode()); 
 	            pst.setInt(5, r.getCustomerID());
-	           // pst.setDate(6, java.sql.Date.valueOf(r.getDate())); // problem in Constructor
+	            pst.setDate(6,(Date) r.getReservationPlacedDate()); 
 	            
 	            int update_status = pst.executeUpdate();
 	            
