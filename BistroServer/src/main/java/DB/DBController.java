@@ -120,7 +120,7 @@ public class DBController {
 		public boolean insertReservation(Reservation r) {
 			Connection con = getConnection(); 
 			
-			try (PreparedStatement pst = con.prepareStatement("INSERT INTO orders (order_number, order_date, number_of_guests,confirmation_code,user_id,date_of_placing_order) VALUES (?, ?, ? ,?, ?, ?)")){
+			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `order` (order_number, order_date, number_of_guests,confirmation_code,user_id,date_of_placing_order) VALUES (?, ?, ? ,?, ?, ?)")){
 				
 	            pst.setInt(1, r.getReservationID());      
 	            pst.setDate(2, (Date) r.getReservationDate()); 
