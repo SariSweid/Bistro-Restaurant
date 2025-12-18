@@ -143,57 +143,83 @@ public class DBController {
 
 		
 		
-		public Boolean InsertUser(User u) {
-			
-		}
-		
-		public Boolean UpdateUser(User u) {
-			
-		}
-		
-		public List<User> readAllUsers() {
-			
-		}
-		
-		public User GetUser(User u) {
-			
-		}
+//		public Boolean InsertUser(User u) {
+//			
+//		}
+//		
+//		public Boolean UpdateUser(User u) {
+//			
+//		}
+//		
+//		public List<User> readAllUsers() {
+//			
+//		}
+//		
+//		public User GetUser(User u) {
+//			
+//		}
 		
 		public Reservation GetReservation(int ReservationId) {
+			
+			Connection con = getConnection(); //connect to DB
+			
+			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `order` WHERE order_number = ?")){
+				pst.setInt(1, ReservationId);
+				ResultSet rs = pst.executeQuery();
+				
+		        if (rs.next()) {
+		        	
+		            int orderNumber = rs.getInt("order_number");
+		            java.sql.Date orderDate = rs.getDate("order_date");
+		            int numberOfGuests = rs.getInt("number_of_guests");
+		            int confirmationCode = rs.getInt("confirmation_code");
+		            int userId = rs.getInt("user_id");
+		            java.sql.Date dateOfPlacingOrder = rs.getDate("date_of_placing_order");
+		        
+
+		            return new Reservation(orderNumber, orderDate,dateOfPlacingOrder, numberOfGuests, confirmationCode, userId);
+		        }
+		        	        
+			}
 						
+			 catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			return null; // There isnt Res with this ID.
 		}
 		
-		public List<Reservation> GetAllUserReservations(User u) {
-			
-		}
+//		public List<Reservation> GetAllUserReservations(User u) {
+//			
+//		}
 		
-		public Table GetTable(Table t) {
-			
-		}
-		
-		public List<Table> GetAllTables(){
-			
-		}
-		
-		public Boolean UpdateTable(Table t) {
-			
-		}
-		
-		public Boolean DeleteTable(Table t) {
-			
-		}
-		
-		public Boolean AddReport(Report r) {
-			
-		}
-		
-		public List<Report> GetAllReports() {
-			
-		}
-		
-		public Bill GetBill(Bill b) {
-			
-		}
+//		public Table GetTable(Table t) {
+//			
+//		}
+//		
+//		public List<Table> GetAllTables(){
+//			
+//		}
+//		
+//		public Boolean UpdateTable(Table t) {
+//			
+//		}
+//		
+//		public Boolean DeleteTable(Table t) {
+//			
+//		}
+//		
+//		public Boolean AddReport(Report r) {
+//			
+//		}
+//		
+//		public List<Report> GetAllReports() {
+//			
+//		}
+//		
+//		public Bill GetBill(Bill b) {
+//			
+//		}
 		
 		
 		
