@@ -138,8 +138,66 @@ public class DBController {
         	catch (SQLException e) {
         		e.printStackTrace();
             return false;
-        }
-   }
+          }
+		}
+
+		
+		
+		public Boolean InsertUser(User u) {
+			
+		}
+		
+		public Boolean UpdateUser(User u) {
+			
+		}
+		
+		public List<User> readAllUsers() {
+			
+		}
+		
+		public User GetUser(User u) {
+			
+		}
+		
+		public Reservation GetReservation(int ReservationId) {
+						
+		}
+		
+		public List<Reservation> GetAllUserReservations(User u) {
+			
+		}
+		
+		public Table GetTable(Table t) {
+			
+		}
+		
+		public List<Table> GetAllTables(){
+			
+		}
+		
+		public Boolean UpdateTable(Table t) {
+			
+		}
+		
+		public Boolean DeleteTable(Table t) {
+			
+		}
+		
+		public Boolean AddReport(Report r) {
+			
+		}
+		
+		public List<Report> GetAllReports() {
+			
+		}
+		
+		public Bill GetBill(Bill b) {
+			
+		}
+		
+		
+		
+		
 }
 
 	    	
