@@ -1,4 +1,6 @@
-/Entities/
-/META-INF/
-/messages/
 /DB/
+/META-INF/
+/gui/
+/logicControllers/
+/server/
+/src/
