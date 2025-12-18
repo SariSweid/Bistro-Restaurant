@@ -21,18 +21,32 @@ public class DBController {
 
 
 	    private static Connection conn = null; 
+	    private static long lastUsed = 0;
+	    private static final long TIMEOUT = 30 * 60 * 1000; // 30 min 
 
 	    // connect to data_base
 	    public static Connection getConnection() {
-	        if (conn == null) {
-	            try {
-	                
-	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/order?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234");
-	                System.out.println("SQL connection initialized");
-	            } catch (SQLException e) {
-	                e.printStackTrace();
+	        try {
+	            if (conn != null && !conn.isClosed()) {
+	                if (System.currentTimeMillis() - lastUsed > TIMEOUT) {
+	                    conn.close();
+	                    conn = null;
+	                    System.out.println("SQL connection closed due to inactivity");
+	                }
 	            }
+	    	
+	    	
+	    	
+	            if (conn == null || conn.isClosed()) {	                
+	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/order?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234");
+	                System.out.println("SQL connection initialized");	               	                	                
+	            }
+	            lastUsed = System.currentTimeMillis();
 	        }
+	            
+	        catch (SQLException e) {
+	        	e.printStackTrace();
+	        }	        
 	        return conn;
 	    }
 	    
