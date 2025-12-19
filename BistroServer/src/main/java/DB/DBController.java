@@ -17,6 +17,10 @@ import java.time.LocalTime;
 
 
 
+/**
+ * DBController is responsible for managing database operations
+ * related to reservations, including CRUD operations.
+ */
 public class DBController {
 
 
@@ -24,7 +28,13 @@ public class DBController {
 	    private static long lastUsed = 0;
 	    private static final long TIMEOUT = 30 * 60 * 1000; // 30 min 
 
-	    // connect to data_base
+	    /**
+	     * Returns a valid connection to the database.
+	     * If the connection was inactive for more than 30 minutes,
+	     * it is closed and reinitialized.
+	     *
+	     * @return an active SQL Connection
+	     */
 	    public static Connection getConnection() {
 	        try {
 	            if (conn != null && !conn.isClosed()) {
@@ -52,7 +62,14 @@ public class DBController {
 	    
 	    
 	    
-	    // func that update the order in the DB 
+	    /**
+	     * Updates an existing reservation in the database.
+	     *
+	     * @param reservationId the reservation ID to update
+	     * @param newDate the new reservation date
+	     * @param newNumGuests the updated number of guests
+	     * @return true if the update succeeded, false otherwise
+	     */
 	    public boolean updateReservation(int reservationId, Date newDate, int newNumGuests) {
 	    	Connection con = getConnection(); 
 	    	
@@ -74,7 +91,11 @@ public class DBController {
 	        }
 	   }
 	    
-	    //func that return all the orders from DB
+	    /**
+	     * Retrieves all reservations from the database.
+	     *
+	     * @return a list of all reservations
+	     */
 	    public List<Reservation> readAllReservations() {
 	    	
 	    	List<Reservation> reservations = new ArrayList<>(); // made new list to return
@@ -116,7 +137,12 @@ public class DBController {
 
 
 
-	    //func that insert Reservation into the DB
+	    /**
+	     * Inserts a new reservation into the database.
+	     *
+	     * @param r the reservation to insert
+	     * @return true if the insertion succeeded, false otherwise
+	     */
 		public boolean insertReservation(Reservation r) {
 			Connection con = getConnection(); 
 			
@@ -159,6 +185,12 @@ public class DBController {
 //			
 //		}
 		
+		/**
+		 * Retrieves a reservation by its ID.
+		 *
+		 * @param ReservationId the reservation ID
+		 * @return the Reservation if found, or null if not found
+		 */
 		public Reservation GetReservation(int ReservationId) {
 			
 			Connection con = getConnection(); //connect to DB
