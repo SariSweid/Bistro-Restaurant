@@ -249,11 +249,33 @@ public class DBController {
 //			
 //		}
 //		
-//		public Bill GetBill(Bill b) {
+//		public Bill GetBill(int BillId) {
 //			
 //		}
-		
-		
+//		
+//		public Boolean updateOpeningHours() {
+//			
+//		}
+//		
+//		public Boolean updateClosingHours() {
+//			
+//		}
+//		
+//		public Boolean updateMaxTable() {
+//			
+//		}
+//		
+//		public Boolean updateSpecialDates() {
+//			
+//		}
+//		
+//		public Boolean addSpecialDates() {
+//			
+//		}
+//		
+//		public Boolean AddBill(Bill b) {
+//		
+//		}
 		
 		
 }
