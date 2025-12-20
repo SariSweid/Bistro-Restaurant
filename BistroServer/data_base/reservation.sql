@@ -27,10 +27,11 @@ CREATE TABLE `reservation` (
   `reservationDate` date DEFAULT NULL,
   `numOfGuests` int DEFAULT NULL,
   `confirmationCode` int DEFAULT NULL,
-  `status` varchar(20) DEFAULT NULL,
+  `status` enum('PENDING','CONFIRMED','CANCELLED','SEATED','COMPLETED','NOT_SHOWED','WAITLIST') DEFAULT NULL,
   `customerID` int DEFAULT NULL,
   `TableId` int DEFAULT NULL,
   `BillId` int DEFAULT NULL,
+  `date_of_placing_reservation` date DEFAULT NULL,
   PRIMARY KEY (`reservationID`),
   KEY `customerID_idx` (`customerID`),
   KEY `TableId_idx` (`TableId`),
@@ -48,4 +49,4 @@ CREATE TABLE `reservation` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-20 17:32:29
+-- Dump completed on 2025-12-20 22:42:48

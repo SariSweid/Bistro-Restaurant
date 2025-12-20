@@ -22,6 +22,11 @@ import java.time.LocalTime;
  * related to reservations, including CRUD operations.
  */
 public class DBController {
+	
+	public enum Status {
+	    PENDING, CONFIRMED, CANCELLED, SEATED,
+	    COMPLETED, NOT_SHOWED, WAITLIST
+	}
 
 
 	    private static Connection conn = null; 
@@ -96,6 +101,48 @@ public class DBController {
 	     *
 	     * @return a list of all reservations
 	     */
+//	    public List<Reservation> readAllReservations() {
+//	    	
+//	    	List<Reservation> reservations = new ArrayList<>(); // made new list to return
+//	    	Connection con = getConnection(); //connect to DB
+//	    	
+//	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation`")){ // ask from DB the all Orders
+//	    		
+//	    		ResultSet rs = pst.executeQuery();
+//	    		
+//	    		while(rs.next()) { // read from DB
+//	    			
+//	    			int order_number = rs.getInt("reservationID");
+//	    			Date order_date = rs.getDate("reservationDate"); 
+//	    			int number_of_guests = rs.getInt("numOfGuests");
+//	    			int confirmation_code = rs.getInt("confirmationCode");
+//	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
+//	    			int user_id = rs.getInt("customerID");
+//	    			int table_id = rs.getInt("TableId");
+//	    			int bill_id = rs.getInt("BillId");
+//	    			Date date_of_placing_order = rs.getDate("date_of_placing_reservation"); 
+//	    			
+//	                Reservation r = new Reservation(order_number ,order_date ,number_of_guests ,date_of_placing_order ,confirmation_code 
+//	                								,status ,user_id ,table_id ,bill_id);
+//	                
+//	                reservations.add(r);
+//	    			
+//	    		}
+//	    		
+//	    		for (Reservation r : reservations) {
+//	    		    System.out.println(r);
+//	    		}
+//	    		
+//	    		
+//	    	} catch (SQLException e) {
+//
+//				e.printStackTrace();
+//			}
+//	    	
+//	    	
+//			return reservations;    	
+//	    }
+	    
 	    public List<Reservation> readAllReservations() {
 	    	
 	    	List<Reservation> reservations = new ArrayList<>(); // made new list to return
