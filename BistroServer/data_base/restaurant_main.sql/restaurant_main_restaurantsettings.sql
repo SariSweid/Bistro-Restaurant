@@ -16,13 +16,20 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping data for table `restaurantsettings`
+-- Table structure for table `restaurantsettings`
 --
 
-LOCK TABLES `restaurantsettings` WRITE;
-/*!40000 ALTER TABLE `restaurantsettings` DISABLE KEYS */;
-/*!40000 ALTER TABLE `restaurantsettings` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `restaurantsettings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `restaurantsettings` (
+  `SpecialDates` date NOT NULL,
+  `MaxTables` int DEFAULT NULL,
+  `OpeningHours` time DEFAULT NULL,
+  `ClosingHours` time DEFAULT NULL,
+  PRIMARY KEY (`SpecialDates`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -33,4 +40,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-21  1:17:59
+-- Dump completed on 2025-12-21 22:09:47
