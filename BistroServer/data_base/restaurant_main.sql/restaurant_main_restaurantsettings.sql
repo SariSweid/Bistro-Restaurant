@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
 --
--- Host: localhost    Database: user
+-- Host: localhost    Database: restaurant_main
 -- ------------------------------------------------------
 -- Server version	8.0.44
 
@@ -16,21 +16,13 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `user`
+-- Dumping data for table `restaurantsettings`
 --
 
-DROP TABLE IF EXISTS `user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user` (
-  `UserId` int NOT NULL,
-  `Name` varchar(45) DEFAULT NULL,
-  `Phone` varchar(20) DEFAULT NULL,
-  `Email` varchar(100) DEFAULT NULL,
-  `Role` enum('GUEST','SUBSCRIBER','STAFF','MANAGER') NOT NULL,
-  PRIMARY KEY (`UserId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+LOCK TABLES `restaurantsettings` WRITE;
+/*!40000 ALTER TABLE `restaurantsettings` DISABLE KEYS */;
+/*!40000 ALTER TABLE `restaurantsettings` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -41,4 +33,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-20 17:33:49
+-- Dump completed on 2025-12-21  1:17:59

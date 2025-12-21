@@ -1,8 +1,6 @@
-CREATE DATABASE  IF NOT EXISTS `order` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `order`;
 -- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
 --
--- Host: localhost    Database: order
+-- Host: localhost    Database: restaurant_main
 -- ------------------------------------------------------
 -- Server version	8.0.44
 
@@ -18,28 +16,13 @@ USE `order`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `order`
+-- Dumping data for table `subscriber`
 --
 
-DROP TABLE IF EXISTS `order`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `order` (
-  `order_number` int NOT NULL,
-  `order_date` date DEFAULT NULL,
-  `number_of_guests` int DEFAULT NULL,
-  `confirmation_code` int DEFAULT NULL,
-  `user_id` int DEFAULT NULL,
-  `date_of_placing_order` date DEFAULT NULL,
-  PRIMARY KEY (`order_number`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO `order` 
-(`order_number`, `order_date`, `number_of_guests`, `confirmation_code`, `user_id`, `date_of_placing_order`)
-VALUES
-(1, '2025-12-01', 4, 1234, 7, '2025-12-02'),
-(2, '2025-12-03', 2, 5678, 8, '2025-12-03');
-/*!40101 SET character_set_client = @saved_cs_client */;
+LOCK TABLES `subscriber` WRITE;
+/*!40000 ALTER TABLE `subscriber` DISABLE KEYS */;
+/*!40000 ALTER TABLE `subscriber` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -50,4 +33,4 @@ VALUES
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-04 19:02:07
+-- Dump completed on 2025-12-21  1:17:59

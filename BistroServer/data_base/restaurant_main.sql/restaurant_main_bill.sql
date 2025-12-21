@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
 --
--- Host: localhost    Database: restaurantsettings
+-- Host: localhost    Database: restaurant_main
 -- ------------------------------------------------------
 -- Server version	8.0.44
 
@@ -16,20 +16,13 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `restaurantsettings`
+-- Dumping data for table `bill`
 --
 
-DROP TABLE IF EXISTS `restaurantsettings`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `restaurantsettings` (
-  `SpecialDates` date NOT NULL,
-  `MaxTables` int DEFAULT NULL,
-  `OpeningHours` time DEFAULT NULL,
-  `ClosingHours` time DEFAULT NULL,
-  PRIMARY KEY (`SpecialDates`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+LOCK TABLES `bill` WRITE;
+/*!40000 ALTER TABLE `bill` DISABLE KEYS */;
+/*!40000 ALTER TABLE `bill` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -40,4 +33,4 @@ CREATE TABLE `restaurantsettings` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-20 17:32:59
+-- Dump completed on 2025-12-21  1:17:59
