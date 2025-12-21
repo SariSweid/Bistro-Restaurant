@@ -141,46 +141,7 @@ public class DBController {
 	    	
 			return reservations;    	
 	    }
-	    
-//	    public List<Reservation> readAllReservations() {
-//	    	
-//	    	List<Reservation> reservations = new ArrayList<>(); // made new list to return
-//	    	Connection con = getConnection(); //connect to DB
-//	    	
-//	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `order`")){ // ask from DB the all Orders
-//	    		
-//	    		ResultSet rs = pst.executeQuery();
-//	    		
-//	    		while(rs.next()) { // read from DB
-//	    			
-//	    			int order_number = rs.getInt("order_number");
-//	    			Date order_date = rs.getDate("order_date"); 
-//	    			int number_of_guests = rs.getInt("number_of_guests");
-//	    			int confirmation_code = rs.getInt("confirmation_code");
-//	    			int user_id = rs.getInt("user_id");
-//	    			Date date_of_placing_order = rs.getDate("date_of_placing_order"); 
-//	    			
-//	                Reservation r = new Reservation(order_number,order_date,date_of_placing_order,number_of_guests,confirmation_code,user_id);
-//	                
-//	                reservations.add(r);
-//	    			
-//	    		}
-//	    		
-//	    		for (Reservation r : reservations) {
-//	    		    System.out.println(r);
-//	    		}
-//	    		
-//	    		
-//	    	} catch (SQLException e) {
-//
-//				e.printStackTrace();
-//			}
-//	    	
-//	    	
-//			return reservations;    	
-//	    }
-
-
+	    	    
 
 
 	    /**
