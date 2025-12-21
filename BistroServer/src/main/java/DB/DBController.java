@@ -153,7 +153,7 @@ public class DBController {
 		public boolean insertReservation(Reservation r) {
 			Connection con = getConnection(); 
 			
-			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `order` (order_number, order_date, number_of_guests,confirmation_code,user_id,date_of_placing_order) VALUES (?, ?, ? ,?, ?, ?)")){
+			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `reservation` (reservationID, reservationDate, numOfGuests,confirmationCode,customerID,date_of_placing_reservation) VALUES (?, ?, ? ,?, ?, ?)")){
 				
 	            pst.setInt(1, r.getReservationID());      
 	            pst.setDate(2, (Date) r.getReservationDate()); 
@@ -202,18 +202,18 @@ public class DBController {
 			
 			Connection con = getConnection(); //connect to DB
 			
-			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `order` WHERE order_number = ?")){
+			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE reservationID = ?")){
 				pst.setInt(1, ReservationId);
 				ResultSet rs = pst.executeQuery();
 				
 		        if (rs.next()) {
 		        	
-		            int orderNumber = rs.getInt("order_number");
-		            java.sql.Date orderDate = rs.getDate("order_date");
-		            int numberOfGuests = rs.getInt("number_of_guests");
-		            int confirmationCode = rs.getInt("confirmation_code");
-		            int userId = rs.getInt("user_id");
-		            java.sql.Date dateOfPlacingOrder = rs.getDate("date_of_placing_order");
+		            int orderNumber = rs.getInt("reservationID");
+		            java.sql.Date orderDate = rs.getDate("reservationDate");
+		            int numberOfGuests = rs.getInt("numOfGuests");
+		            int confirmationCode = rs.getInt("confirmationCode");
+		            int userId = rs.getInt("customerID");
+		            java.sql.Date dateOfPlacingOrder = rs.getDate("date_of_placing_reservation");
 		        
 
 		            return new Reservation(orderNumber, orderDate,dateOfPlacingOrder, numberOfGuests, confirmationCode, userId);
