@@ -53,7 +53,7 @@ public class DBController {
 	    	
 	    	
 	            if (conn == null || conn.isClosed()) {	                
-	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/order?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234");
+	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234");
 	                System.out.println("SQL connection initialized");	               	                	                
 	            }
 	            lastUsed = System.currentTimeMillis();
@@ -78,7 +78,7 @@ public class DBController {
 	    public boolean updateReservation(int reservationId, Date newDate, int newNumGuests) {
 	    	Connection con = getConnection(); 
 	    	
-	        try (PreparedStatement pst = con.prepareStatement("UPDATE `order` SET order_date = ? , number_of_guests = ?  WHERE order_number = ?")) {
+	        try (PreparedStatement pst = con.prepareStatement("UPDATE `reservation` SET reservationDate = ? , numOfGuests = ?  WHERE reservationID = ?")) {
 	            pst.setDate(1, newDate);      
 	            pst.setInt(2, newNumGuests); 
 	            pst.setInt(3, reservationId);
@@ -101,67 +101,28 @@ public class DBController {
 	     *
 	     * @return a list of all reservations
 	     */
-//	    public List<Reservation> readAllReservations() {
-//	    	
-//	    	List<Reservation> reservations = new ArrayList<>(); // made new list to return
-//	    	Connection con = getConnection(); //connect to DB
-//	    	
-//	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation`")){ // ask from DB the all Orders
-//	    		
-//	    		ResultSet rs = pst.executeQuery();
-//	    		
-//	    		while(rs.next()) { // read from DB
-//	    			
-//	    			int order_number = rs.getInt("reservationID");
-//	    			Date order_date = rs.getDate("reservationDate"); 
-//	    			int number_of_guests = rs.getInt("numOfGuests");
-//	    			int confirmation_code = rs.getInt("confirmationCode");
-//	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
-//	    			int user_id = rs.getInt("customerID");
-//	    			int table_id = rs.getInt("TableId");
-//	    			int bill_id = rs.getInt("BillId");
-//	    			Date date_of_placing_order = rs.getDate("date_of_placing_reservation"); 
-//	    			
-//	                Reservation r = new Reservation(order_number ,order_date ,number_of_guests ,date_of_placing_order ,confirmation_code 
-//	                								,status ,user_id ,table_id ,bill_id);
-//	                
-//	                reservations.add(r);
-//	    			
-//	    		}
-//	    		
-//	    		for (Reservation r : reservations) {
-//	    		    System.out.println(r);
-//	    		}
-//	    		
-//	    		
-//	    	} catch (SQLException e) {
-//
-//				e.printStackTrace();
-//			}
-//	    	
-//	    	
-//			return reservations;    	
-//	    }
-	    
 	    public List<Reservation> readAllReservations() {
 	    	
 	    	List<Reservation> reservations = new ArrayList<>(); // made new list to return
 	    	Connection con = getConnection(); //connect to DB
 	    	
-	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `order`")){ // ask from DB the all Orders
+	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation`")){ // ask from DB the all Orders
 	    		
 	    		ResultSet rs = pst.executeQuery();
 	    		
 	    		while(rs.next()) { // read from DB
 	    			
-	    			int order_number = rs.getInt("order_number");
-	    			Date order_date = rs.getDate("order_date"); 
-	    			int number_of_guests = rs.getInt("number_of_guests");
-	    			int confirmation_code = rs.getInt("confirmation_code");
-	    			int user_id = rs.getInt("user_id");
-	    			Date date_of_placing_order = rs.getDate("date_of_placing_order"); 
+	    			int order_number = rs.getInt("reservationID");
+	    			Date order_date = rs.getDate("reservationDate"); 
+	    			int number_of_guests = rs.getInt("numOfGuests");
+	    			int confirmation_code = rs.getInt("confirmationCode");
+	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
+	    			int user_id = rs.getInt("customerID");
+	    			int table_id = rs.getInt("TableId");
+	    			int bill_id = rs.getInt("BillId");
+	    			Date date_of_placing_order = rs.getDate("date_of_placing_reservation"); 
 	    			
-	                Reservation r = new Reservation(order_number,order_date,date_of_placing_order,number_of_guests,confirmation_code,user_id);
+	    			Reservation r = new Reservation(order_number,order_date,date_of_placing_order,number_of_guests,confirmation_code,user_id);
 	                
 	                reservations.add(r);
 	    			
@@ -180,8 +141,7 @@ public class DBController {
 	    	
 			return reservations;    	
 	    }
-
-
+	    	    
 
 
 	    /**
@@ -193,7 +153,7 @@ public class DBController {
 		public boolean insertReservation(Reservation r) {
 			Connection con = getConnection(); 
 			
-			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `order` (order_number, order_date, number_of_guests,confirmation_code,user_id,date_of_placing_order) VALUES (?, ?, ? ,?, ?, ?)")){
+			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `reservation` (reservationID, reservationDate, numOfGuests,confirmationCode,customerID,date_of_placing_reservation) VALUES (?, ?, ? ,?, ?, ?)")){
 				
 	            pst.setInt(1, r.getReservationID());      
 	            pst.setDate(2, (Date) r.getReservationDate()); 
@@ -242,18 +202,18 @@ public class DBController {
 			
 			Connection con = getConnection(); //connect to DB
 			
-			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `order` WHERE order_number = ?")){
+			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE reservationID = ?")){
 				pst.setInt(1, ReservationId);
 				ResultSet rs = pst.executeQuery();
 				
 		        if (rs.next()) {
 		        	
-		            int orderNumber = rs.getInt("order_number");
-		            java.sql.Date orderDate = rs.getDate("order_date");
-		            int numberOfGuests = rs.getInt("number_of_guests");
-		            int confirmationCode = rs.getInt("confirmation_code");
-		            int userId = rs.getInt("user_id");
-		            java.sql.Date dateOfPlacingOrder = rs.getDate("date_of_placing_order");
+		            int orderNumber = rs.getInt("reservationID");
+		            java.sql.Date orderDate = rs.getDate("reservationDate");
+		            int numberOfGuests = rs.getInt("numOfGuests");
+		            int confirmationCode = rs.getInt("confirmationCode");
+		            int userId = rs.getInt("customerID");
+		            java.sql.Date dateOfPlacingOrder = rs.getDate("date_of_placing_reservation");
 		        
 
 		            return new Reservation(orderNumber, orderDate,dateOfPlacingOrder, numberOfGuests, confirmationCode, userId);
