@@ -19,40 +19,49 @@ public class Reservation implements Serializable {
 	}
 	
 	private int reservationID;
-	private Date reservationDate; //future date the customer reserved a place
-	private Date reservationPlacedDate; //when the reservation was palced in the site
-	//private LocalDate reservationDate; //use after the prototype
-	//private LocalTime reservationTime; //use after the prototype
-	//private LocalDate reservationPlacedDate; //use after the prototype
-	//private LocalTime reservationPlacedTime; //use after the prototype
+	private final int customerID;
+	private Integer tableID; //id of the table that was assigned to the reservation, Integer and not int to initialize with null until table is assigned 
+	private Integer billID; //Integer and not int to initialize with null until bill is generated
 	private int numOfGuests;
 	private int confirmationCode;
+	private LocalDate reservationDate; //future date the customer reserved a place
+	private LocalTime reservationTime; //future time the customer reserved a place
+	private LocalDate reservationPlacedDate; //the date the reservation was placed in the site
+	private LocalTime reservationPlacedTime; ///the time the reservation was placed in the site
 	private Status status; //use after the prototype
-	private final int customerID;
-	//private Integer tableID; //use after the prototype
-	//private Integer billID; //Integer and not int to initialize with null until bill is generated //use after the prototype
 	
 	//Constructor for creating a new reservation - use after prototype
-	public Reservation(int reservationID, Date reservationDate, int numOfGuests, int confirmationCode, Status status, int customerID) {
+	public Reservation(int reservationID, int customerID, int numOfGuests, int confirmationCode, LocalDate reservationDate,
+					   LocalTime reservationTime, Status status) {
 		this.reservationID = reservationID;
-		this.reservationDate = reservationDate;
-		this.reservationPlacedDate = new Date();
+		this.customerID = customerID;
 		this.numOfGuests = numOfGuests;
 		this.confirmationCode = confirmationCode;
-		this.status = status;
-		this.customerID = customerID;
-		//this.tableID = null;
-		//this.billID = null;
+		this.reservationDate = reservationDate;
+		this.reservationTime = reservationTime;
+		this.reservationPlacedDate = LocalDate.now();
+		this.reservationPlacedTime = LocalTime.now();		
+		this.status = status;	
+		this.tableID = null;
+		this.billID = null;
 	}
 	
 	//constructor for getting a reservation from the db
-	public Reservation(int reservationID, Date reservationDate, Date reservationPlacedDate, int numOfGuests, int confirmationCode, int customerID) {
+	public Reservation(int reservationID, int customerID, Integer tableID, Integer billID, int numOfGuests,
+					   int confirmationCode, LocalDate reservationDate, LocalTime reservationTime,
+					   LocalDate reservationPlacedDate, LocalTime reservationPlacedTime, Status status) {
 		this.reservationID = reservationID;
-		this.reservationDate = reservationDate;
-		this.reservationPlacedDate = reservationPlacedDate;
+		this.customerID = customerID;
+		this.tableID = tableID;
+		this.billID = billID;
 		this.numOfGuests = numOfGuests;
 		this.confirmationCode = confirmationCode;
-		this.customerID = customerID;
+		this.reservationDate = reservationDate;
+		this.reservationTime = reservationTime;
+		this.reservationPlacedDate = reservationPlacedDate;
+		this.reservationPlacedTime = reservationPlacedTime;
+		this.status = status;
+		
 	}
 	
 	//getters
@@ -61,10 +70,17 @@ public class Reservation implements Serializable {
 		return this.reservationID;
 	}
 	
-	public Date getReservationDate() {
-		return this.reservationDate;
+	public int getCustomerId() {
+	    return this.customerID;
 	}
 	
+	public Integer getTableID() {
+		return this.tableID;
+	}
+	
+	public Integer getBillID() {
+		return this.billID;
+	}
 	
 	public int getNumOfGuests() {
 		return this.numOfGuests;
@@ -73,61 +89,28 @@ public class Reservation implements Serializable {
 	public int getConfirmationCode() {
 		return this.confirmationCode;
 	}
-
-	public int getCustomerID() {
-		return customerID;
+	
+	public LocalDate getReservationDate() {
+		return this.reservationDate;
+	}
+	
+	public LocalTime getReservationTime() {
+		return this.reservationTime;
+	}
+	
+	public LocalDate getReservationPlacedDate() {
+		return this.reservationPlacedDate;
+	}
+	
+	public LocalTime getReservationPlacedTime() {
+		return this.reservationPlacedTime;
 	}
 
 	public Status getStatus() {
 		return this.status;
 	}
 	
-	public int getSubscriberId() {
-	    return this.customerID;
-	}
-
-	public Date getOrderDate() {
-	    return this.reservationPlacedDate;
-	}
-	
-	
-	//getters use after the prototype
-	/*public Integer getTableID() {
-		return this.tableID;
-	}
-	
-	public Integer getBillID() {
-		return this.billID;
-	}*/
-	
 	//setters
-	
-	public void setDate(Date newReservationDate) {
-		this.reservationDate = newReservationDate;
-	}
-	
-	//setter use after the prototype
-	/*public void setTime(LocalTime newTime) {
-		this.time = newTime;
-	}*/
-	
-	public void setNumOfGuests(int newNumOfGuests) {
-		this.numOfGuests = newNumOfGuests;
-	}
-	
-	public void setConfirmationCode(int newConfirmationCode) {
-		this.confirmationCode = newConfirmationCode;
-	}
-
-	public Date getReservationPlacedDate() {
-		return reservationPlacedDate;
-	}
-
-	
-	//setters use after the prototype
-	/*public void setStatus(Status newStatus) {
-		this.status = newStatus;
-	}
 	
 	public void setTableID(Integer newTableID) {
 		this.tableID = newTableID;
@@ -137,7 +120,27 @@ public class Reservation implements Serializable {
 		this.billID = newBillID;
 	}
 	
-	//status methods use after the prototype
+	public void setNumOfGuests(int newNumOfGuests) {
+		this.numOfGuests = newNumOfGuests;
+	}
+	
+	public void setConfirmationCode(int newConfirmationCode) {
+		this.confirmationCode = newConfirmationCode;
+	}
+	
+	public void setReservationDate(LocalDate newReservationDate) {
+		this.reservationDate = newReservationDate;
+	}
+	
+	public void setReservationTime(LocalTime newReservationTime) {
+		this.reservationTime = newReservationTime;
+	}
+	
+	public void setStatus(Status newStatus) {
+		this.status = newStatus;
+	}
+	
+	//status methods
 	
 	public boolean isReservationActive() {
 		return (this.status == Status.CONFIRMED) || (this.status == Status.PENDING);
@@ -145,5 +148,5 @@ public class Reservation implements Serializable {
 	
 	public boolean isReservationCancelled() {
 		return this.status == Status.CANCELLED;
-	}*/
+	}
 }
