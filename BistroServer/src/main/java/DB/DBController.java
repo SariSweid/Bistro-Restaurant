@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Entities.Reservation;
+import Entities.User;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -27,6 +29,13 @@ public class DBController {
 	public enum Status {
 	    PENDING, CONFIRMED, CANCELLED, SEATED,
 	    COMPLETED, NOT_SHOWED, WAITLIST
+	}
+	
+	public enum Role{
+		GUEST,
+		SUBSCRIBER,
+		SUPERVISOR,
+		MANAGER
 	}
 
 
@@ -225,7 +234,54 @@ public class DBController {
 //			
 //		}
 //		
-//		public List<User> readAllUsers() {
+	    public List<User> readAllUsers() {
+    	
+    	List<User> Users = new ArrayList<>(); // made new list to return
+    	Connection con = getConnection(); //connect to DB
+    	
+    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `user`")){ // ask from DB the all Orders
+    		
+    		ResultSet rs = pst.executeQuery();
+    		
+    		while(rs.next()) { // read from DB
+    			
+    			int UserId  = rs.getInt("UserId");
+    			String Name  = rs.getString("Name"); 
+    			String Phone  = rs.getString("Phone");
+    			String Email  = rs.getString("Email");
+    			String UserName  = rs.getString("UserName");
+    			int SubscriberMemberShipCode = rs.getInt("MemberShipCode");
+    			Entities.User.Role Role = Entities.User.Role.valueOf(rs.getString("Role"));
+
+    			
+                User u;
+
+//                switch (Role) {
+//                    case GUEST:
+//                        u = new Guest(userId, email, phone);
+//                        break;
+//                    case SUBSCRIBER:
+//                        u = new Subscriber(userId, email, phone);
+//                        break;
+//                    case SUPERVISOR:
+//                        u = new RestaurantSupervisor(userId, email, phone);
+//                        break;
+//                    case MANAGER:
+//                        u = new RestaurantManager(userId, email, phone);
+//                        break;
+//                    default:
+//                        continue;
+//                }
+
+  //              Users.add(u);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return Users;
+    }
 //			
 //		}
 //		
