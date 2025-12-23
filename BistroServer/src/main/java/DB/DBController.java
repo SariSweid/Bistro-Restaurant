@@ -185,29 +185,35 @@ public class DBController {
 	     * @param r the reservation to insert
 	     * @return true if the insertion succeeded, false otherwise
 	     */
-		public boolean insertReservation(Reservation r) {
-			Connection con = getConnection(); 
-			
-			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `reservation` (reservationID, reservationDate, numOfGuests,confirmationCode,customerID,date_of_placing_reservation) VALUES (?, ?, ? ,?, ?, ?)")){
-				
-	            pst.setInt(1, r.getReservationID());      
-	            pst.setDate(2, java.sql.Date.valueOf(r.getReservationDate())); 
-	            pst.setInt(3 , r.getNumOfGuests());
-	            pst.setInt(4, r.getConfirmationCode()); 
-	            pst.setInt(5, r.getCustomerId());
-	            pst.setDate(2, java.sql.Date.valueOf(r.getReservationDate()));
-	            
+	    public boolean insertReservation(Reservation r) {
+	        Connection con = getConnection(); 
+	        
+	        try (PreparedStatement pst = con.prepareStatement(
+	            "INSERT INTO `reservation` " +
+	            "(reservationID, customerID, tableId, billId, numOfGuests, confirmationCode, " +
+	            "reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime, status) " +
+	            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	        )) {
+
+	            pst.setInt(1, r.getReservationID());
+	            pst.setInt(2, r.getCustomerId());
+	            pst.setInt(3, r.getTableID());
+	            pst.setInt(5, r.getNumOfGuests());
+	            pst.setInt(6, r.getConfirmationCode());
+	            pst.setDate(7, java.sql.Date.valueOf(r.getReservationDate()));
+	            pst.setTime(8, java.sql.Time.valueOf(r.getReservationTime()));
+	            pst.setDate(9, java.sql.Date.valueOf(r.getReservationPlacedDate()));
+	            pst.setTime(10, java.sql.Time.valueOf(r.getReservationPlacedTime()));
+	            pst.setString(11, r.getStatus().name());
+
 	            int update_status = pst.executeUpdate();
-	            
-	            // we return whether the update succeeded or not
-	            return update_status > 0;				
-			}
-			
-        	catch (SQLException e) {
-        		e.printStackTrace();
-            return false;
-          }
-		}
+	            return update_status > 0;
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+	    }
 
 		
 		
