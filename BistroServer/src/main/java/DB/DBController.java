@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,13 +76,37 @@ public class DBController {
 	     * @param newNumGuests the updated number of guests
 	     * @return true if the update succeeded, false otherwise
 	     */
-	    public boolean updateReservation(int reservationId, Date newDate, int newNumGuests) {
+	    public boolean updateReservation(Reservation r) {
 	    	Connection con = getConnection(); 
-	    	
-	        try (PreparedStatement pst = con.prepareStatement("UPDATE `reservation` SET reservationDate = ? , numOfGuests = ?  WHERE reservationID = ?")) {
-	            pst.setDate(1, newDate);      
-	            pst.setInt(2, newNumGuests); 
-	            pst.setInt(3, reservationId);
+	    	try (PreparedStatement pst = con.prepareStatement(
+	    		    "UPDATE `reservation` SET " +
+	    		    "reservationDate = ?, " +
+	    		    "reservationTime = ?, " +
+	    		    "numOfGuests = ?, " +
+	    		    "confirmationCode = ?, " +
+	    		    "status = ?, " +
+	    		    "customerID = ?, " +
+	    		    "TableId = ?, " +
+	    		    "BillId = ?, " +
+	    		    "reservationPlacedDate = ?, " +
+	    		    "reservationPlacedTime = ? " +
+	    		    "WHERE reservationID = ?"
+	    		)) {
+	    		
+	    		
+	        	pst.setDate(1, Date.valueOf(r.getReservationDate()));
+	        	pst.setTime(2, Time.valueOf(r.getReservationTime()));
+	        	pst.setInt(3, r.getNumOfGuests());
+	        	pst.setInt(4, r.getConfirmationCode());
+	        	pst.setString(5, r.getStatus().name());
+	        	pst.setInt(6, r.getCustomerId());
+	        	pst.setInt(7, r.getTableID());
+	        	pst.setInt(8, r.getBillID());
+	        	pst.setDate(9, Date.valueOf(r.getReservationPlacedDate()));
+	        	pst.setTime(10, Time.valueOf(r.getReservationPlacedTime()));
+	        	pst.setInt(11, r.getReservationID());
+
+	        	pst.executeUpdate();
 	            
 
 	            int update_status = pst.executeUpdate();/////
@@ -114,16 +139,26 @@ public class DBController {
 	    			
 	    			int reservationID  = rs.getInt("reservationID");
 	    			Date reservationDate  = rs.getDate("reservationDate"); 
+	    			Time reservationTime  = rs.getTime("reservationTime");
 	    			int numOfGuests  = rs.getInt("numOfGuests");
 	    			int confirmation_code = rs.getInt("confirmationCode");
 	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
 	    			int customerID  = rs.getInt("customerID");
 	    			int tableID  = rs.getInt("TableId");
 	    			int billID  = rs.getInt("BillId");
-	    			Date reservationPlacedDate  = rs.getDate("date_of_placing_reservation"); 
+	    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
+	    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
+	
 	    			
-	    			Reservation r = new Reservation(reservationID,reservationDate,tableID,billID,numOfGuests,confirmation_code,);
-	                
+	    			//conver date and time to local
+	    			LocalDate resDate = reservationDate.toLocalDate();
+	    			LocalTime resTime = reservationTime.toLocalTime();
+	    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
+	    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
+	    			
+	    			Reservation r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
+	    											,resDate,resTime,placedDate,placedTime,status);
+	    			
 	                reservations.add(r);
 	    			
 	    		}
@@ -208,15 +243,30 @@ public class DBController {
 				
 		        if (rs.next()) {
 		        	
-		            int orderNumber = rs.getInt("reservationID");
-		            java.sql.Date orderDate = rs.getDate("reservationDate");
-		            int numberOfGuests = rs.getInt("numOfGuests");
-		            int confirmationCode = rs.getInt("confirmationCode");
-		            int userId = rs.getInt("customerID");
-		            java.sql.Date dateOfPlacingOrder = rs.getDate("date_of_placing_reservation");
+	    			int reservationID  = rs.getInt("reservationID");
+	    			Date reservationDate  = rs.getDate("reservationDate"); 
+	    			Time reservationTime  = rs.getTime("reservationTime");
+	    			int numOfGuests  = rs.getInt("numOfGuests");
+	    			int confirmation_code = rs.getInt("confirmationCode");
+	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
+	    			int customerID  = rs.getInt("customerID");
+	    			int tableID  = rs.getInt("TableId");
+	    			int billID  = rs.getInt("BillId");
+	    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
+	    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
+	
+	    			
+	    			//conver date and time to local
+	    			LocalDate resDate = reservationDate.toLocalDate();
+	    			LocalTime resTime = reservationTime.toLocalTime();
+	    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
+	    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
 		        
 
-		            return new Reservation(orderNumber, orderDate,dateOfPlacingOrder, numberOfGuests, confirmationCode, userId);
+		            
+		            
+	    			Reservation r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
+	    											,resDate,resTime,placedDate,placedTime,status);
 		        }
 		        	        
 			}

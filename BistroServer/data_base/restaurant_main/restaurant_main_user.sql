@@ -27,10 +27,21 @@ CREATE TABLE `user` (
   `Name` varchar(45) DEFAULT NULL,
   `Phone` varchar(20) DEFAULT NULL,
   `Email` varchar(100) DEFAULT NULL,
+  `UserName` varchar(45) DEFAULT NULL,
+  `MemberShipCode` int DEFAULT NULL,
   `Role` enum('GUEST','SUBSCRIBER','STAFF','MANAGER') NOT NULL,
   PRIMARY KEY (`UserId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -41,4 +52,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-23 18:30:50
+-- Dump completed on 2025-12-23 19:23:21
