@@ -16,27 +16,19 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `reservation`
+-- Table structure for table `user`
 --
 
-DROP TABLE IF EXISTS `reservation`;
+DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `reservation` (
-  `reservationID` int NOT NULL,
-  `reservationDate` date DEFAULT NULL,
-  `numOfGuests` int DEFAULT NULL,
-  `confirmationCode` int DEFAULT NULL,
-  `status` enum('PENDING','CONFIRMED','CANCELLED','SEATED','COMPLETED','NOT_SHOWED','WAITLIST') DEFAULT NULL,
-  `customerID` int DEFAULT NULL,
-  `TableId` int DEFAULT NULL,
-  `BillId` int DEFAULT NULL,
-  `date_of_placing_reservation` date DEFAULT NULL,
-  PRIMARY KEY (`reservationID`),
-  KEY `customerID_idx` (`customerID`),
-  KEY `TableId_idx` (`TableId`),
-  CONSTRAINT `customerID` FOREIGN KEY (`customerID`) REFERENCES `user` (`UserId`),
-  CONSTRAINT `TableId` FOREIGN KEY (`TableId`) REFERENCES `table` (`TableId`)
+CREATE TABLE `user` (
+  `UserId` int NOT NULL,
+  `Name` varchar(45) DEFAULT NULL,
+  `Phone` varchar(20) DEFAULT NULL,
+  `Email` varchar(100) DEFAULT NULL,
+  `Role` enum('GUEST','SUBSCRIBER','STAFF','MANAGER') NOT NULL,
+  PRIMARY KEY (`UserId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +41,4 @@ CREATE TABLE `reservation` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-21 22:09:47
+-- Dump completed on 2025-12-23 18:30:50

@@ -16,18 +16,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `report`
+-- Table structure for table `reservation`
 --
 
-DROP TABLE IF EXISTS `report`;
+DROP TABLE IF EXISTS `reservation`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `report` (
-  `Report_Id` int NOT NULL,
-  `Type` varchar(45) DEFAULT NULL,
-  `From` date DEFAULT NULL,
-  `To` date DEFAULT NULL,
-  PRIMARY KEY (`Report_Id`)
+CREATE TABLE `reservation` (
+  `reservationID` int NOT NULL,
+  `reservationDate` date DEFAULT NULL,
+  `reservationTime` time DEFAULT NULL,
+  `numOfGuests` int DEFAULT NULL,
+  `confirmationCode` int DEFAULT NULL,
+  `status` enum('PENDING','CONFIRMED','CANCELLED','SEATED','COMPLETED','NOT_SHOWED','WAITLIST') DEFAULT NULL,
+  `customerID` int DEFAULT NULL,
+  `TableId` int DEFAULT NULL,
+  `BillId` int DEFAULT NULL,
+  `reservationPlacedDate` date DEFAULT NULL,
+  `reservationPlacedTime` time DEFAULT NULL,
+  PRIMARY KEY (`reservationID`),
+  KEY `customerID_idx` (`customerID`),
+  KEY `TableId_idx` (`TableId`),
+  CONSTRAINT `customerID` FOREIGN KEY (`customerID`) REFERENCES `user` (`UserId`),
+  CONSTRAINT `TableId` FOREIGN KEY (`TableId`) REFERENCES `table` (`TableId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -40,4 +51,4 @@ CREATE TABLE `report` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-21 22:09:46
+-- Dump completed on 2025-12-23 18:30:49

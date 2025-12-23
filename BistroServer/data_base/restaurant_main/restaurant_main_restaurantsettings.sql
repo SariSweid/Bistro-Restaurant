@@ -16,21 +16,18 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `bill`
+-- Table structure for table `restaurantsettings`
 --
 
-DROP TABLE IF EXISTS `bill`;
+DROP TABLE IF EXISTS `restaurantsettings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `bill` (
-  `BillId` int NOT NULL,
-  `Amount` int DEFAULT NULL,
-  `User_Id` int DEFAULT NULL,
-  `Items` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`BillId`),
-  KEY `UserId_idx` (`User_Id`),
-  KEY `User_id_idx` (`User_Id`),
-  CONSTRAINT `User_id` FOREIGN KEY (`User_Id`) REFERENCES `user`.`user` (`UserId`)
+CREATE TABLE `restaurantsettings` (
+  `SpecialDates` date NOT NULL,
+  `MaxTables` int DEFAULT NULL,
+  `OpeningHours` time DEFAULT NULL,
+  `ClosingHours` time DEFAULT NULL,
+  PRIMARY KEY (`SpecialDates`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -43,4 +40,4 @@ CREATE TABLE `bill` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-21 22:09:46
+-- Dump completed on 2025-12-23 18:30:49

@@ -16,17 +16,18 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `table`
+-- Table structure for table `waitinglist`
 --
 
-DROP TABLE IF EXISTS `table`;
+DROP TABLE IF EXISTS `waitinglist`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `table` (
-  `TableId` int NOT NULL,
-  `Capacity` int DEFAULT NULL,
-  `IsAvailable` tinyint DEFAULT NULL,
-  PRIMARY KEY (`TableId`)
+CREATE TABLE `waitinglist` (
+  `Customer` int NOT NULL,
+  `NumOfGuests` int DEFAULT NULL,
+  `ConfirmationCode` int DEFAULT NULL,
+  PRIMARY KEY (`Customer`),
+  CONSTRAINT `Customer` FOREIGN KEY (`Customer`) REFERENCES `user` (`UserId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -39,4 +40,4 @@ CREATE TABLE `table` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-21 22:09:47
+-- Dump completed on 2025-12-23 18:30:49

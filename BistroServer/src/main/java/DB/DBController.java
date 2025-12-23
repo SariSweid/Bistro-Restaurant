@@ -112,17 +112,17 @@ public class DBController {
 	    		
 	    		while(rs.next()) { // read from DB
 	    			
-	    			int order_number = rs.getInt("reservationID");
-	    			Date order_date = rs.getDate("reservationDate"); 
-	    			int number_of_guests = rs.getInt("numOfGuests");
+	    			int reservationID  = rs.getInt("reservationID");
+	    			Date reservationDate  = rs.getDate("reservationDate"); 
+	    			int numOfGuests  = rs.getInt("numOfGuests");
 	    			int confirmation_code = rs.getInt("confirmationCode");
 	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
-	    			int user_id = rs.getInt("customerID");
-	    			int table_id = rs.getInt("TableId");
-	    			int bill_id = rs.getInt("BillId");
-	    			Date date_of_placing_order = rs.getDate("date_of_placing_reservation"); 
+	    			int customerID  = rs.getInt("customerID");
+	    			int tableID  = rs.getInt("TableId");
+	    			int billID  = rs.getInt("BillId");
+	    			Date reservationPlacedDate  = rs.getDate("date_of_placing_reservation"); 
 	    			
-	    			Reservation r = new Reservation(order_number,order_date,date_of_placing_order,number_of_guests,confirmation_code,user_id);
+	    			Reservation r = new Reservation(reservationID,reservationDate,tableID,billID,numOfGuests,confirmation_code,);
 	                
 	                reservations.add(r);
 	    			
@@ -156,11 +156,11 @@ public class DBController {
 			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `reservation` (reservationID, reservationDate, numOfGuests,confirmationCode,customerID,date_of_placing_reservation) VALUES (?, ?, ? ,?, ?, ?)")){
 				
 	            pst.setInt(1, r.getReservationID());      
-	            pst.setDate(2, (Date) r.getReservationDate()); 
+	            pst.setDate(2, java.sql.Date.valueOf(r.getReservationDate())); 
 	            pst.setInt(3 , r.getNumOfGuests());
 	            pst.setInt(4, r.getConfirmationCode()); 
-	            pst.setInt(5, r.getCustomerID());
-	            pst.setDate(6,(Date) r.getReservationPlacedDate()); 
+	            pst.setInt(5, r.getCustomerId());
+	            pst.setDate(2, java.sql.Date.valueOf(r.getReservationDate()));
 	            
 	            int update_status = pst.executeUpdate();
 	            
