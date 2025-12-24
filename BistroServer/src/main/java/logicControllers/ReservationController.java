@@ -28,37 +28,66 @@ public class ReservationController {
      * Update a reservation's date and guest count.
      * Returns true if update succeeded, false otherwise.
      */
-    public boolean updateReservation(int reservationId, Date newDate, int newNumGuests) {
-        // Validation
-        if (reservationId <= 0) return false;
-        if (newDate == null) return false;
-        if (newNumGuests <= 0) return false;
+
+    
+    
+    public boolean updateReservation(Reservation r) {
+        if (!isValidReservation(r)) return false;
 
         try {
-            return db.updateReservation(reservationId, newDate, newNumGuests);
+            return db.updateReservation(r);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
+
     
      // dont need it for prototype , we will use it later.
     /**
      * Add a new reservation. Returns true on success.
      */
-   public boolean addReservation(Reservation r) {
-       if (r == null) return false;
-       // Validation
-       if (r.getReservationID() <= 0) return false;
-        if (r.getReservationDate() == null) return false;
-        if (r.getNumOfGuests() <= 0) return false;
+    public boolean addReservation(Reservation r) {
+        if (!isValidReservation(r)) return false;
 
-       try {           
-    	   return db.insertReservation(r);
+        try {
+            return db.insertReservation(r);
         } catch (Exception e) {
-           e.printStackTrace();
-           return false;
+            e.printStackTrace();
+            return false;
         }
     }
+
+   
+   
+   private boolean isValidReservation(Reservation r) {
+	    if (r == null) return false;
+
+	    if (r.getReservationID() <= 0) return false;
+	    if (r.getCustomerId() <= 0) return false;
+
+	    if (r.getNumOfGuests() <= 0) return false;
+	    if (r.getConfirmationCode() <= 0) return false;
+
+	    if (r.getReservationDate() == null) return false;
+	    if (r.getReservationTime() == null) return false;
+
+	    if (r.getReservationPlacedDate() == null) return false;
+	    if (r.getReservationPlacedTime() == null) return false;
+
+	    if (r.getStatus() == null) return false;
+
+	    return true;
+	}
+
+   
+   
+   
+   
+   
+   
+   
+   
+   
 }
