@@ -1,10 +1,13 @@
 package client;
-import javafx.application.Platform;
-
 import java.io.IOException;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import Entities.Reservation;
+import Entities.Reservation.Status;
+import javafx.application.Platform;
 import messages.AddReservationRequest;
 import messages.GetAllReservationsRequest;
 import messages.UpdateReservationRequest;
@@ -61,11 +64,11 @@ public class ClientHandler extends AbstractClient {
     }
 
     // UPDATE
-    public void updateReservation(int id, java.sql.Date date, int guests) {   
+    public void updateReservation(int id, LocalDate date, LocalTime time, int guests, Status status) {   
         try {
-            sendToServer(
-                new UpdateReservationRequest(id, date, guests)
-            );
+            
+
+            sendToServer(new UpdateReservationRequest(id, date, time, guests, status));
         }
         catch (IOException e){
             e.printStackTrace();

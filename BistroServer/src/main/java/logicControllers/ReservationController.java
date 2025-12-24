@@ -1,6 +1,7 @@
 package logicControllers;
 
 import Entities.Reservation;
+import messages.UpdateReservationRequest;
 import DB.DBController;
 import java.sql.Date;
 import java.util.List;
@@ -31,15 +32,22 @@ public class ReservationController {
 
     
     
-    public boolean updateReservation(Reservation r) {
-        if (!isValidReservation(r)) return false;
+    public boolean updateReservation(UpdateReservationRequest ur) {
+        if (ur == null) return false;
+        if (ur.getReservationID() <= 0 || ur.getReservationDate() == null
+            || ur.getReservationTime() == null || ur.getNumOfGuests() <= 0
+            || ur.getStatus() == null) return false;
 
-        try {
-            return db.updateReservation(r);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        Reservation existing = db.GetReservation(ur.getReservationID());
+        if (existing == null) return false;
+
+        // עדכון שדות מותרים בלבד
+        existing.setReservationDate(ur.getReservationDate());
+        existing.setReservationTime(ur.getReservationTime());
+        existing.setNumOfGuests(ur.getNumOfGuests());
+        existing.setStatus(Entities.Reservation.Status.valueOf(ur.getStatus().name()));
+
+        return db.updateReservation(existing);
     }
 
 

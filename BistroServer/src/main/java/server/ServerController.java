@@ -78,13 +78,12 @@ public class ServerController extends AbstractServer {
     		
     			// =========== UPDATE RESERVATION ===========
     			case UpdateReservationRequest ur -> {
-    				System.out.println("Received update reservation request");
-    				boolean success = reservationController.updateReservation(
-    	                ur.getReservationID(),
-    	                ur.getReservationDate(),
-    	                ur.getNumOfGuests()
-    				);
-    	            client.sendToClient(success ? "UPDATE_OK" : "UPDATE_FAIL");
+    			    System.out.println("Received update reservation request");
+
+    			    // העברת העבודה ל-Controller
+    			    boolean success = reservationController.updateReservation(ur);
+
+    			    client.sendToClient(success ? "UPDATE_OK" : "UPDATE_FAIL");
     			}
             
 
