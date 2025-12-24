@@ -75,31 +75,59 @@ public class DBController {
 	     * @param newNumGuests the updated number of guests
 	     * @return true if the update succeeded, false otherwise
 	     */
-	    public boolean updateReservation(Reservation r) {
-	        Connection con = getConnection(); 
-	        try (PreparedStatement pst = con.prepareStatement(
-	                "UPDATE `reservation` SET " +
-	                "reservationDate = ?, " +
-	                "reservationTime = ?, " +
-	                "numOfGuests = ?, " +
-	                "status = ? " +
-	                "WHERE reservationID = ?"
-	            )) {
+//	    public boolean updateReservation(Reservation r) {
+//	        Connection con = getConnection(); 
+//	        try (PreparedStatement pst = con.prepareStatement(
+//	                "UPDATE `reservation` SET " +
+//	                "reservationDate = ?, " +
+//	                "reservationTime = ?, " +
+//	                "numOfGuests = ?, " +
+//	                "status = ? " +
+//	                "WHERE reservationID = ?"
+//	            )) {
+//
+//	            pst.setDate(1, Date.valueOf(r.getReservationDate()));
+//	            pst.setTime(2, Time.valueOf(r.getReservationTime()));
+//	            pst.setInt(3, r.getNumOfGuests());
+//	            pst.setString(4, r.getStatus().name());
+//	            pst.setInt(5, r.getReservationID());
+//
+//	            int update_status = pst.executeUpdate(); 
+//	            return update_status > 0;
+//
+//	        } catch (SQLException e) {
+//	            e.printStackTrace();
+//	            return false;
+//	        }
+//	    }
+	    
+	    public boolean updateReservation(Reservation reservation) {
+	        Connection con = getConnection();
+	        String sql = "UPDATE `reservation` SET reservationDate = ?, reservationTime = ?, numOfGuests = ?, " +
+	                     "status = ? " +
+	                     "WHERE reservationID = ?";
 
-	            pst.setDate(1, Date.valueOf(r.getReservationDate()));
-	            pst.setTime(2, Time.valueOf(r.getReservationTime()));
-	            pst.setInt(3, r.getNumOfGuests());
-	            pst.setString(4, r.getStatus().name());
-	            pst.setInt(5, r.getReservationID());
+	        try (PreparedStatement pst = con.prepareStatement(sql)) {
 
-	            int update_status = pst.executeUpdate(); 
-	            return update_status > 0;
+
+	        	pst.setDate(1, Date.valueOf(reservation.getReservationDate()));
+	        	pst.setTime(2, Time.valueOf(reservation.getReservationTime()));  
+	            pst.setInt(3, reservation.getNumOfGuests());
+	            pst.setString(4, reservation.getStatus().name());  
+
+	            pst.setInt(5, reservation.getReservationID());
+
+	            int rows = pst.executeUpdate();
+
+	            return rows > 0; 
 
 	        } catch (SQLException e) {
+	            System.err.println("SQL Exception during update: " + e.getMessage());
 	            e.printStackTrace();
-	            return false;
+	            return false; 
 	        }
 	    }
+
 
 	    
 	    /**
@@ -270,6 +298,7 @@ public class DBController {
 		public Reservation GetReservation(int ReservationId) {
 			
 			Connection con = getConnection(); //connect to DB
+			Reservation r = null;
 			
 			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE reservationID = ?")){
 				pst.setInt(1, ReservationId);
@@ -299,7 +328,7 @@ public class DBController {
 
 		            
 		            
-	    			Reservation r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
+	    			r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
 	    											,resDate,resTime,placedDate,placedTime,status);
 		        }
 		        	        
@@ -309,7 +338,7 @@ public class DBController {
 				e.printStackTrace();
 			}
 			
-			return null; // There isnt Res with this ID.
+			return r; // There isnt Res with this ID.
 		}
 		
 //		public List<Reservation> GetAllUserReservations(User u) {

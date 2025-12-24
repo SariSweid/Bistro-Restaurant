@@ -51,6 +51,12 @@
                     <Label text="Guests:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                     <TextField fx:id="guestsField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                     
+                    <Label text="Time:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+					<TextField fx:id="timeField" promptText="HH:mm" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+					
+					<Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+					<TextField fx:id="statusField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                    
                     
 <!--                     <Label text="Confirmation Code:" GridPane.columnIndex="0" GridPane.rowIndex="3" /> -->
 <!-- 					<TextField fx:id="confirmationCodeField" GridPane.columnIndex="1" GridPane.rowIndex="3" /> -->
