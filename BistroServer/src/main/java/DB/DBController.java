@@ -76,49 +76,31 @@ public class DBController {
 	     * @return true if the update succeeded, false otherwise
 	     */
 	    public boolean updateReservation(Reservation r) {
-	    	Connection con = getConnection(); 
-	    	try (PreparedStatement pst = con.prepareStatement(
-	    		    "UPDATE `reservation` SET " +
-	    		    "reservationDate = ?, " +
-	    		    "reservationTime = ?, " +
-	    		    "numOfGuests = ?, " +
-	    		    "confirmationCode = ?, " +
-	    		    "status = ?, " +
-	    		    "customerID = ?, " +
-	    		    "TableId = ?, " +
-	    		    "BillId = ?, " +
-	    		    "reservationPlacedDate = ?, " +
-	    		    "reservationPlacedTime = ? " +
-	    		    "WHERE reservationID = ?"
-	    		)) {
-	    		
-	    		
-	        	pst.setDate(1, Date.valueOf(r.getReservationDate()));
-	        	pst.setTime(2, Time.valueOf(r.getReservationTime()));
-	        	pst.setInt(3, r.getNumOfGuests());
-	        	pst.setInt(4, r.getConfirmationCode());
-	        	pst.setString(5, r.getStatus().name());
-	        	pst.setInt(6, r.getCustomerId());
-	        	pst.setInt(7, r.getTableID());
-	        	pst.setInt(8, r.getBillID());
-	        	pst.setDate(9, Date.valueOf(r.getReservationPlacedDate()));
-	        	pst.setTime(10, Time.valueOf(r.getReservationPlacedTime()));
-	        	pst.setInt(11, r.getReservationID());
+	        Connection con = getConnection(); 
+	        try (PreparedStatement pst = con.prepareStatement(
+	                "UPDATE `reservation` SET " +
+	                "reservationDate = ?, " +
+	                "reservationTime = ?, " +
+	                "numOfGuests = ?, " +
+	                "status = ? " +
+	                "WHERE reservationID = ?"
+	            )) {
 
-	        	pst.executeUpdate();
-	            
+	            pst.setDate(1, Date.valueOf(r.getReservationDate()));
+	            pst.setTime(2, Time.valueOf(r.getReservationTime()));
+	            pst.setInt(3, r.getNumOfGuests());
+	            pst.setString(4, r.getStatus().name());
+	            pst.setInt(5, r.getReservationID());
 
-	            int update_status = pst.executeUpdate();/////
-	            
-	            // we return whether the update succeeded or not
+	            int update_status = pst.executeUpdate(); 
 	            return update_status > 0;
-
 
 	        } catch (SQLException e) {
 	            e.printStackTrace();
 	            return false;
 	        }
-	   }
+	    }
+
 	    
 	    /**
 	     * Retrieves all reservations from the database.

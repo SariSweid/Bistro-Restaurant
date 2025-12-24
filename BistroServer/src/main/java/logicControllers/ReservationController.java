@@ -33,21 +33,16 @@ public class ReservationController {
     
     
     public boolean updateReservation(UpdateReservationRequest ur) {
-        if (ur == null) return false;
-        if (ur.getReservationID() <= 0 || ur.getReservationDate() == null
-            || ur.getReservationTime() == null || ur.getNumOfGuests() <= 0
-            || ur.getStatus() == null) return false;
+    	Reservation existing = db.GetReservation(ur.getReservationID());
+    	if (existing == null) return false;
 
-        Reservation existing = db.GetReservation(ur.getReservationID());
-        if (existing == null) return false;
+    	// עדכון שדות שמסופקים בלבד
+    	if (ur.getReservationDate() != null) existing.setReservationDate(ur.getReservationDate());
+    	if (ur.getReservationTime() != null) existing.setReservationTime(ur.getReservationTime());
+    	if (ur.getNumOfGuests() != 0) existing.setNumOfGuests(ur.getNumOfGuests());
+    	if (ur.getStatus() != null) existing.setStatus(ur.getStatus());
 
-        // עדכון שדות מותרים בלבד
-        existing.setReservationDate(ur.getReservationDate());
-        existing.setReservationTime(ur.getReservationTime());
-        existing.setNumOfGuests(ur.getNumOfGuests());
-        existing.setStatus(Entities.Reservation.Status.valueOf(ur.getStatus().name()));
-
-        return db.updateReservation(existing);
+    	return db.updateReservation(existing);
     }
 
 

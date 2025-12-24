@@ -105,6 +105,14 @@ public class Reservation implements Serializable {
 	public LocalTime getReservationPlacedTime() {
 		return this.reservationPlacedTime;
 	}
+	
+	public int getSubscriberId() {
+	    return this.customerID;
+	}
+	
+	public LocalDate getOrderDate() {
+	    return this.reservationPlacedDate;
+	}
 
 	public Status getStatus() {
 		return this.status;
