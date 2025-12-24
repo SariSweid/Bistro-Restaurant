@@ -26,17 +26,7 @@ import java.time.LocalTime;
  */
 public class DBController {
 	
-	public enum Status {
-	    PENDING, CONFIRMED, CANCELLED, SEATED,
-	    COMPLETED, NOT_SHOWED, WAITLIST
-	}
 	
-	public enum Role{
-		GUEST,
-		SUBSCRIBER,
-		SUPERVISOR,
-		MANAGER
-	}
 
 
 	    private static Connection conn = null; 
