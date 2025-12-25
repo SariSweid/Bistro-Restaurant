@@ -3,8 +3,8 @@ package logicControllers;
 import Entities.Reservation;
 import DB.DBController;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Server-side logic controller for reservations.
@@ -12,9 +12,15 @@ import java.util.Objects;
 public class ReservationController {
 
     private final DBController db;
-
+    
+    // Constructor
     public ReservationController() {
         this.db = new DBController(); // implement DBController to connect to your DB
+    }
+    
+    // Constructor for tests (inject a mock DB)
+    public ReservationController(DBController db) {
+        this.db = db;
     }
 
     /**
@@ -28,14 +34,15 @@ public class ReservationController {
      * Update a reservation's date and guest count.
      * Returns true if update succeeded, false otherwise.
      */
-    public boolean updateReservation(int reservationId, Date newDate, int newNumGuests) {
+    public boolean updateReservation(int reservationId, LocalDate newDate, int newNumGuests) {
         // Validation
         if (reservationId <= 0) return false;
         if (newDate == null) return false;
         if (newNumGuests <= 0) return false;
 
         try {
-            return db.updateReservation(reservationId, newDate, newNumGuests);
+        		Date sqlDate = Date.valueOf(newDate);  // conversion
+            return db.updateReservation(reservationId, sqlDate, newNumGuests);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -43,7 +50,6 @@ public class ReservationController {
     }
 
     
-     // dont need it for prototype , we will use it later.
     /**
      * Add a new reservation. Returns true on success.
      */
@@ -51,11 +57,11 @@ public class ReservationController {
        if (r == null) return false;
        // Validation
        if (r.getReservationID() <= 0) return false;
-        if (r.getOrderDate() == null) return false;
-        if (r.getNumOfGuests() <= 0) return false;
+       if (r.getReservationDate() == null) return false;
+       if (r.getNumOfGuests() <= 0) return false;
 
-       try {           
-    	   return db.insertReservation(r);
+       try {       
+    	    	return db.insertReservation(r);
         } catch (Exception e) {
            e.printStackTrace();
            return false;

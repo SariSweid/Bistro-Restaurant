@@ -1,16 +1,26 @@
 package server;
 
+import java.util.HashMap;
 import java.util.List;
 
 import Entities.Reservation;
 import logicControllers.ReservationController;
 import messages.*;
+import commands.*;
+import common.*;
 import src.ocsf.server.AbstractServer;
 import src.ocsf.server.ConnectionToClient;
 
-
+/**
+ * Main server controller.
+ * Receives messages from clients and handling
+ * to the appropriate Command using a HashMap.
+ */
 public class ServerController extends AbstractServer {
-   
+	
+	// Maps each ActionType to its corresponding Command
+    private HashMap<ActionType, Command> commands;
+    
 	/** Default port number the server listens on */
     public static final int DEFAULT_PORT = 5555;
     
@@ -32,6 +42,10 @@ public class ServerController extends AbstractServer {
         super(port);  // Initialize the AbstractServer with the given port
         System.out.println("Server started on port " + port);
         reservationController = new ReservationController();
+        
+        // Setup the commands
+        commands = new HashMap<>();
+        initializeCommands();
     }
 
     // ===== CLIENT CONNECT EVENT =====
@@ -58,54 +72,43 @@ public class ServerController extends AbstractServer {
         }
     }
 
+    
     /**
-     * Receives messages from clients and delegates them to specific handler methods.
-     * @param msg - the message received from the client
-     * @param client - the client connection that sent the message
+     * Registers all supported commands.
+     */
+    private void initializeCommands() {
+        // Command #1: Update Reservations
+        commands.put(ActionType.UPDATE_RESERVATION, new UpdateReservationCommand());
+        
+        // Command #2: Add Reservation
+        commands.put(ActionType.ADD_RESERVATION, new AddReservationCommand());
+
+        // Command #3: Get All Reservations
+        commands.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsCommand());
+    }
+    
+    /**
+     * Handles incoming messages from clients.
+     *
+     * @param msg    received object
+     * @param client client connection
      */
     @Override
     protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
-    	System.out.println("Server received: " + (msg == null ? "null" : msg.getClass().getSimpleName() + " -> " + msg.toString()));
+    	if (msg instanceof Message) {
+            Message message = (Message) msg;
+            ActionType type = message.getAction();
 
-    	try {
-    		switch (msg) {
-    			// =========== GET ALL RESERVATIONS ===========
-    			case GetAllReservationsRequest req -> {
-    				System.out.println("Received get all reservations request");
-    				List<Reservation> reservations = reservationController.getAllReservations();
-    				client.sendToClient(reservations);
-    			}
-    		
-    			// =========== UPDATE RESERVATION ===========
-    			case UpdateReservationRequest ur -> {
-    				System.out.println("Received update reservation request");
-    				boolean success = reservationController.updateReservation(
-    	                ur.getReservationID(),
-    	                ur.getReservationDate(),
-    	                ur.getNumOfGuests()
-    				);
-    	            client.sendToClient(success ? "UPDATE_OK" : "UPDATE_FAIL");
-    			}
-            
-
-       	    // =========== ADD RESERVATION ===========
-              case AddReservationRequest add -> {
-                System.out.println("Received add reservation request");
-                boolean success = reservationController.addReservation(add.getReservation());
-                client.sendToClient(success ? "ADD_OK" : "ADD_FAIL");
-              }
-
-            // ----------- UNKNOWN MESSAGE -----------
-    			default -> {
-    		        client.sendToClient("UNKNOWN_REQUEST");
-    		    }
-    		}
-    	}
-        catch (Exception e) {
-            e.printStackTrace();
-            try {
-                client.sendToClient("SERVER_ERROR");
-            } catch (Exception ignored) {}
+            if (commands.containsKey(type)) {
+                // Execute the command.
+                System.out.println("Server: Received request for " + type);
+                commands.get(type).execute(message.getData(), client);
+            } else {
+                // We don't have a command for this action
+                System.out.println("Server: Error! Unknown Command received: " + type);
+            }
+        } else {
+            System.out.println("Server: Received a non-Message object. Ignoring.");
         }
     }
 }

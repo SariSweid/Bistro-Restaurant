@@ -176,11 +176,11 @@ public class DBController {
 
 		
 		
-//		public Boolean InsertUser(User u) {
+//		public Boolean insertUser(User u) {
 //			
 //		}
 //		
-//		public Boolean UpdateUser(User u) {
+//		public Boolean updateUser(User u) {
 //			
 //		}
 //		
@@ -188,7 +188,7 @@ public class DBController {
 //			
 //		}
 //		
-//		public User GetUser(User u) {
+//		public User getUser(User u) {
 //			
 //		}
 		
