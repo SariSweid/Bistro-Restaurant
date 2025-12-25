@@ -471,7 +471,16 @@ public class DBController {
 		    return reservations;
 		}
 
+
 		
+		
+		
+	    /**
+	     * Retrieves a specific table by their ID.
+	     *
+	     * @param TableId the table ID
+	     * @return the Table if found, or null if not found
+	     */
 		public Table GetTable(int tableid) {
 			
 			Connection con = getConnection(); //connect to DB
@@ -501,56 +510,6 @@ public class DBController {
 		
 
 		
-		
-		
-		
-		
-		
-//		public Reservation GetReservation(int ReservationId) {
-//			
-//			Connection con = getConnection(); //connect to DB
-//			Reservation r = null;
-//			
-//			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE reservationID = ?")){
-//				pst.setInt(1, ReservationId);
-//				ResultSet rs = pst.executeQuery();
-//				
-//		        if (rs.next()) {
-//		        	
-//	    			int reservationID  = rs.getInt("reservationID");
-//	    			Date reservationDate  = rs.getDate("reservationDate"); 
-//	    			Time reservationTime  = rs.getTime("reservationTime");
-//	    			int numOfGuests  = rs.getInt("numOfGuests");
-//	    			int confirmation_code = rs.getInt("confirmationCode");
-//	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
-//	    			int customerID  = rs.getInt("customerID");
-//	    			int tableID  = rs.getInt("TableId");
-//	    			int billID  = rs.getInt("BillId");
-//	    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
-//	    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
-//	
-//	    			
-//	    			//conver date and time to local
-//	    			LocalDate resDate = reservationDate.toLocalDate();
-//	    			LocalTime resTime = reservationTime.toLocalTime();
-//	    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
-//	    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
-//		        
-//
-//		            
-//		            
-//	    			r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
-//	    											,resDate,resTime,placedDate,placedTime,status);
-//		        }
-//		        	        
-//			}
-//						
-//			 catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-//			
-//			return r; // There isnt Res with this ID.
-//		}		
 		
 		
 		
