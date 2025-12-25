@@ -14,6 +14,7 @@ import java.util.List;
 
 import Entities.Guest;
 import Entities.Reservation;
+import Entities.Table;
 import Entities.User;
 
 
@@ -471,9 +472,94 @@ public class DBController {
 		}
 
 		
-//		public Table GetTable(Table t) {
+		public Table GetTable(int tableid) {
+			
+			Connection con = getConnection(); //connect to DB
+			Table t = null;
+			
+			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `table` WHERE TableId = ?")){
+				pst.setInt(1, TableId);
+				ResultSet rs = pst.executeQuery();
+				
+		        if (rs.next()) {
+		        	int tableId = rs.getInt("TableId");
+		        	int capacity = rs.getInt("Capacity");
+		        	Boolean isAvailable = rs.getBoolean("IsAvailable");	        	
+				
+		        	t = new Table(tableId , capacity , isAvailable );
+			        }
+        	        
+			}
+				
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+	
+		return t; // There isnt Res with this ID.
+}
+				
+		
+
+		
+		
+		
+		
+		
+		
+//		public Reservation GetReservation(int ReservationId) {
 //			
-//		}
+//			Connection con = getConnection(); //connect to DB
+//			Reservation r = null;
+//			
+//			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE reservationID = ?")){
+//				pst.setInt(1, ReservationId);
+//				ResultSet rs = pst.executeQuery();
+//				
+//		        if (rs.next()) {
+//		        	
+//	    			int reservationID  = rs.getInt("reservationID");
+//	    			Date reservationDate  = rs.getDate("reservationDate"); 
+//	    			Time reservationTime  = rs.getTime("reservationTime");
+//	    			int numOfGuests  = rs.getInt("numOfGuests");
+//	    			int confirmation_code = rs.getInt("confirmationCode");
+//	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
+//	    			int customerID  = rs.getInt("customerID");
+//	    			int tableID  = rs.getInt("TableId");
+//	    			int billID  = rs.getInt("BillId");
+//	    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
+//	    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
+//	
+//	    			
+//	    			//conver date and time to local
+//	    			LocalDate resDate = reservationDate.toLocalDate();
+//	    			LocalTime resTime = reservationTime.toLocalTime();
+//	    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
+//	    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
+//		        
+//
+//		            
+//		            
+//	    			r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
+//	    											,resDate,resTime,placedDate,placedTime,status);
+//		        }
+//		        	        
+//			}
+//						
+//			 catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//			
+//			return r; // There isnt Res with this ID.
+//		}		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 //		
 //		public List<Table> GetAllTables(){
 //			
