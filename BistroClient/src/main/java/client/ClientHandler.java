@@ -1,126 +1,98 @@
 package client;
-import javafx.application.Platform;
 
 import java.io.IOException;
-import java.util.List;
-
+import java.time.LocalDate;
+import java.util.HashMap;
 import Entities.Reservation;
-import messages.AddReservationRequest;
-import messages.GetAllReservationsRequest;
+import common.*;
+import handlers.*;
+import messages.*;
 import messages.UpdateReservationRequest;
 import src.ocsf.client.AbstractClient;
 
 public class ClientHandler extends AbstractClient {
+	public boolean awaitResponse = false;
+	
+	private HashMap<ActionType, ResponseHandler> handlers;
 	
 	// Singleton instance of ClientHandler
     public static ClientHandler instance;
 
     private GuestReservationUI guestUI; // added by tamer for wiring
+    
     // Constructor
-    public ClientHandler(String host, int port) {
+    public ClientHandler(String host, int port) throws IOException {
         super(host, port);
         instance = this;
-        
-        try {
-            openConnection();
-            System.out.println("Connected to server successfully.");
-        } catch (IOException e) {
-            System.out.println("Failed to connect to server.");
-        }
-    }
-    
-    // Return the active ClientHandler instance
-    public static ClientHandler getClient() { 
-    	return instance;
-    	}
-
-    // ==== SEND REQUESTS ====
-    
-    // SELECT
-    public void getAllReservations() {
-        try {
-            sendToServer(new GetAllReservationsRequest()); // ** CHANGED **
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        openConnection();
+        System.out.println(">> Connected to server at " + host + ":" + port);
+        handlers = new HashMap<>();
+        initializeHandlers();
     }
     
     public void setGuestUI(GuestReservationUI guestUI) { // added setter tamer
         this.guestUI = guestUI;
     }
     
+    // Return the active ClientHandler instance
+    public static ClientHandler getClient() { 
+    		return instance;
+    	}
     
-    // ADD      not for prototype
-    public void addReservation(Reservation reservation) {
+    private void initializeHandlers() {
+        // When Server sends reservations --> Run GetAllReservationsHandler
+        handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler(guestUI));
+        // When Server confirms update --> Run UpdateConfirmHandler
+        handlers.put(ActionType.UPDATE_RESERVATION, new UpdateReservationHandler(guestUI));
+        // When Server add reservation --> Run AddReservationHandler
+        handlers.put(ActionType.ADD_RESERVATION, new AddReservationHandler(guestUI));
+    }
+    
+    private void sendRequest(Message msg) {
         try {
-            AddReservationRequest req = new AddReservationRequest(reservation);
-            sendToServer(req);
+            sendToServer(msg);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    
+    
+    // ==== SEND REQUESTS ====
 
-    // UPDATE
-    public void updateReservation(int id, java.sql.Date date, int guests) {   
-        try {
-            sendToServer(
-                new UpdateReservationRequest(id, date, guests)
-            );
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
+    public void getAllReservations() {
+        sendRequest(new Message(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsRequest()));
     }
 
+    public void addReservation(Reservation reservation) {
+        awaitResponse = true;
+        sendRequest(new Message(ActionType.ADD_RESERVATION, new AddReservationRequest(reservation)));
+    }
+
+    public void updateReservation(int id, LocalDate date, int guests) {
+        sendRequest(new Message(ActionType.UPDATE_RESERVATION, new UpdateReservationRequest(id, date, guests)));
+    }
+    
 
     // ==== RECEIVE RESPONSE ====
     @Override
     protected void handleMessageFromServer(Object msg) {
-    	System.out.println("Client received: " + (msg == null ? "null" : msg.getClass().getSimpleName() + " -> " + msg.toString()));
+    		// Validate the message format
+        if (msg instanceof Message) {
+            Message m = (Message) msg;
+            ActionType type = m.getAction();
 
-        // ----- RECEIVE RESERVATION LIST -----
-        if (msg instanceof List<?> list) {
-        	@SuppressWarnings("unchecked")
-            List<Reservation> reservations = (List<Reservation>) list;
-        	Platform.runLater(() ->
-        		guestUI.displayAllReservations(reservations)
-        	);
-        }
+            // Look up the correct Handler in the HashMap
+            if (handlers.containsKey(type)) {
+                // FOUND IT: Execute the specific handler code
+                handlers.get(type).handle(m.getData());
+            } else {
+                // NOT FOUND: We don't know how to handle this action
+                System.out.println(">> Error: Received unknown action type: " + type);
+            }
 
-        // ===== RECEIVE UPDATE RESULT =====
-        if ("UPDATE_OK".equals(msg)) {
-        	Platform.runLater(() ->
-            	guestUI.showMessage("Reservation updated successfully.")
-        	);
+            // Release the Lock
+            awaitResponse = false;
         }
-
-        if ("UPDATE_FAIL".equals(msg)) {
-        	Platform.runLater(() ->
-            	guestUI.showMessage("Failed to update reservation.")
-        	);
-        }
-        
-        if ("ADD_OK".equals(msg)) {
-            Platform.runLater(() -> 
-            	guestUI.showMessage("Reservation added successfully.")
-            );
-            return;
-        }
-
-        if ("ADD_FAIL".equals(msg)) {
-            Platform.runLater(() -> 
-            	guestUI.showMessage("Failed to add reservation.")
-            );
-            return;
-        }
-
-        // ==== ERRORS ====
-        if ("SERVER_ERROR".equals(msg)) {
-            Platform.runLater(() ->
-                guestUI.showMessage("Server error.")
-            );
-        }
-        System.out.println("Unknown server message: " + msg);
     }
 }
 

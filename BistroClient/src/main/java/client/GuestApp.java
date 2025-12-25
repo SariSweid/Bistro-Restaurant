@@ -25,13 +25,11 @@ public class GuestApp extends Application {
         List<String> list = parms.getUnnamed();
         String host = "";
         
-        // Create client
-        try {
-        	host = list.get(0);
+        // -- Create client --
+        if (list != null && !list.isEmpty()) {
+            host = list.get(0);
         }
-        catch (ArrayIndexOutOfBoundsException e) {
-			host = "localhost";
-		}
+        // Now create client safely
         ClientHandler client = new ClientHandler(host, 5555); // or your port
         client.setGuestUI(ui);
 

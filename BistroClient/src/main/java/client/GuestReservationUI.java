@@ -1,6 +1,6 @@
 package client;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import Entities.Reservation;
@@ -22,7 +22,7 @@ public class GuestReservationUI {
     private TableColumn<Reservation, Integer> idColumn;
 
     @FXML
-    private TableColumn<Reservation, Date> dateColumn;
+    private TableColumn<Reservation, LocalDate> dateColumn;
 
     @FXML
     private TableColumn<Reservation, Integer> guestsColumn;
@@ -35,7 +35,7 @@ public class GuestReservationUI {
     private TableColumn<Reservation, Integer> subscriberIdColumn;
 
     @FXML
-    private TableColumn<Reservation, Date> orderDateColumn;
+    private TableColumn<Reservation, LocalDate> orderDateColumn;
 
 
     @FXML
@@ -153,7 +153,7 @@ public class GuestReservationUI {
 
         try {
             int id = Integer.parseInt(reservationIdField.getText().trim()); //check for valid id
-            Date date = Date.valueOf(dateField.getText().trim()); //check for valid date
+            LocalDate date = LocalDate.parse(dateField.getText().trim()); //check for valid date
             int guests = Integer.parseInt(guestsField.getText().trim()); //check for valid guests num
 
             client.updateReservation(id, date, guests);
