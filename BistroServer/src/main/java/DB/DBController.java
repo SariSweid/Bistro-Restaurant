@@ -80,9 +80,7 @@ public class DBController {
 	        Connection con = getConnection();
 ;
 
-	        try (PreparedStatement pst = con.prepareStatement("UPDATE `reservation` SET reservationDate = ?, reservationTime = ?, numOfGuests = ?, " +
-                    "status = ? " +
-                    "WHERE reservationID = ?")) {
+	        try (PreparedStatement pst = con.prepareStatement("UPDATE `reservation` SET reservationDate = ?, reservationTime = ?, numOfGuests = ?,  status = ?  WHERE reservationID = ?")) {
 
 
 	        	pst.setDate(1, Date.valueOf(reservation.getReservationDate()));
@@ -226,10 +224,7 @@ public class DBController {
 	        Connection con = getConnection(); 
 	        
 	        try (PreparedStatement pst = con.prepareStatement(
-	            "INSERT INTO `reservation` " +
-	            "(reservationID, customerID, tableId, billId, numOfGuests, confirmationCode, " +
-	            "reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime, status) " +
-	            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	            "INSERT INTO `reservation`  (reservationID, customerID, tableId, billId, numOfGuests, confirmationCode,  reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	        )) {
 
 	            pst.setInt(1, r.getReservationID());
@@ -253,19 +248,24 @@ public class DBController {
 	    }
 
 		
-		
+
+	    
+	    /**
+	     * Inserts a new user into the database.
+	     *
+	     * @param u the user to insert
+	     * @return true if the insertion succeeded, false otherwise
+	     */
 		public Boolean InsertUser(User u) {
 			
 			Connection con = getConnection();
 			
 	        try (PreparedStatement pst = con.prepareStatement(
-		            "INSERT INTO `user` " +
-		            "(UserId, Name, Phone, Email, UserName, MemberShipCode, Role "  +
-		            "VALUES (?, ?, ?, ?, ?, ?, ?)"
+		            "INSERT INTO `user`  (UserId, Name, Phone, Email, UserName, MemberShipCode, Role)  VALUES (?, ?, ?, ?, ?, ?, ?)"
 		        )) {
 	        	
 	            pst.setInt(1, u.getuserId());
-	            pst.setString(2, u.getName());
+	            pst.setString(2, u.getName()); // not exist yet
 	            pst.setString(3, u.getPhone());
 	            pst.setString(5, u.getEmail());
 	            pst.setInt(6, u.getuserId());
@@ -286,14 +286,16 @@ public class DBController {
 		
 		
 		
-		
+	    /**
+	     * Updates an existing user in the database.
+	     *
+	     * @param u the user object containing updated data
+	     * @return true if the update succeeded, false otherwise
+	     */
 		public Boolean UpdateUser(User u) {
 			Connection con = getConnection();
 			
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `user` SET Name = ?, Phone = ?, Email = ?, " +
-                    "UserName = ? " +
-                    "WHERE UserId = ?")) {
-				
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `user` SET Name = ?, Phone = ?, Email = ?, UserName = ?  WHERE UserId = ?")) {				
 	        	pst.setString(1, u.getName()); // not exist yet
 				pst.setString(2, u.getPhone());  
 	            pst.setString(3, u.getEmail());
@@ -369,7 +371,12 @@ public class DBController {
 
 	    
 	    
-	    
+	    /**
+	     * Retrieves a specific user by their ID.
+	     *
+	     * @param userId the user ID
+	     * @return the User if found, or null if not found
+	     */
 		public User GetUser(int userId) {
 			
 			Connection con = getConnection(); //connect to DB
@@ -420,13 +427,18 @@ public class DBController {
 			
 		
 
-		
+	    /**
+	     * Retrieves all reservations made by a specific user.
+	     *
+	     * @param user the user whose reservations are to be retrieved
+	     * @return a list of reservations made by the user
+	     */
 		public List<Reservation> GetAllUserReservations(User user) {
 
 		    Connection con = getConnection();
 		    List<Reservation> reservations = new ArrayList<>();
 
-		    try (PreparedStatement pst = con.prepareStatement("SELECT r.*  FROM reservation r  JOIN user usr ON r.customerID = usr.UserId WHERE usr.UserId = ?")) {
+		    try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE customerID = ?")) {
 
 		        pst.setInt(1, user.getuserId());
 		        ResultSet rs = pst.executeQuery();
