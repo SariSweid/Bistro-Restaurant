@@ -16,13 +16,31 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping data for table `restaurantsettings`
+-- Table structure for table `reservation`
 --
 
-LOCK TABLES `restaurantsettings` WRITE;
-/*!40000 ALTER TABLE `restaurantsettings` DISABLE KEYS */;
-/*!40000 ALTER TABLE `restaurantsettings` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `reservation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reservation` (
+  `reservationID` int NOT NULL,
+  `reservationDate` date DEFAULT NULL,
+  `reservationTime` time DEFAULT NULL,
+  `numOfGuests` int DEFAULT NULL,
+  `confirmationCode` int DEFAULT NULL,
+  `status` enum('PENDING','CONFIRMED','CANCELLED','SEATED','COMPLETED','NOT_SHOWED','WAITLIST') DEFAULT NULL,
+  `customerID` int DEFAULT NULL,
+  `TableId` int DEFAULT NULL,
+  `BillId` int DEFAULT NULL,
+  `reservationPlacedDate` date DEFAULT NULL,
+  `reservationPlacedTime` time DEFAULT NULL,
+  PRIMARY KEY (`reservationID`),
+  KEY `customerID_idx` (`customerID`),
+  KEY `TableId_idx` (`TableId`),
+  CONSTRAINT `customerID` FOREIGN KEY (`customerID`) REFERENCES `user` (`UserId`),
+  CONSTRAINT `TableId` FOREIGN KEY (`TableId`) REFERENCES `table` (`TableId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -33,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-21  1:17:59
+-- Dump completed on 2025-12-23 18:30:49

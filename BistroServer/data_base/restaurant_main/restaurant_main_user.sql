@@ -16,13 +16,31 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping data for table `reservation`
+-- Table structure for table `user`
 --
 
-LOCK TABLES `reservation` WRITE;
-/*!40000 ALTER TABLE `reservation` DISABLE KEYS */;
-INSERT INTO `reservation` VALUES (1,'2025-12-03',3,1234,'CANCELLED',NULL,NULL,NULL,'2025-12-01'),(2,'2025-12-02',2,1111,'CANCELLED',NULL,NULL,NULL,'2025-12-01');
-/*!40000 ALTER TABLE `reservation` ENABLE KEYS */;
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user` (
+  `UserId` int NOT NULL,
+  `Name` varchar(45) DEFAULT NULL,
+  `Phone` varchar(20) DEFAULT NULL,
+  `Email` varchar(100) DEFAULT NULL,
+  `UserName` varchar(45) DEFAULT NULL,
+  `MemberShipCode` int DEFAULT NULL,
+  `Role` enum('GUEST','SUBSCRIBER','STAFF','MANAGER') NOT NULL,
+  PRIMARY KEY (`UserId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -34,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-21  1:17:59
+-- Dump completed on 2025-12-23 19:23:21
