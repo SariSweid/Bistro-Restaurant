@@ -75,31 +75,6 @@ public class DBController {
 	     * @param newNumGuests the updated number of guests
 	     * @return true if the update succeeded, false otherwise
 	     */
-//	    public boolean updateReservation(Reservation r) {
-//	        Connection con = getConnection(); 
-//	        try (PreparedStatement pst = con.prepareStatement(
-//	                "UPDATE `reservation` SET " +
-//	                "reservationDate = ?, " +
-//	                "reservationTime = ?, " +
-//	                "numOfGuests = ?, " +
-//	                "status = ? " +
-//	                "WHERE reservationID = ?"
-//	            )) {
-//
-//	            pst.setDate(1, Date.valueOf(r.getReservationDate()));
-//	            pst.setTime(2, Time.valueOf(r.getReservationTime()));
-//	            pst.setInt(3, r.getNumOfGuests());
-//	            pst.setString(4, r.getStatus().name());
-//	            pst.setInt(5, r.getReservationID());
-//
-//	            int update_status = pst.executeUpdate(); 
-//	            return update_status > 0;
-//
-//	        } catch (SQLException e) {
-//	            e.printStackTrace();
-//	            return false;
-//	        }
-//	    }
 	    
 	    public boolean updateReservation(Reservation reservation) {
 	        Connection con = getConnection();
@@ -234,6 +209,12 @@ public class DBController {
 //			
 //		}
 //		
+	    
+	    /**
+	     * Reads all users from the database.
+	     *
+	     * @return list of users
+	     */
 	    public List<User> readAllUsers() {
     	
     	List<User> Users = new ArrayList<>(); // made new list to return
