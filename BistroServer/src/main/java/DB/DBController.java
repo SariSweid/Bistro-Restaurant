@@ -306,7 +306,7 @@ public class DBController {
 
 	            return rows > 0; 
 
-	        } catch (SQLException e) {
+	        } catch (SQLException e) { // 
 	            System.err.println("SQL Exception during update: " + e.getMessage());
 	            e.printStackTrace();
 	            return false; 
