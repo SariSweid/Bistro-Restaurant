@@ -78,11 +78,11 @@ public class DBController {
 	    
 	    public boolean updateReservation(Reservation reservation) {
 	        Connection con = getConnection();
-	        String sql = "UPDATE `reservation` SET reservationDate = ?, reservationTime = ?, numOfGuests = ?, " +
-	                     "status = ? " +
-	                     "WHERE reservationID = ?";
+;
 
-	        try (PreparedStatement pst = con.prepareStatement(sql)) {
+	        try (PreparedStatement pst = con.prepareStatement("UPDATE `reservation` SET reservationDate = ?, reservationTime = ?, numOfGuests = ?, " +
+                    "status = ? " +
+                    "WHERE reservationID = ?")) {
 
 
 	        	pst.setDate(1, Date.valueOf(reservation.getReservationDate()));
@@ -286,12 +286,33 @@ public class DBController {
 		
 		
 		
-//		
-//		public Boolean UpdateUser(User u) {
-//			
-//		}
-//		
-	    
+		
+		public Boolean UpdateUser(User u) {
+			Connection con = getConnection();
+			
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `user` SET Name = ?, Phone = ?, Email = ?, " +
+                    "UserName = ? " +
+                    "WHERE UserId = ?")) {
+				
+	        	pst.setString(1, u.getName()); // not exist yet
+				pst.setString(2, u.getPhone());  
+	            pst.setString(3, u.getEmail());
+  	            pst.setString(4, u.getuserName());  // not exist yet
+  	            
+	            int rows = pst.executeUpdate();
+
+	            return rows > 0; 
+
+	        } catch (SQLException e) {
+	            System.err.println("SQL Exception during update: " + e.getMessage());
+	            e.printStackTrace();
+	            return false; 
+	        }			
+		}
+		
+		
+		
+		
 	    /**
 	     * Reads all users from the database.
 	     *
