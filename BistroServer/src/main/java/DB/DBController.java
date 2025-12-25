@@ -508,17 +508,6 @@ public class DBController {
 }
 				
 		
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 //		
 //		public List<Table> GetAllTables(){
 //			
