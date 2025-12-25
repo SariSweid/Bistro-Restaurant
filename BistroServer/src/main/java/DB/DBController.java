@@ -421,9 +421,43 @@ public class DBController {
 		
 
 		
-//		public List<Reservation> GetAllUserReservations(User u) {
-//			
-//		}
+		public List<Reservation> GetAllUserReservations(User user) {
+
+		    Connection con = getConnection();
+		    List<Reservation> reservations = new ArrayList<>();
+
+		    try (PreparedStatement pst = con.prepareStatement("SELECT r.*  FROM reservation r  JOIN user usr ON r.customerID = usr.UserId WHERE usr.UserId = ?")) {
+
+		        pst.setInt(1, user.getuserId());
+		        ResultSet rs = pst.executeQuery();
+
+		        while (rs.next()) {
+
+		            int reservationID = rs.getInt("reservationID");
+		            Date reservationDate = rs.getDate("reservationDate");
+		            Time reservationTime = rs.getTime("reservationTime");
+		            int numOfGuests = rs.getInt("numOfGuests");
+		            int confirmationCode = rs.getInt("confirmationCode");
+		            Reservation.Status status = Reservation.Status.valueOf(rs.getString("status"));
+		            int customerID = rs.getInt("customerID");
+		            int tableID = rs.getInt("TableId");
+		            int billID = rs.getInt("BillId");
+		            Date placedDate = rs.getDate("reservationPlacedDate");
+		            Time placedTime = rs.getTime("reservationPlacedTime");
+
+		            Reservation r = new Reservation(reservationID, customerID, tableID, billID, numOfGuests, confirmationCode, reservationDate.toLocalDate(), reservationTime.toLocalTime(), placedDate.toLocalDate(), placedTime.toLocalTime(), status);
+
+
+		            reservations.add(r);
+		        }
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+
+		    return reservations;
+		}
+
 		
 //		public Table GetTable(Table t) {
 //			
