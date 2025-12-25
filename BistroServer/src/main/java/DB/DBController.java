@@ -254,9 +254,38 @@ public class DBController {
 
 		
 		
-//		public Boolean InsertUser(User u) {
-//			
-//		}
+		public Boolean InsertUser(User u) {
+			
+			Connection con = getConnection();
+			
+	        try (PreparedStatement pst = con.prepareStatement(
+		            "INSERT INTO `user` " +
+		            "(UserId, Name, Phone, Email, UserName, MemberShipCode, Role "  +
+		            "VALUES (?, ?, ?, ?, ?, ?, ?)"
+		        )) {
+	        	
+	            pst.setInt(1, u.getuserId());
+	            pst.setString(2, u.getName());
+	            pst.setString(3, u.getPhone());
+	            pst.setString(5, u.getEmail());
+	            pst.setInt(6, u.getuserId());
+	            pst.setString(7, u.getRole().name());
+	        	        
+            int update_status = pst.executeUpdate();
+            return update_status > 0;
+
+	        } catch (SQLException e) {
+	        	e.printStackTrace();
+	        	return false;
+	        }
+			
+		}
+		
+		
+		
+		
+		
+		
 //		
 //		public Boolean UpdateUser(User u) {
 //			
@@ -290,7 +319,7 @@ public class DBController {
     			
                 User u;
 
-//                switch (Role) {
+//                switch (Role) {    // will update this when the classes will be complete
 //                    case GUEST:
 //                        u = new Guest(userId, email, phone);
 //                        break;
@@ -345,7 +374,7 @@ public class DBController {
     		        u = new Guest(UserId, email, phone);
     		        break;
 
-//    		    case SUBSCRIBER:
+//    		    case SUBSCRIBER: // will update this when the classes will be complete
 //    		        u = new Subscriber(UserId, email, phone, MemberShipCode);
 //    		        break;
 //
