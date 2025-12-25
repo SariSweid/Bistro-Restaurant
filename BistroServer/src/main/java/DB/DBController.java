@@ -7,14 +7,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import Entities.Guest;
 import Entities.Reservation;
 import Entities.User;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 
 
@@ -102,6 +102,59 @@ public class DBController {
 	            return false; 
 	        }
 	    }
+	    
+	    
+		/**
+		 * Retrieves a reservation by its ID.
+		 *
+		 * @param ReservationId the reservation ID
+		 * @return the Reservation if found, or null if not found
+		 */
+		public Reservation GetReservation(int ReservationId) {
+			
+			Connection con = getConnection(); //connect to DB
+			Reservation r = null;
+			
+			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE reservationID = ?")){
+				pst.setInt(1, ReservationId);
+				ResultSet rs = pst.executeQuery();
+				
+		        if (rs.next()) {
+		        	
+	    			int reservationID  = rs.getInt("reservationID");
+	    			Date reservationDate  = rs.getDate("reservationDate"); 
+	    			Time reservationTime  = rs.getTime("reservationTime");
+	    			int numOfGuests  = rs.getInt("numOfGuests");
+	    			int confirmation_code = rs.getInt("confirmationCode");
+	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
+	    			int customerID  = rs.getInt("customerID");
+	    			int tableID  = rs.getInt("TableId");
+	    			int billID  = rs.getInt("BillId");
+	    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
+	    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
+	
+	    			
+	    			//conver date and time to local
+	    			LocalDate resDate = reservationDate.toLocalDate();
+	    			LocalTime resTime = reservationTime.toLocalTime();
+	    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
+	    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
+		        
+
+		            
+		            
+	    			r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
+	    											,resDate,resTime,placedDate,placedTime,status);
+		        }
+		        	        
+			}
+						
+			 catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			return r; // There isnt Res with this ID.
+		}
 
 
 	    
@@ -262,65 +315,106 @@ public class DBController {
         }
 
         return Users;
-    }
-//			
-//		}
-//		
-//		public User GetUser(User u) {
-//			
-//		}
-		
-		/**
-		 * Retrieves a reservation by its ID.
-		 *
-		 * @param ReservationId the reservation ID
-		 * @return the Reservation if found, or null if not found
-		 */
-		public Reservation GetReservation(int ReservationId) {
+	    }
+
+	    
+	    
+	    
+		public User GetUser(int userId) {
 			
 			Connection con = getConnection(); //connect to DB
-			Reservation r = null;
+			User u = null;
 			
-			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE reservationID = ?")){
-				pst.setInt(1, ReservationId);
+			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `user` WHERE UserId = ?")){ // ask from DB the User that we want
+				
+				pst.setInt(1, userId);
 				ResultSet rs = pst.executeQuery();
 				
 		        if (rs.next()) {
-		        	
-	    			int reservationID  = rs.getInt("reservationID");
-	    			Date reservationDate  = rs.getDate("reservationDate"); 
-	    			Time reservationTime  = rs.getTime("reservationTime");
-	    			int numOfGuests  = rs.getInt("numOfGuests");
-	    			int confirmation_code = rs.getInt("confirmationCode");
-	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
-	    			int customerID  = rs.getInt("customerID");
-	    			int tableID  = rs.getInt("TableId");
-	    			int billID  = rs.getInt("BillId");
-	    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
-	    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
-	
-	    			
-	    			//conver date and time to local
-	    			LocalDate resDate = reservationDate.toLocalDate();
-	    			LocalTime resTime = reservationTime.toLocalTime();
-	    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
-	    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
-		        
+	        	
+    			int UserId  = rs.getInt("UserId");
+    			String name  = rs.getString("Name"); 
+    			String phone  = rs.getString("Phone"); 
+    			String email  = rs.getString("Email");
+    			String username  = rs.getString("UserName");
+    			int MemberShipCode = rs.getInt("MemberShipCode");
+    			Entities.User.Role role = Entities.User.Role.valueOf(rs.getString("Role")); 
+    			
+    			switch (role) {
+    		    case GUEST:
+    		        u = new Guest(UserId, email, phone);
+    		        break;
 
-		            
-		            
-	    			r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
-	    											,resDate,resTime,placedDate,placedTime,status);
+//    		    case SUBSCRIBER:
+//    		        u = new Subscriber(UserId, email, phone, MemberShipCode);
+//    		        break;
+//
+//    		    case SUPERVISOR:
+//    		        u = new RestaurantSupervisor(UserId, email, phone);
+//    		        break;
+//
+//    		    case MANAGER:
+//    		        u = new RestaurantManager(UserId, email, phone);
+//    		        break;
+    		}
 		        }
-		        	        
 			}
-						
+			
 			 catch (SQLException e) {
 				e.printStackTrace();
 			}
 			
-			return r; // There isnt Res with this ID.
+			return u;
 		}
+			
+			
+//			public Reservation GetReservation(int ReservationId) {
+//				
+//				Connection con = getConnection(); //connect to DB
+//				Reservation r = null;
+//				
+//				try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE reservationID = ?")){
+//					pst.setInt(1, ReservationId);
+//					ResultSet rs = pst.executeQuery();
+//					
+//			        if (rs.next()) {
+//			        	
+//		    			int reservationID  = rs.getInt("reservationID");
+//		    			Date reservationDate  = rs.getDate("reservationDate"); 
+//		    			Time reservationTime  = rs.getTime("reservationTime");
+//		    			int numOfGuests  = rs.getInt("numOfGuests");
+//		    			int confirmation_code = rs.getInt("confirmationCode");
+//		    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
+//		    			int customerID  = rs.getInt("customerID");
+//		    			int tableID  = rs.getInt("TableId");
+//		    			int billID  = rs.getInt("BillId");
+//		    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
+//		    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
+//		
+//		    			
+//		    			//conver date and time to local
+//		    			LocalDate resDate = reservationDate.toLocalDate();
+//		    			LocalTime resTime = reservationTime.toLocalTime();
+//		    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
+//		    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
+//			        
+//
+//			            
+//			            
+//		    			r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
+//		    											,resDate,resTime,placedDate,placedTime,status);
+//			        }
+//			        	        
+//				}
+//							
+//				 catch (SQLException e) {
+//					e.printStackTrace();
+//				}
+//				
+//				return r; // There isnt Res with this ID.
+//			}
+		
+
 		
 //		public List<Reservation> GetAllUserReservations(User u) {
 //			
