@@ -441,7 +441,7 @@ public class DBController {
 
 		    try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE customerID = ?")) {
 
-		        pst.setInt(1, user.getuserId());
+		        pst.setInt(1, user.());
 		        ResultSet rs = pst.executeQuery();
 
 		        while (rs.next()) {
@@ -487,7 +487,7 @@ public class DBController {
 			Table t = null;
 			
 			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `table` WHERE TableId = ?")){
-				pst.setInt(1, TableId);
+				pst.setInt(1, tableid);
 				ResultSet rs = pst.executeQuery();
 				
 		        if (rs.next()) {
@@ -509,83 +509,32 @@ public class DBController {
 				
 		
 		
-		public List<Table> GetAllTables(){
-			
-			Connection con = getConnection(); //connect to DB
-	    	List<Table> tables = new ArrayList<>(); // made new list to return
-	    	
-	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `table`")){ // ask from DB the all Orders
-	    		
-	    		ResultSet rs = pst.executeQuery();
-	    		
-	    		while(rs.next()) { // read from DB
-    			
-	    			int tableId  = rs.getInt("TableId");
-	    			int capacity  = rs.getInt("Capacity"); 
-	    			Boolean isavailable = rs.getBoolean("IsAvailable");
-	    			
-	    			Table t = new Table(tableId , capacity , isavailable );
-	    			
-	    			
-
-	    		
-	    	}
-	    	
-	    	
-	    	
-			
-		}
-//		
-//	    public List<Reservation> readAllReservations() {
+//		public List<Table> GetAllTables(){
+//			
+//			Connection con = getConnection(); //connect to DB
+//	    	List<Table> tables = new ArrayList<>(); // made new list to return
 //	    	
-//	    	List<Reservation> reservations = new ArrayList<>(); // made new list to return
-//	    	Connection con = getConnection(); //connect to DB
-//	    	
-//	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation`")){ // ask from DB the all Orders
+//	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `table`")){ // ask from DB the all Orders
 //	    		
 //	    		ResultSet rs = pst.executeQuery();
 //	    		
 //	    		while(rs.next()) { // read from DB
+//    			
+//	    			int tableId  = rs.getInt("TableId");
+//	    			int capacity  = rs.getInt("Capacity"); 
+//	    			Boolean isavailable = rs.getBoolean("IsAvailable");
 //	    			
-//	    			int reservationID  = rs.getInt("reservationID");
-//	    			Date reservationDate  = rs.getDate("reservationDate"); 
-//	    			Time reservationTime  = rs.getTime("reservationTime");
-//	    			int numOfGuests  = rs.getInt("numOfGuests");
-//	    			int confirmation_code = rs.getInt("confirmationCode");
-//	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
-//	    			int customerID  = rs.getInt("customerID");
-//	    			int tableID  = rs.getInt("TableId");
-//	    			int billID  = rs.getInt("BillId");
-//	    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
-//	    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
-//	
-//	    			
-//	    			//conver date and time to local
-//	    			LocalDate resDate = reservationDate.toLocalDate();
-//	    			LocalTime resTime = reservationTime.toLocalTime();
-//	    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
-//	    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
-//	    			
-//	    			Reservation r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
-//	    											,resDate,resTime,placedDate,placedTime,status);
-//	    			
-//	                reservations.add(r);
-//	    			
-//	    		}
+//	    			Table t = new Table(tableId , capacity , isavailable );
+//	    			tables.add(t);
 //	    		
-//	    		for (Reservation r : reservations) {
-//	    		    System.out.println(r);
-//	    		}
+//	    	}
 //	    		
-//	    		
-//	    	} catch (SQLException e) {
-//
-//				e.printStackTrace();
-//			}
-//	    	
-//	    	
-//			return reservations;    	
-//	    }
+//	        } catch (SQLException e) {
+//	            e.printStackTrace();
+//	        }
+//	    	 return tables;		
+//		}
+
 		
 		
 		
