@@ -1,21 +1,21 @@
 package messages;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class UpdateReservationRequest implements Serializable {
 
     private int reservationID;
-    private Date reservationDate;
+    private LocalDate reservationDate;
     private int numOfGuests;
 
-    public UpdateReservationRequest(int ID, Date date, int guests) {
+    public UpdateReservationRequest(int ID, LocalDate date, int guests) {
         this.reservationID = ID;
         this.reservationDate = date;
         this.numOfGuests = guests;
     }
 
     public int getReservationID() { return reservationID; }
-    public Date getReservationDate() { return reservationDate; }
+    public LocalDate getReservationDate() { return reservationDate; }
     public int getNumOfGuests() { return numOfGuests; }
 }
