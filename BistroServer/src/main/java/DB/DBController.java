@@ -441,7 +441,7 @@ public class DBController {
 
 		    try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE customerID = ?")) {
 
-		        pst.setInt(1, user.());
+		        pst.setInt(1, user.getuserId());
 		        ResultSet rs = pst.executeQuery();
 
 		        while (rs.next()) {
