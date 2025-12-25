@@ -2,8 +2,10 @@ package client;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashMap;
 import Entities.Reservation;
+import Entities.Reservation.Status;
 import common.*;
 import handlers.*;
 import messages.*;
@@ -69,8 +71,8 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.ADD_RESERVATION, new AddReservationRequest(reservation)));
     }
 
-    public void updateReservation(int id, LocalDate date, int guests) {
-        sendRequest(new Message(ActionType.UPDATE_RESERVATION, new UpdateReservationRequest(id, date, guests)));
+    public void updateReservation(int id, LocalDate date,LocalTime time , int guests, Status status) {
+    	sendRequest(new Message(ActionType.UPDATE_RESERVATION, new UpdateReservationRequest(id, date, time, guests, status)));
     }
     
 

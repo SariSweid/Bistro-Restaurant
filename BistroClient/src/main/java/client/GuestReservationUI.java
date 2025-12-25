@@ -1,9 +1,11 @@
 package client;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import Entities.Reservation;
+import Entities.Reservation.Status;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -46,6 +48,12 @@ public class GuestReservationUI {
 
     @FXML
     private TextField guestsField;
+    
+    @FXML
+    private TextField timeField;
+    
+    @FXML
+    private TextField statusField;
     
     @FXML
     private TextField confirmationCodeField;
@@ -153,13 +161,16 @@ public class GuestReservationUI {
 
         try {
             int id = Integer.parseInt(reservationIdField.getText().trim()); //check for valid id
-            LocalDate date = LocalDate.parse(dateField.getText().trim()); //check for valid date
-            int guests = Integer.parseInt(guestsField.getText().trim()); //check for valid guests num
+            LocalDate date = LocalDate.parse(dateField.getText().trim());
+            LocalTime time = LocalTime.parse(timeField.getText().trim());
+            int guests = Integer.parseInt(guestsField.getText().trim());//check for valid guests num
+            Status status = Status.valueOf(statusField.getText().trim().toUpperCase());
 
-            client.updateReservation(id, date, guests);
+            client.updateReservation(id, date, time, guests, status);
             showMessage("Sending update to server...");
         } catch (IllegalArgumentException e) {
-            showMessage("Invalid ID / date / guests.");
+        	showMessage("Invalid input: check ID, date, time, guests, or status.");
+        
         }
     }
     

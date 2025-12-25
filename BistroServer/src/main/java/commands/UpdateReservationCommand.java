@@ -16,17 +16,13 @@ public class UpdateReservationCommand implements Command {
      * @param data   UpdateReservationRequest object
      * @param client client that sent the request
      */
-    @Override
+    @Override	
     public void execute(Object data, ConnectionToClient client) {
     		
         UpdateReservationRequest req = (UpdateReservationRequest) data;
         
         // Perform the update using business logic
-        boolean success = reservationController.updateReservation(
-                req.getReservationID(),
-                req.getReservationDate(),
-                req.getNumOfGuests()
-        );
+        boolean success = reservationController.updateReservation(req);
 
         try {
             client.sendToClient(

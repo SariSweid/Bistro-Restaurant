@@ -1,6 +1,7 @@
 package logicControllers;
 
 import Entities.Reservation;
+import messages.UpdateReservationRequest;
 import DB.DBController;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -34,20 +35,40 @@ public class ReservationController {
      * Update a reservation's date and guest count.
      * Returns true if update succeeded, false otherwise.
      */
-    public boolean updateReservation(int reservationId, LocalDate newDate, int newNumGuests) {
-        // Validation
-        if (reservationId <= 0) return false;
-        if (newDate == null) return false;
-        if (newNumGuests <= 0) return false;
+    
+    
 
-        try {
-        		Date sqlDate = Date.valueOf(newDate);  // conversion
-            return db.updateReservation(reservationId, sqlDate, newNumGuests);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public boolean updateReservation(UpdateReservationRequest ur) {
+        if (ur == null) return false;
+        if (ur.getReservationID() <= 0 || ur.getReservationDate() == null
+            || ur.getReservationTime() == null || ur.getNumOfGuests() <= 0
+            || ur.getStatus() == null) return false;
+
+        Reservation existing = db.GetReservation(ur.getReservationID());
+        if (existing == null) return false;
+
+        // עדכון שדות מותרים בלבד
+        existing.setReservationDate(ur.getReservationDate());
+        existing.setReservationTime(ur.getReservationTime());
+        existing.setNumOfGuests(ur.getNumOfGuests());
+        existing.setStatus(Entities.Reservation.Status.valueOf(ur.getStatus().name()));
+
+        return db.updateReservation(existing);
     }
+//    public boolean updateReservation(int reservationId, LocalDate newDate, int newNumGuests) {
+//        // Validation
+//        if (reservationId <= 0) return false;
+//        if (newDate == null) return false;
+//        if (newNumGuests <= 0) return false;
+//
+//        try {
+//        		Date sqlDate = Date.valueOf(newDate);  // conversion
+//            return db.updateReservation(reservationId, sqlDate, newNumGuests);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
     
     /**
