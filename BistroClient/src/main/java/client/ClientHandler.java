@@ -27,11 +27,12 @@ public class ClientHandler extends AbstractClient {
         openConnection();
         System.out.println(">> Connected to server at " + host + ":" + port);
         handlers = new HashMap<>();
-        initializeHandlers();
+        
     }
     
     public void setGuestUI(GuestReservationUI guestUI) { // added setter tamer
         this.guestUI = guestUI;
+        initializeHandlers();
     }
     
     // Return the active ClientHandler instance

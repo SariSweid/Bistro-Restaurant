@@ -16,20 +16,26 @@ public class GetAllReservationsCommand implements Command {
 	 */
 	@Override
 	public void execute(Object data, ConnectionToClient client) {
-		
-		try {
-            // Retrieve all reservations from business logic
-            List<Reservation> reservations = reservationController.getAllReservations();
+	    try {
+	        // Retrieve all reservations
+	        List<Reservation> reservations = reservationController.getAllReservations();
 
-            // Send the list back to the client
-            client.sendToClient(reservations);
+	        // Send a Message object to the client
+	        client.sendToClient(new common.Message(
+	            common.ActionType.GET_ALL_RESERVATIONS,
+	            reservations
+	        ));
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            try {
-                client.sendToClient("SERVER_ERROR");
-            } catch (Exception ignored) {}
-        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        try {
+	            client.sendToClient(new common.Message(
+	                common.ActionType.GET_ALL_RESERVATIONS,
+	                "SERVER_ERROR"
+	            ));
+	        } catch (Exception ignored) {}
+	    }
 	}
+
 	
 }
