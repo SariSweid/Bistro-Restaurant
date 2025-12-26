@@ -577,10 +577,35 @@ public class DBController {
 			
 
 			
-//		
-//		public Boolean DeleteTable(Table t) {
-//			
-//		}
+	    /**
+	     * Remove an existing table from the database.
+	     *
+	     * @param t the table object containing updated data
+	     * @return true if the Remove succeeded, false otherwise
+	     */
+		public Boolean DeleteTable(Table t) {
+			
+
+			Connection con = getConnection(); //connect to DB
+			
+			try (PreparedStatement pst = con.prepareStatement("DELETE FROM `table` WHERE TableId = ? ")){
+				
+				pst.setInt(1, t.getTableId()); // not exist yet
+				
+	            int rows = pst.executeUpdate();
+
+	            return rows > 0; 
+				
+	        } catch (SQLException e) {
+	        	System.err.println("SQL Exception during update: " + e.getMessage());
+	        	e.printStackTrace();
+	        	return false; 
+	        }			
+		}
+			
+			
+			
+		}
 //		
 //		public Boolean AddReport(Report r) {
 //			
