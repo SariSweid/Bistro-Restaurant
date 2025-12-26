@@ -508,7 +508,14 @@ public class DBController {
 }
 				
 		
+	
 		
+		
+	    /**
+	     * Retrieves all Tables
+	     *
+	     * @return a list of Tables
+	     */
 //		public List<Table> GetAllTables(){
 //			
 //			Connection con = getConnection(); //connect to DB
