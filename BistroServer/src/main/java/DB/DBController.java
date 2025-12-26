@@ -692,12 +692,36 @@ public class DBController {
 //		public Boolean addSpecialDates() {
 //			
 //		}
-//		
-//		public Boolean AddBill(Bill b) {
-//		
-//		}
 
 		
+		
+	    /**
+	     * Inserts a new bill into the database.
+	     *
+	     * @param b the bill to insert
+	     * @return true if the insertion succeeded, false otherwise
+	     */
+		public Boolean AddBill(Bill b) {
+			
+			Connection con = getConnection(); //connect to DB
+			
+			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `bill` (BillId, Amount, User_Id, Items) VALUES (?,?,?,?)")){
+				
+	            pst.setInt(1, b.getBillId()); // not exist yet
+	            pst.setInt(2, b.getAmount()); // not exist yet 
+	            pst.setInt(3, b.getUserId()); // not exist yet
+	            pst.setArray(4, b.getItems()); // not exist yet
+	            
+	            int update_status = pst.executeUpdate();
+	            return update_status > 0;
+	
+		        } catch (SQLException e) {
+		        	e.printStackTrace();
+		        	return false;
+		        }
+				
+			}
+
 		
 	    /**
 	     * Retrieves a specific bill by their ID.
@@ -732,39 +756,6 @@ public class DBController {
 	
 			return b; // There isnt Res with this ID.
 			}
-		
-	    /**
-	     * Retrieves a specific table by their ID.
-	     *
-	     * @param TableId the table ID
-	     * @return the Table if found, or null if not found
-	     */
-//		public Table GetTable(int tableid) {
-//			
-//			Connection con = getConnection(); //connect to DB
-//			Table t = null;
-//			
-//			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `table` WHERE TableId = ?")){
-//				pst.setInt(1, tableid);
-//				ResultSet rs = pst.executeQuery();
-//				
-//		        if (rs.next()) {
-//		        	int tableId = rs.getInt("TableId");
-//		        	int capacity = rs.getInt("Capacity");
-//		        	Boolean isAvailable = rs.getBoolean("IsAvailable");	        	
-//				
-//		        	t = new Table(tableId , capacity , isAvailable );
-//			        }
-//        	        
-//			}
-//				
-//		catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//	
-//		return t; // There isnt Res with this ID.
-//		}
-		
 		
 }
 
