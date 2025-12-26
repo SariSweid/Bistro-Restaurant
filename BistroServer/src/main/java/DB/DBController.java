@@ -271,8 +271,9 @@ public class DBController {
 	            pst.setInt(1, u.getuserId());
 	            pst.setString(2, u.getName()); // not exist yet
 	            pst.setString(3, u.getPhone());
-	            pst.setString(5, u.getEmail());
-	            pst.setInt(6, u.getuserId());
+	            pst.setString(4, u.getEmail());
+	            pst.setInt(5, u.getuserId());
+	            pst.setInt(6, u.getMemberShipCode()); // not exist yet
 	            pst.setString(7, u.getRole().name());
 	        	        
             int update_status = pst.executeUpdate();
