@@ -299,12 +299,13 @@ public class DBController {
 		public Boolean UpdateUser(User u) {
 			Connection con = getConnection();
 			
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `user` SET Name = ?, Phone = ?, Email = ?, UserName = ?  WHERE UserId = ?")) {				
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `user` SET Name = ?, Phone = ?, Email = ?, UserName = ?  WHERE UserId = ?")) {	
+				
 	        	pst.setString(1, u.getName()); // not exist yet
 				pst.setString(2, u.getPhone());  
 	            pst.setString(3, u.getEmail());
   	            pst.setString(4, u.getuserName());  // not exist yet
-  	            
+  	            pst.setInt(5, u.getuserId());
 	            int rows = pst.executeUpdate();
 
 	            return rows > 0; 
