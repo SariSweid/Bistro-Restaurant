@@ -518,31 +518,31 @@ public class DBController {
 	     *
 	     * @return a list of Tables
 	     */
-//		public List<Table> GetAllTables(){
-//			
-//			Connection con = getConnection(); //connect to DB
-//	    	List<Table> tables = new ArrayList<>(); // made new list to return
-//	    	
-//	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `table`")){ // ask from DB the all Orders
-//	    		
-//	    		ResultSet rs = pst.executeQuery();
-//	    		
-//	    		while(rs.next()) { // read from DB
-//    			
-//	    			int tableId  = rs.getInt("TableId");
-//	    			int capacity  = rs.getInt("Capacity"); 
-//	    			Boolean isavailable = rs.getBoolean("IsAvailable");
-//	    			
-//	    			Table t = new Table(tableId , capacity , isavailable );
-//	    			tables.add(t);
-//	    		
-//	    	}
-//	    		
-//	        } catch (SQLException e) {
-//	            e.printStackTrace();
-//	        }
-//	    	 return tables;		
-//		}
+		public List<Table> GetAllTables(){
+			
+			Connection con = getConnection(); //connect to DB
+	    	List<Table> tables = new ArrayList<>(); // made new list to return
+	    	
+	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `table`")){ // ask from DB the all Orders
+	    		
+	    		ResultSet rs = pst.executeQuery();
+	    		
+	    		while(rs.next()) { // read from DB
+    			
+	    			int tableId  = rs.getInt("TableId");
+	    			int capacity  = rs.getInt("Capacity"); 
+	    			Boolean isavailable = rs.getBoolean("IsAvailable");
+	    			
+	    			Table t = new Table(tableId , capacity , isavailable ); // not exist yet
+	    			tables.add(t);
+	    		
+	    	}
+	    		
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    	 return tables;		
+		}
 
 		
 		
@@ -602,22 +602,42 @@ public class DBController {
 	        	return false; 
 	        }			
 		}
+
+		
+		
+	    /**
+	     * Inserts a new report into the database.
+	     *
+	     * @param r the report to insert
+	     * @return true if the insertion succeeded, false otherwise
+	     */
+		public Boolean AddReport(Report r) {
 			
+			Connection con = getConnection(); //connect to DB
 			
-			
-		}
-//		
-//		public Boolean AddReport(Report r) {
-//			
-//		}
-//		
+			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `report` (Report_Id, Type, From, To) VALUES (?,?,?,?)")){
+				
+	            pst.setInt(1, r.getReportId()); // not exist yet
+	            pst.setString(2, r.getType()); // not exist yet 
+	            pst.setDate(3, r.getFrom()); // not exist yet
+	            pst.setDate(4, r.getTo()); // not exist yet
+
+	            int update_status = pst.executeUpdate();
+	            return update_status > 0;
+	
+		        } catch (SQLException e) {
+		        	e.printStackTrace();
+		        	return false;
+		        }
+				
+			}
+		
+		
+	
 //		public List<Report> GetAllReports() {
 //			
 //		}
 //		
-//		public Bill GetBill(int BillId) {
-//			
-//		}
 //		
 //		public Boolean updateOpeningHours() {
 //			
@@ -642,6 +662,10 @@ public class DBController {
 //		public Boolean AddBill(Bill b) {
 //		
 //		}
+		
+//		public Bill GetBill(int BillId) {
+//		
+//	}
 		
 		
 }
