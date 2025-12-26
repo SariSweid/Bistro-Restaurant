@@ -506,7 +506,7 @@ public class DBController {
 		}
 	
 		return t; // There isnt Res with this ID.
-}
+		}
 		
 
 				
@@ -669,6 +669,9 @@ public class DBController {
 	    	 return reports;		
 		}
 	
+	
+		
+		
 		
 //		public Boolean updateOpeningHours() {
 //			
@@ -693,10 +696,74 @@ public class DBController {
 //		public Boolean AddBill(Bill b) {
 //		
 //		}
+
 		
-//		public Bill GetBill(int BillId) {
-//		
-//	}
+		
+	    /**
+	     * Retrieves a specific bill by their ID.
+	     *
+	     * @param Billid the bill ID
+	     * @return the Bill if found, or null if not found
+	     */
+		public Bill GetBill(int Billid) {
+			
+			Connection con = getConnection();
+			Bill b = null;
+			
+			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `bill` WHERE BillId = ?")){
+				
+				pst.setInt(1, Billid);
+				ResultSet rs = pst.executeQuery();
+				
+		        if (rs.next()) {
+		        	
+		        	int BillId = rs.getInt("BillId");
+		        	int amount = rs.getInt("Amount");
+		        	int UserId = rs.getInt("User_Id");	
+		        	@SuppressWarnings("unchecked")
+					List <String> items = (List<String>) rs.getArray("Items");
+			
+		        	b = new Bill(BillId , amount , UserId , items );
+		        }
+				
+			}catch (SQLException e) {
+				e.printStackTrace();
+			}
+	
+			return b; // There isnt Res with this ID.
+			}
+		
+	    /**
+	     * Retrieves a specific table by their ID.
+	     *
+	     * @param TableId the table ID
+	     * @return the Table if found, or null if not found
+	     */
+//		public Table GetTable(int tableid) {
+//			
+//			Connection con = getConnection(); //connect to DB
+//			Table t = null;
+//			
+//			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `table` WHERE TableId = ?")){
+//				pst.setInt(1, tableid);
+//				ResultSet rs = pst.executeQuery();
+//				
+//		        if (rs.next()) {
+//		        	int tableId = rs.getInt("TableId");
+//		        	int capacity = rs.getInt("Capacity");
+//		        	Boolean isAvailable = rs.getBoolean("IsAvailable");	        	
+//				
+//		        	t = new Table(tableId , capacity , isAvailable );
+//			        }
+//        	        
+//			}
+//				
+//		catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//	
+//		return t; // There isnt Res with this ID.
+//		}
 		
 		
 }
