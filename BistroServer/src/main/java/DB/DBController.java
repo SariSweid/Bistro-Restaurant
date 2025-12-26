@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Entities.Guest;
+import Entities.Report;
 import Entities.Reservation;
 import Entities.Table;
 import Entities.User;
@@ -633,12 +634,42 @@ public class DBController {
 			}
 		
 		
+
+		
+	    /**
+	     * Retrieves all Reports
+	     *
+	     * @return a list of Reports
+	     */
+		public List<Report> GetAllReports() {
+
+			Connection con = getConnection(); //connect to DB			
+			List<Report> reports = new ArrayList<>(); // made new list to return
+			
+			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `report`")){ // ask from DB the all reports
+				
+				ResultSet rs = pst.executeQuery();
+				
+	    		while(rs.next()) { // read from DB
+    			
+	    			int tableId  = rs.getInt("Report_Id");// not exist yet
+	    			String Type  = rs.getString("Type"); // not exist yet
+	    			Date from = rs.getDate("From"); // not exist yet
+	    			Date to = rs.getDate("To"); // not exist yet
+	    			
+	    			
+	    			
+	    			Report r = new Report(tableId , Type , from , to  ); // not exist yet
+	    			reports.add(r);
+	    		
+	    		}			
+			} catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    	 return reports;		
+		}
 	
-//		public List<Report> GetAllReports() {
-//			
-//		}
-//		
-//		
+		
 //		public Boolean updateOpeningHours() {
 //			
 //		}
