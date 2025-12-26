@@ -12,6 +12,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import Entities.Bill;
 import Entities.Guest;
 import Entities.Report;
 import Entities.Reservation;
