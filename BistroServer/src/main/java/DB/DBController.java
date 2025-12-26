@@ -506,6 +506,8 @@ public class DBController {
 	
 		return t; // There isnt Res with this ID.
 }
+		
+
 				
 		
 	
@@ -547,10 +549,34 @@ public class DBController {
 		
 		
 		
-//		
-//		public Boolean UpdateTable(Table t) {
-//			
-//		}
+	    /**
+	     * Updates an existing table in the database.
+	     *
+	     * @param t the table object containing updated data
+	     * @return true if the update succeeded, false otherwise
+	     */
+		public Boolean UpdateTable(Table t) {
+			
+			Connection con = getConnection(); //connect to DB
+			
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `table` SET IsAvailable = ?   WHERE TableId = ? ")){
+				
+				pst.setBoolean(1, t.getIsAvailable()); // not exist yet
+				pst.setInt(2, t.getTableId()); // not exist yet
+				
+	            int rows = pst.executeUpdate();
+
+	            return rows > 0; 
+			
+	        } catch (SQLException e) {
+	        	System.err.println("SQL Exception during update: " + e.getMessage());
+	        	e.printStackTrace();
+	        	return false; 
+	        }			
+		}
+			
+
+			
 //		
 //		public Boolean DeleteTable(Table t) {
 //			
