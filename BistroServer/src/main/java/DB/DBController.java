@@ -692,10 +692,33 @@ public class DBController {
 //		public Boolean updateSpecialDates() {
 //			
 //		}
-//		
-//		public Boolean addSpecialDates() {
-//			
-//		}
+//
+	    /**
+	     * Inserts a new SpecailDates into the database.
+	     *
+	     * @param d the SpecailDates to insert
+	     * @return true if the insertion succeeded, false otherwise
+	     */
+		public Boolean addSpecialDates(SpecailDates d) {
+			Connection con = getConnection(); //connect to DB
+			
+			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `specialdates` (special_date, OpeningHours, ClosingHours, description) VALUES (?,?,?,?)")){  
+				
+	            pst.setDate(1, d.special_date()); // not exist yet
+	            pst.setTime(2, d.getOpeningHours()); // not exist yet 
+	            pst.setTime(3, d.getClosingHours()); // not exist yet
+	            pst.setString(4 ,d.getdescription()); // not exist yet	
+	            
+	            int update_status = pst.executeUpdate();
+	            return update_status > 0;
+	
+		        } catch (SQLException e) {
+		        	e.printStackTrace();
+		        	return false;
+		        }
+				
+			}
+			
 
 		
 		
