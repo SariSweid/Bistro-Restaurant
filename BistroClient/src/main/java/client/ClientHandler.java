@@ -5,8 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import Entities.Reservation;
-import Entities.Reservation.Status;
 import common.*;
+import enums.ReservationStatus;
 import handlers.*;
 import messages.*;
 import messages.UpdateReservationRequest;
@@ -71,7 +71,7 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.ADD_RESERVATION, new AddReservationRequest(reservation)));
     }
 
-    public void updateReservation(int id, LocalDate date,LocalTime time , int guests, Status status) {
+    public void updateReservation(int id, LocalDate date,LocalTime time , int guests, ReservationStatus status) {
     	sendRequest(new Message(ActionType.UPDATE_RESERVATION, new UpdateReservationRequest(id, date, time, guests, status)));
     }
     

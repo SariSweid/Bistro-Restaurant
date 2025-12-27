@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 
-import Entities.Reservation.Status;
+import enums.ReservationStatus;
 
 
 
@@ -17,9 +17,9 @@ public class UpdateReservationRequest implements Serializable {
     private LocalDate reservationDate;
     private LocalTime reservationTime;
     private int numOfGuests;
-    private Status status;
+    private ReservationStatus status;
 
-    public UpdateReservationRequest(int reservationID,LocalDate reservationDate, LocalTime reservationTime,int numOfGuests,Status status) {
+    public UpdateReservationRequest(int reservationID,LocalDate reservationDate, LocalTime reservationTime,int numOfGuests,ReservationStatus status) {
     	
         this.reservationID = reservationID;
         this.reservationDate = reservationDate;
@@ -33,5 +33,5 @@ public class UpdateReservationRequest implements Serializable {
     public LocalDate getReservationDate() { return reservationDate; }
     public LocalTime getReservationTime() { return reservationTime; }
     public int getNumOfGuests() { return numOfGuests; }
-    public Status getStatus() { return status; }
+    public ReservationStatus getStatus() { return status; }
 }

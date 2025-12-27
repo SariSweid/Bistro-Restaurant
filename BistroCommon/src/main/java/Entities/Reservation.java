@@ -5,18 +5,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
 
+import enums.ReservationStatus;
+
 public class Reservation implements Serializable {
 
-	//enum that represent the current status of the reservation use after the prototype
-	public enum Status{
-		PENDING,    //reservation waiting for confirmation
-		CONFIRMED,  //reservation confirmed
-		CANCELLED,  //reservation cancelled
-		SEATED,	    //customer arrived and currently seated
-		COMPLETED,  //customer left and payed for the reservation
-		NOT_SHOWED, //customer late or not arrived 
-		WAITLIST    //the table is currently occupied, the customer is in the waitlist
-	}
 	
 	private int reservationID;
 	private final int customerID;
@@ -28,11 +20,11 @@ public class Reservation implements Serializable {
 	private LocalTime reservationTime; //future time the customer reserved a place
 	private LocalDate reservationPlacedDate; //the date the reservation was placed in the site
 	private LocalTime reservationPlacedTime; ///the time the reservation was placed in the site
-	private Status status; //use after the prototype
+	private ReservationStatus status; //use after the prototype
 	
 	//Constructor for creating a new reservation - use after prototype
 	public Reservation(int reservationID, int customerID, int numOfGuests, int confirmationCode, LocalDate reservationDate,
-					   LocalTime reservationTime, Status status) {
+					   LocalTime reservationTime, ReservationStatus status) {
 		this.reservationID = reservationID;
 		this.customerID = customerID;
 		this.numOfGuests = numOfGuests;
@@ -49,7 +41,7 @@ public class Reservation implements Serializable {
 	//constructor for getting a reservation from the db
 	public Reservation(int reservationID, int customerID, Integer tableID, Integer billID, int numOfGuests,
 					   int confirmationCode, LocalDate reservationDate, LocalTime reservationTime,
-					   LocalDate reservationPlacedDate, LocalTime reservationPlacedTime, Status status) {
+					   LocalDate reservationPlacedDate, LocalTime reservationPlacedTime, ReservationStatus status) {
 		this.reservationID = reservationID;
 		this.customerID = customerID;
 		this.tableID = tableID;
@@ -114,7 +106,7 @@ public class Reservation implements Serializable {
 	    return this.reservationPlacedDate;
 	}
 
-	public Status getStatus() {
+	public ReservationStatus getStatus() {
 		return this.status;
 	}
 	
@@ -144,17 +136,17 @@ public class Reservation implements Serializable {
 		this.reservationTime = newReservationTime;
 	}
 	
-	public void setStatus(Status newStatus) {
+	public void setStatus(ReservationStatus newStatus) {
 		this.status = newStatus;
 	}
 	
 	//status methods
 	
 	public boolean isReservationActive() {
-		return (this.status == Status.CONFIRMED) || (this.status == Status.PENDING);
+		return (this.status == ReservationStatus.CONFIRMED) || (this.status == ReservationStatus.PENDING);
 	}
 	
 	public boolean isReservationCancelled() {
-		return this.status == Status.CANCELLED;
+		return this.status == ReservationStatus.CANCELLED;
 	}
 }

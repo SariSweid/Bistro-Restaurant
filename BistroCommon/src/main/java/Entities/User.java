@@ -2,6 +2,8 @@ package Entities;
 
 import java.io.Serializable;
 
+import enums.UserRole;
+
 /**
  * User the base class for Subscriber, Guest, RestaurantSupervisor and RestaurantManager
  */
@@ -11,16 +13,10 @@ public abstract class User implements Serializable {
 	/**
 	 * 
 	 */
-	public enum Role{
-		GUEST,
-		SUBSCRIBER,
-		SUPERVISOR,
-		MANAGER
-	}
 	private int userID;
 	private String email;
 	private String phone;
-	private Role role;
+	private UserRole role;
 	
 	/**
 	 * 
@@ -29,7 +25,7 @@ public abstract class User implements Serializable {
 	 * @param phone
 	 * @param role
 	 */
-	protected User(int userID, String email, String phone, Role role) {
+	protected User(int userID, String email, String phone, UserRole role) {
 		this.userID = userID;
 		this.email = email;
 		this.phone = phone;
@@ -64,7 +60,7 @@ public abstract class User implements Serializable {
 	 * 
 	 * @return
 	 */
-	public Role getRole() {
+	public UserRole getRole() {
 		return this.role;
 	}
 	

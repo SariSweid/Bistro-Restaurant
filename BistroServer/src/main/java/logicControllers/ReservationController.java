@@ -51,24 +51,10 @@ public class ReservationController {
         existing.setReservationDate(ur.getReservationDate());
         existing.setReservationTime(ur.getReservationTime());
         existing.setNumOfGuests(ur.getNumOfGuests());
-        existing.setStatus(Entities.Reservation.Status.valueOf(ur.getStatus().name()));
+        existing.setStatus(enums.ReservationStatus.valueOf(ur.getStatus().name()));
 
         return db.updateReservation(existing);
     }
-//    public boolean updateReservation(int reservationId, LocalDate newDate, int newNumGuests) {
-//        // Validation
-//        if (reservationId <= 0) return false;
-//        if (newDate == null) return false;
-//        if (newNumGuests <= 0) return false;
-//
-//        try {
-//        		Date sqlDate = Date.valueOf(newDate);  // conversion
-//            return db.updateReservation(reservationId, sqlDate, newNumGuests);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
 
     
     /**

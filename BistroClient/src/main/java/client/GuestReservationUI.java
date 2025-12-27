@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import Entities.Reservation;
-import Entities.Reservation.Status;
+import enums.ReservationStatus;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -164,7 +164,7 @@ public class GuestReservationUI {
             LocalDate date = LocalDate.parse(dateField.getText().trim());
             LocalTime time = LocalTime.parse(timeField.getText().trim());
             int guests = Integer.parseInt(guestsField.getText().trim());//check for valid guests num
-            Status status = Status.valueOf(statusField.getText().trim().toUpperCase());
+            ReservationStatus status = enums.ReservationStatus.valueOf(statusField.getText().trim().toUpperCase());
 
             client.updateReservation(id, date, time, guests, status);
             showMessage("Sending update to server...");
