@@ -840,7 +840,7 @@ public class DBController {
 			        
 
 	
-			        PreparedStatement pst2 = con.prepareStatement("SELECT table_id FROM `table`  WHERE status='AVAILABLE' AND capacity >= ? ORDER BY capacity LIMIT 1"); // than we search for him a table
+			        PreparedStatement pst2 = con.prepareStatement("SELECT TableId FROM `table`  WHERE IsAvailable=1 AND capacity >= ? ORDER BY capacity LIMIT 1"); // than we search for him a table
 			        pst2.setInt(1, numGuests);
 
 			        ResultSet rs2 = pst2.executeQuery();
@@ -855,7 +855,7 @@ public class DBController {
 			        int deleted = pst3.executeUpdate();
 
 			        
-			        PreparedStatement pst4 = con.prepareStatement("UPDATE `table` SET status='OCCUPIED' WHERE table_id=?"); // update the table that he is taken
+			        PreparedStatement pst4 = con.prepareStatement("UPDATE `table` SET IsAvailable=0 WHERE TableId=?"); // update the table that he is taken
 			        pst4.setInt(1, tableId);
 			        int updated = pst4.executeUpdate();
 			        
