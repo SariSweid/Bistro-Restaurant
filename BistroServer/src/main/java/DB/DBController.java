@@ -127,7 +127,7 @@ public class DBController {
 	    			Time reservationTime  = rs.getTime("reservationTime");
 	    			int numOfGuests  = rs.getInt("numOfGuests");
 	    			int confirmation_code = rs.getInt("confirmationCode");
-	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
+	    			enums.ReservationStatus status = enums.ReservationStatus.valueOf(rs.getString("status"));
 	    			int customerID  = rs.getInt("customerID");
 	    			int tableID  = rs.getInt("TableId");
 	    			int billID  = rs.getInt("BillId");
@@ -180,7 +180,7 @@ public class DBController {
 	    			Time reservationTime  = rs.getTime("reservationTime");
 	    			int numOfGuests  = rs.getInt("numOfGuests");
 	    			int confirmation_code = rs.getInt("confirmationCode");
-	    			Entities.Reservation.Status status = Entities.Reservation.Status.valueOf(rs.getString("status"));
+	    			enums.ReservationStatus status = enums.ReservationStatus.valueOf(rs.getString("status"));
 	    			int customerID  = rs.getInt("customerID");
 	    			int tableID  = rs.getInt("TableId");
 	    			int billID  = rs.getInt("BillId");
@@ -343,7 +343,7 @@ public class DBController {
     			String Email  = rs.getString("Email");
     			String UserName  = rs.getString("UserName");
     			int SubscriberMemberShipCode = rs.getInt("MemberShipCode");
-    			Entities.User.Role Role = Entities.User.Role.valueOf(rs.getString("Role"));
+    			enums.UserRole Role = enums.UserRole.valueOf(rs.getString("Role"));
 
     			
                 User u;
@@ -401,7 +401,7 @@ public class DBController {
     			String email  = rs.getString("Email");
     			String username  = rs.getString("UserName");
     			int MemberShipCode = rs.getInt("MemberShipCode");
-    			Entities.User.Role role = Entities.User.Role.valueOf(rs.getString("Role")); 
+    			enums.UserRole role = enums.UserRole.valueOf(rs.getString("Role")); 
     			
     			switch (role) {
     		    case GUEST:
@@ -456,7 +456,7 @@ public class DBController {
 		            Time reservationTime = rs.getTime("reservationTime");
 		            int numOfGuests = rs.getInt("numOfGuests");
 		            int confirmationCode = rs.getInt("confirmationCode");
-		            Reservation.Status status = Reservation.Status.valueOf(rs.getString("status"));
+		            enums.ReservationStatus status = enums.ReservationStatus.valueOf(rs.getString("status"));
 		            int customerID = rs.getInt("customerID");
 		            int tableID = rs.getInt("TableId");
 		            int billID = rs.getInt("BillId");
@@ -676,18 +676,81 @@ public class DBController {
 	
 		
 		
+	    /**
+	     * Updates the OpeningHours an existing restaurantsettings in the database.
+	     *
+	     * @param r the SpecialDates object containing updated data
+	     * @return true if the update succeeded, false otherwise
+	     */
+		public Boolean updateOpeningHours(restaurantsettings r) {
+			
+			Connection con = getConnection(); //connect to DB
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? WHERE Day = ? ")){
+				
+				pst.setTime(1, r.getOpeningHours()); // not exist yet
+				pst.setString(2, r.getDay().name()); // not exist yet 
+				
+	            int rows = pst.executeUpdate();
+
+	            return rows > 0;
+		        } catch (SQLException e) {
+	        	System.err.println("SQL Exception during update: " + e.getMessage());
+	        	e.printStackTrace();
+	        	return false; 
+	        }			
+		}
+
+	    /**
+	     * Updates the ClosingHours an existing restaurantsettings in the database.
+	     *
+	     * @param r the SpecialDates object containing updated data
+	     * @return true if the update succeeded, false otherwise
+	     */
+		public Boolean updateClosingHours(restaurantsettings r) {
+			
+			Connection con = getConnection(); //connect to DB
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET ClosingHours = ? WHERE Day = ? ")){
+				
+				pst.setTime(1, r.getOpeningHours()); // not exist yet
+				pst.setString(2, r.getDay().name()); // not exist yet 
+				
+	            int rows = pst.executeUpdate();
+
+	            return rows > 0;
+		        } catch (SQLException e) {
+	        	System.err.println("SQL Exception during update: " + e.getMessage());
+	        	e.printStackTrace();
+	        	return false; 
+	        }	
+			
+		}
 		
-//		public Boolean updateOpeningHours() {
-//			
-//		}
-//		
-//		public Boolean updateClosingHours() {
-//			
-//		}
-//		
-//		public Boolean updateMaxTable() {
-//			
-//		}
+		
+		
+	    /**
+	     * Updates the MaxTable an existing restaurantsettings in the database.
+	     *
+	     * @param r the SpecialDates object containing updated data
+	     * @return true if the update succeeded, false otherwise
+	     */
+		public Boolean updateMaxTable(restaurantsettings r) {
+			
+			Connection con = getConnection(); //connect to DB
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET MaxTables = ? WHERE Day = ? ")){
+				
+				pst.setInt(1, r.getOpeningHours()); // not exist yet
+				pst.setString(2, r.getDay().name()); // not exist yet 
+				
+	            int rows = pst.executeUpdate();
+
+	            return rows > 0;
+		        } catch (SQLException e) {
+	        	System.err.println("SQL Exception during update: " + e.getMessage());
+	        	e.printStackTrace();
+	        	return false; 
+	        }	
+			
+		}
 
 	
 		

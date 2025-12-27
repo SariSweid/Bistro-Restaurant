@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `restaurantsettings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `restaurantsettings` (
-  `Day` tinyint NOT NULL,
+  `Day` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') NOT NULL,
   `MaxTables` int DEFAULT NULL,
   `OpeningHours` time DEFAULT NULL,
   `ClosingHours` time DEFAULT NULL,
@@ -40,4 +40,4 @@ CREATE TABLE `restaurantsettings` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-27 18:24:36
+-- Dump completed on 2025-12-27 19:27:59
