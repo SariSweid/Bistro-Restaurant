@@ -23,15 +23,14 @@ public class UserController {
 	public boolean addUser(User user) throws Exception {
 		if (user == null) return false;
         // Validation
-        //if (user.getUserID() <= 0) return false;
+        	if (user.getuserId() <= 0) return false;
 
         try {
-            //return db.insertUser(user);
+            return db.InsertUser(user);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-		return false; //toRemove
     }
 	
 	/**
@@ -41,12 +40,11 @@ public class UserController {
         if (userID <= 0) return null;
 
         try {
-            //return db.getUser(userID);
+            return db.GetUser(userID);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-		return null; //toRemove
     }
 	
 	/**
@@ -54,12 +52,11 @@ public class UserController {
      */
 	public List<User> getAllUsers() {
         try {
-            //return db.readAllUsers();
+            return db.readAllUsers();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-		return null; //toRemove
     }
 	
 	 /**
@@ -68,15 +65,14 @@ public class UserController {
      */
 	public boolean updateUser(User user) {
         if (user == null) return false;
-        //if (user.getUserID() <= 0) return false;
+        if (user.getuserId() <= 0) return false;
 
         try {
-           // return db.updateUser(u);
+            return db.UpdateUser(user);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-		return false; //toRemove
     }
 	
 	
