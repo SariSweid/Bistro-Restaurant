@@ -761,6 +761,46 @@ public class DBController {
 			return b; // There isnt Res with this ID.
 			}
 		
+		
+		
+		
+		
+	    /**
+	     * Inserts a new Reservation into the database.
+	     *
+	     * @param r the Reservation to insert
+	     * @return true if the insertion succeeded, false otherwise
+	     */
+			public Boolean addToWitingList(Reservation r) { // not sure if i recive  Reservation Or User
+				
+				Connection con = getConnection();
+				try (PreparedStatement pst = con.prepareStatement("INSERT INTO `waitinglist` (Customer, NumOfGuests, ConfirmationCode) VALUES (?,?,?)")){
+					
+		            pst.setInt(1, r.getCustomerId() ); 
+		            pst.setInt(2, r.getNumOfGuests()); 
+		            pst.setInt(3, r.getConfirmationCode()); 
+		            
+		            int update_status = pst.executeUpdate();
+		            return update_status > 0;
+		
+			        } catch (SQLException e) {
+			        	e.printStackTrace();
+			        	return false;
+			        }
+					
+				}
+			
+			public Boolean removeFromWitingList(User Customer) {
+				
+			}
+			
+			public Boolean notifyTableIsAvailable() {
+				
+				
+			}
+			
+			
+		
 }
 
 	    	
