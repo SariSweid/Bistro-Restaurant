@@ -790,9 +790,32 @@ public class DBController {
 					
 				}
 			
-			public Boolean removeFromWitingList(User Customer) {
+			
+			
+		    /**
+		     * Remove an existing Reservation from the database.
+		     *
+		     * @param r the Reservation object containing updated data
+		     * @return true if the Remove succeeded, false otherwise
+		     */
+			public Boolean removeFromWitingList(Reservation r) { // not sure if i recive  Reservation Or User
 				
+				Connection con = getConnection(); //connect to DB
+				
+				try (PreparedStatement pst = con.prepareStatement("DELETE FROM `waitinglist` WHERE Customer = ? ")){
+					
+					pst.setInt(1, r.getCustomerId()); // not exist yet
+					
+		            int rows = pst.executeUpdate();
+
+		            return rows > 0;
+			        } catch (SQLException e) {
+		        	System.err.println("SQL Exception during update: " + e.getMessage());
+		        	e.printStackTrace();
+		        	return false; 
+		        }			
 			}
+			
 			
 			public Boolean notifyTableIsAvailable() {
 				
