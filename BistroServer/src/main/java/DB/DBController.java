@@ -817,10 +817,59 @@ public class DBController {
 			}
 			
 			
-			public Boolean notifyTableIsAvailable() {
-				
-				
+			
+			
+			/**
+			 * Assigns a waiting customer to an available table if possible.
+			 *
+			 * @return true if a waiting customer was successfully assigned, false otherwise
+			 */
+			public Boolean notifyTableIsAvailable() throws SQLException {
+			    Connection con = getConnection();
+			    
+
+			    try {
+			       PreparedStatement pst1 = con.prepareStatement("SELECT Customer, NumOfGuests FROM waitinglist LIMIT 1"); // first we  check if there is waitings
+			        ResultSet rs = pst1.executeQuery();
+
+			        if (!rs.next()) 
+			            return false; 
+			        
+			        int customerId = rs.getInt("Customer");
+			        int numGuests = rs.getInt("NumOfGuests");
+			        
+
+	
+			        PreparedStatement pst2 = con.prepareStatement("SELECT table_id FROM `table`  WHERE status='AVAILABLE' AND capacity >= ? ORDER BY capacity LIMIT 1"); // than we search for him a table
+			        pst2.setInt(1, numGuests);
+
+			        ResultSet rs2 = pst2.executeQuery();
+			        if (!rs2.next()) 
+			           return false; 
+			        
+
+			        int tableId = rs2.getInt("table_id");
+
+			        PreparedStatement pst3 = con.prepareStatement("DELETE FROM waitinglist WHERE Customer=?"); // we remove him from the waiting list
+			        pst3.setInt(1, customerId);
+			        int deleted = pst3.executeUpdate();
+
+			        
+			        PreparedStatement pst4 = con.prepareStatement("UPDATE `table` SET status='OCCUPIED' WHERE table_id=?"); // update the table that he is taken
+			        pst4.setInt(1, tableId);
+			        int updated = pst4.executeUpdate();
+			        
+			        return deleted > 0 && updated > 0;
+
+			        
+
+			    } catch (Exception e) {
+		        	System.err.println("SQL Exception during update: " + e.getMessage());
+		        	e.printStackTrace();
+		        	return false;
+			    }
 			}
+
 			
 			
 		
