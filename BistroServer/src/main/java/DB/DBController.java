@@ -688,18 +688,46 @@ public class DBController {
 //		public Boolean updateMaxTable() {
 //			
 //		}
-//		
-//		public Boolean updateSpecialDates() {
-//			
-//		}
-//
+
+	
+		
+	    /**
+	     * Updates an existing SpecialDates in the database.
+	     *
+	     * @param d the SpecialDates object containing updated data
+	     * @return true if the update succeeded, false otherwise
+	     */
+		public Boolean updateSpecialDates(SpecialDates d) {
+			
+			Connection con = getConnection(); //connect to DB
+			
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? , ClosingHours = ? , description = ?   WHERE special_date = ? ")){
+				
+				pst.setTime(1, d.getOpeningHours()); // not exist yet
+				pst.setTime(2, d.getClosingHours()); // not exist yet
+				pst.setString(3, d.getdescription());// not exist yet
+				pst.setDate(4, d.special_date());// not exist yet
+				
+	            int rows = pst.executeUpdate();
+
+	            return rows > 0;
+		        } catch (SQLException e) {
+	        	System.err.println("SQL Exception during update: " + e.getMessage());
+	        	e.printStackTrace();
+	        	return false; 
+	        }			
+		}
+		
+		
+		
+
 	    /**
 	     * Inserts a new SpecailDates into the database.
 	     *
 	     * @param d the SpecailDates to insert
 	     * @return true if the insertion succeeded, false otherwise
 	     */
-		public Boolean addSpecialDates(SpecailDates d) {
+		public Boolean addSpecialDates(SpecialDates d) {
 			Connection con = getConnection(); //connect to DB
 			
 			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `specialdates` (special_date, OpeningHours, ClosingHours, description) VALUES (?,?,?,?)")){  
