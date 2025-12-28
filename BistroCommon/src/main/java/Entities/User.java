@@ -36,7 +36,7 @@ public abstract class User implements Serializable {
 	 * 
 	 * @return
 	 */
-	public int getuserId() {
+	public int getUserId() {
 	    return this.userID;
 	}
 	
