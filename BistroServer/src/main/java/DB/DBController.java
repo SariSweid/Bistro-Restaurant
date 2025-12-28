@@ -16,10 +16,11 @@ import Entities.Bill;
 import Entities.Guest;
 import Entities.Report;
 import Entities.Reservation;
+import Entities.RestaurantManager;
+import Entities.RestaurantSupervisor;
 import Entities.Table;
 import Entities.User;
-
-
+import Entities.Subscriber;
 
 
 
@@ -268,16 +269,22 @@ public class DBController {
 		            "INSERT INTO `user`  (UserId, Name, Phone, Email, UserName, MemberShipCode, Role)  VALUES (?, ?, ?, ?, ?, ?, ?)"
 		        )) {
 	        	
-	            pst.setInt(1, u.getuserId());
-	            pst.setString(2, u.getName()); // not exist yet
+	            pst.setInt(1, u.getUserId()); 
 	            pst.setString(3, u.getPhone());
 	            pst.setString(4, u.getEmail());
-	            pst.setInt(5, u.getuserId());
-	            pst.setInt(6, u.getMemberShipCode()); // not exist yet
 	            pst.setString(7, u.getRole().name());
+	            
+	            if (u instanceof Subscriber) {
+	                Subscriber s = (Subscriber) u;
+
+	                pst.setString(2, s.getName());
+	                pst.setString(5, s.getUserName());
+	                pst.setString(6, s.getMembershipCode());
+	            }
+
 	        	        
-            int update_status = pst.executeUpdate();
-            return update_status > 0;
+	            int update_status = pst.executeUpdate();
+	            return update_status > 0;
 
 	        } catch (SQLException e) {
 	        	e.printStackTrace();
@@ -302,11 +309,17 @@ public class DBController {
 			
 			try (PreparedStatement pst = con.prepareStatement("UPDATE `user` SET Name = ?, Phone = ?, Email = ?, UserName = ?  WHERE UserId = ?")) {	
 				
-	        	pst.setString(1, u.getName()); // not exist yet
 				pst.setString(2, u.getPhone());  
 	            pst.setString(3, u.getEmail());
-  	            pst.setString(4, u.getuserName());  // not exist yet
-  	            pst.setInt(5, u.getuserId());
+  	            pst.setInt(5, u.getUserId());
+  	            
+  	            
+	            if (u instanceof Subscriber) {
+	                Subscriber s = (Subscriber) u;
+
+	                pst.setString(1, s.getName());
+	                pst.setString(4, s.getUserName());
+	            }
 	            int rows = pst.executeUpdate();
 
 	            return rows > 0; 
@@ -348,24 +361,24 @@ public class DBController {
     			
                 User u;
 
-//                switch (Role) {    // will update this when the classes will be complete
-//                    case GUEST:
-//                        u = new Guest(userId, email, phone);
-//                        break;
-//                    case SUBSCRIBER:
-//                        u = new Subscriber(userId, email, phone);
-//                        break;
-//                    case SUPERVISOR:
-//                        u = new RestaurantSupervisor(userId, email, phone);
-//                        break;
-//                    case MANAGER:
-//                        u = new RestaurantManager(userId, email, phone);
-//                        break;
-//                    default:
-//                        continue;
-//                }
+                switch (Role) {    // will update this when the classes will be complete
+                    case GUEST:
+                        u = new Guest(UserId, Email, Phone);
+                        break;
+                    case SUBSCRIBER:
+                        u = new Subscriber(UserId , Name , Email , Phone , UserName , SubscriberMemberShipCode);
+                        break;
+                    case SUPERVISOR:
+                        u = new RestaurantSupervisor(UserId , Name , Phone , Email , UserName);
+                        break;
+                    case MANAGER:
+                        u = new RestaurantManager(UserId , Name , Phone , Email , UserName);
+                        break;
+                    default:
+                        continue;
+                }
 
-  //              Users.add(u);
+                Users.add(u);
             }
 
         } catch (SQLException e) {
@@ -408,17 +421,17 @@ public class DBController {
     		        u = new Guest(UserId, email, phone);
     		        break;
 
-//    		    case SUBSCRIBER: // will update this when the classes will be complete
-//    		        u = new Subscriber(UserId, email, phone, MemberShipCode);
-//    		        break;
-//
-//    		    case SUPERVISOR:
-//    		        u = new RestaurantSupervisor(UserId, email, phone);
-//    		        break;
-//
-//    		    case MANAGER:
-//    		        u = new RestaurantManager(UserId, email, phone);
-//    		        break;
+    		    case SUBSCRIBER: // will update this when the classes will be complete
+    		        u = new Subscriber(UserId, email, phone, MemberShipCode); // memnershipcode is int or string
+    		        break;
+
+    		    case SUPERVISOR:
+    		        u = new RestaurantSupervisor(UserId , name , phone , email , username);
+    		        break;
+
+    		    case MANAGER:
+    		        u = new RestaurantManager(UserId , name , phone , email , username);
+    		        break;
     		}
 		        }
 			}
@@ -446,7 +459,7 @@ public class DBController {
 
 		    try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE customerID = ?")) {
 
-		        pst.setInt(1, user.getuserId());
+		        pst.setInt(1, user.getUserId());
 		        ResultSet rs = pst.executeQuery();
 
 		        while (rs.next()) {
