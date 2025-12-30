@@ -5,9 +5,9 @@ import enums.UserRole;
 public class Subscriber extends User{
 	private String name;
 	private String userName;
-	private String membershipCode;
+	private int membershipCode;
 	
-	public Subscriber(int userID, String name, String email, String phone, String userName, String membershipCode) {
+	public Subscriber(int userID, String name, String email, String phone, String userName, int membershipCode) {
 		super(userID, email, phone, UserRole.SUBSCRIBER);
 		this.name = name;
 		this.userName = userName;
@@ -24,7 +24,7 @@ public class Subscriber extends User{
 		return this.userName;
 	}
 	
-	public String getMembershipCode() {
+	public int getMembershipCode() {
 		return this.membershipCode;
 	}
 	

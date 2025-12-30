@@ -26,7 +26,7 @@ public class UserFactory {
 		String phone = rs.getString("Phone");
 		String email = rs.getString("Email");
 		String userName = rs.getString("UserName");
-		String membershipCode = rs.getString("MemberShipCode");
+		int membershipCode = rs.getInt("MemberShipCode");
 		UserRole role = UserRole.valueOf(rs.getString("Role"));
 		
 		return switch (role) {
