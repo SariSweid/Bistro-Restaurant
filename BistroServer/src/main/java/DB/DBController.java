@@ -21,6 +21,7 @@ import Entities.RestaurantSupervisor;
 import Entities.Table;
 import Entities.User;
 import Entities.WaitingListEntry;
+import logicControllers.UserFactory;
 import Entities.Subscriber;
 
 
@@ -315,11 +316,18 @@ public class DBController {
   	            pst.setInt(5, u.getUserId());
   	            
   	            
-	            if (u instanceof Subscriber) {
-	                Subscriber s = (Subscriber) u;
-
+	            if (u instanceof Subscriber s) {
 	                pst.setString(1, s.getName());
 	                pst.setString(4, s.getUserName());
+	            }
+	            	            
+	            else if (u instanceof RestaurantManager m) {
+	                pst.setString(2, m.getName());
+	                pst.setString(5, m.getUserName());
+	            }
+	            else if (u instanceof RestaurantSupervisor s) {
+	                pst.setString(2, s.getName());
+	                pst.setString(5, s.getUserName());
 	            }
 	            int rows = pst.executeUpdate();
 
@@ -340,54 +348,27 @@ public class DBController {
 	     *
 	     * @return list of users
 	     */
-	    public List<User> readAllUsers() {
-    	
-    	List<User> Users = new ArrayList<>(); // made new list to return
-    	Connection con = getConnection(); //connect to DB
-    	
-    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `user`")){ // ask from DB the all Orders
-    		
-    		ResultSet rs = pst.executeQuery();
-    		
-    		while(rs.next()) { // read from DB
-    			
-    			int UserId  = rs.getInt("UserId");
-    			String Name  = rs.getString("Name"); 
-    			String Phone  = rs.getString("Phone");
-    			String Email  = rs.getString("Email");
-    			String UserName  = rs.getString("UserName");
-    			int SubscriberMemberShipCode = rs.getInt("MemberShipCode");
-    			enums.UserRole Role = enums.UserRole.valueOf(rs.getString("Role"));
+		public List<User> readAllUsers() {
 
-    			
-                User u;
+		    List<User> users = new ArrayList<>();
+		    Connection con = getConnection();
 
-                switch (Role) {    // will update this when the classes will be complete
-                    case GUEST:
-                        u = new Guest(UserId, Email, Phone);
-                        break;
-                    case SUBSCRIBER:
-                        u = new Subscriber(UserId , Name , Email , Phone , UserName , SubscriberMemberShipCode);
-                        break;
-                    case SUPERVISOR:
-                        u = new RestaurantSupervisor(UserId , Name , Phone , Email , UserName);
-                        break;
-                    case MANAGER:
-                        u = new RestaurantManager(UserId , Name , Phone , Email , UserName);
-                        break;
-                    default:
-                        continue;
-                }
+		    try (PreparedStatement pst =
+		            con.prepareStatement("SELECT * FROM `user`")) {
 
-                Users.add(u);
-            }
+		        ResultSet rs = pst.executeQuery();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+		        while (rs.next()) {
+		            User u = UserFactory.createUser(rs); 
+		            users.add(u);
+		        }
 
-        return Users;
-	    }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+
+		    return users;
+		}
 
 	    
 	    
@@ -397,52 +378,28 @@ public class DBController {
 	     * @param userId the user ID
 	     * @return the User if found, or null if not found
 	     */
-		public User GetUser(int userId) {
-			
-			Connection con = getConnection(); //connect to DB
-			User u = null;
-			
-			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `user` WHERE UserId = ?")){ // ask from DB the User that we want
-				
-				pst.setInt(1, userId);
-				ResultSet rs = pst.executeQuery();
-				
-		        if (rs.next()) {
-	        	
-    			int UserId  = rs.getInt("UserId");
-    			String name  = rs.getString("Name"); 
-    			String phone  = rs.getString("Phone"); 
-    			String email  = rs.getString("Email");
-    			String username  = rs.getString("UserName");
-    			int MemberShipCode = rs.getInt("MemberShipCode");
-    			enums.UserRole role = enums.UserRole.valueOf(rs.getString("Role")); 
-    			
-    			switch (role) {
-    		    case GUEST:
-    		        u = new Guest(UserId, email, phone);
-    		        break;
+	    public User getUser(int userId) {
 
-    		    case SUBSCRIBER: // will update this when the classes will be complete
-    		        u = new Subscriber(UserId,name ,  email, phone, username ,  MemberShipCode); // memnershipcode is int or string
-    		        break;
+	        Connection con = getConnection();
+	        User u = null;
 
-    		    case SUPERVISOR:
-    		        u = new RestaurantSupervisor(UserId , name , phone , email , username);
-    		        break;
+	        try (PreparedStatement pst =
+	                con.prepareStatement("SELECT * FROM `user` WHERE UserId = ?")) {
 
-    		    case MANAGER:
-    		        u = new RestaurantManager(UserId , name , phone , email , username);
-    		        break;
-    		}
-		        }
-			}
-			
-			 catch (SQLException e) {
-				e.printStackTrace();
-			}
-			
-			return u;
-		}
+	            pst.setInt(1, userId);
+	            ResultSet rs = pst.executeQuery();
+
+	            if (rs.next()) {
+	                u = UserFactory.createUser(rs); 
+	            }
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+
+	        return u;
+	    }
+
 			
 			
 		
@@ -489,7 +446,7 @@ public class DBController {
 
 		    return reservations;
 		}
-
+			
 
 		
 		
