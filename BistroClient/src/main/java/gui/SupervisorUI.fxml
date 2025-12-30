@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" spacing="14.0"
+      prefHeight="400.0" prefWidth="600.0"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="handlers.SupervisorController">
+
+    <padding>
+        <Insets top="30" right="40" bottom="30" left="40"/>
+    </padding>
+
+    <Label text=" Welcome ! ">
+        <font>
+            <Font size="26.0"/>
+        </font>
+    </Label>
+
+    <Button text="Show Waiting List" prefWidth="260" onAction="#onShowWaitingList"/>
+    <Button text="Show Reservations" prefWidth="260" onAction="#onShowReservations"/>
+    <Button text="Edit Tables" prefWidth="260" onAction="#onEditTables"/>
+    <Button text="Edit Opening Hours" prefWidth="260" onAction="#onEditOpeningHours"/>
+    <Button text="Get All Users" prefWidth="260" onAction="#onGetAllUsers"/>
+    <Button text="Log Out" prefWidth="100" onAction="#onLogOut"/>
+
+</VBox>

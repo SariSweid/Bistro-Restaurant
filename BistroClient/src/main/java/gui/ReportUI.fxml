@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="400" prefWidth="500"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="handlers.ReportController">
+
+	<children>
+		<VBox spacing="10"
+              AnchorPane.bottomAnchor="10"
+              AnchorPane.leftAnchor="10"
+              AnchorPane.rightAnchor="10"
+              AnchorPane.topAnchor="10">
+
+			
+			<Label style="-fx-font-size: 18px; -fx-font-weight:bold;"
+                   text="Monthly Reports" />	
+			
+            <TableView fx:id="ReportsTable" prefHeight="250">
+                <columns>
+                    <TableColumn fx:id="ArrivalTimeColumn" prefWidth="110" text="Arrival Time" />
+                    <TableColumn fx:id="DepartureTimeColumn" prefWidth="110" text="Departure Time" />
+                    <TableColumn fx:id="DelaysNumberColumn" prefWidth="110" text="Delays Number" />
+					<TableColumn fx:id="confirmationCodeColumn" prefWidth="140" text="Confirmation Code" />
+                                
+                </columns>
+            </TableView>
+
+            
+            
+
+            <HBox spacing="10">
+                <Button onAction="#onPreviousPage" prefWidth="100" text="Previous page" />
+                       
+            </HBox>
+
+		</VBox>
+	</children>
+
+</AnchorPane>

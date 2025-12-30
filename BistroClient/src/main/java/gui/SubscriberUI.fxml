@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="BOTTOM_LEFT" prefHeight="400.0" prefWidth="600.0" spacing="14.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="handlers.SubscriberController">
+
+    <padding>
+        <Insets bottom="30" left="40" right="40" top="30" />
+    </padding>
+
+    <Label text=" Welcome !">
+        <font>
+            <Font size="26.0" />
+        </font>
+    </Label>
+
+    <Button onAction="#onDisplayOrders" prefWidth="260" text="Display Orders" />
+    <Button onAction="#onNewReservation" prefWidth="260" text="New Reservation" />
+    
+    <Button onAction="#onEditPersonalInfo" prefWidth="260" text="Edit Personal info" />
+    <Button onAction="#onLogOut" prefWidth="100" text="Log Out" />
+
+</VBox>
