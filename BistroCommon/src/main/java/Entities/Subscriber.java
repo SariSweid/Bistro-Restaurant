@@ -24,7 +24,7 @@ public class Subscriber extends User{
 		return this.userName;
 	}
 	
-	public int getMembershipCode() {//
+	public int getMembershipCode() {
 		return this.membershipCode;
 	}
 	
