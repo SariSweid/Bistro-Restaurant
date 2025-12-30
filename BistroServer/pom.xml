@@ -10,11 +10,11 @@
   <name> Server Testing</name>
 
   <properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<junit.jupiter.version>5.3.0</junit.jupiter.version>
-	</properties>
+  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  <maven.compiler.release>17</maven.compiler.release>
+  <junit.jupiter.version>5.3.0</junit.jupiter.version>
+</properties>
+
 
 	<dependencies>
 		<dependency>
