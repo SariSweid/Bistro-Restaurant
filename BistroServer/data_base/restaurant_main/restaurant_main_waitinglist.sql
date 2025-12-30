@@ -23,11 +23,15 @@ DROP TABLE IF EXISTS `waitinglist`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `waitinglist` (
-  `Customer` int NOT NULL,
-  `NumOfGuests` int DEFAULT NULL,
-  `ConfirmationCode` int DEFAULT NULL,
-  PRIMARY KEY (`Customer`),
-  CONSTRAINT `Customer` FOREIGN KEY (`Customer`) REFERENCES `user` (`UserId`)
+  `userID` int NOT NULL,
+  `contactInfo` varchar(45) DEFAULT NULL,
+  `numOfGuests` int DEFAULT NULL,
+  `confirmationCode` int DEFAULT NULL,
+  `entryTime` time DEFAULT NULL,
+  `exitTime` time DEFAULT NULL,
+  `exitReason` enum('SEATED','CANCELLED') DEFAULT NULL,
+  PRIMARY KEY (`userID`),
+  CONSTRAINT `UserID` FOREIGN KEY (`userID`) REFERENCES `user` (`UserId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -40,4 +44,4 @@ CREATE TABLE `waitinglist` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-27 18:24:35
+-- Dump completed on 2025-12-30 10:27:19

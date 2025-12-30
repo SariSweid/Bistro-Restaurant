@@ -20,6 +20,7 @@ import Entities.RestaurantManager;
 import Entities.RestaurantSupervisor;
 import Entities.Table;
 import Entities.User;
+import Entities.WaitingListEntry;
 import Entities.Subscriber;
 
 
@@ -279,7 +280,7 @@ public class DBController {
 
 	                pst.setString(2, s.getName());
 	                pst.setString(5, s.getUserName());
-	                pst.setString(6, s.getMembershipCode());
+	                pst.setInt(6, s.getMembershipCode());
 	            }
 
 	        	        
@@ -422,7 +423,7 @@ public class DBController {
     		        break;
 
     		    case SUBSCRIBER: // will update this when the classes will be complete
-    		        u = new Subscriber(UserId, email, phone, MemberShipCode); // memnershipcode is int or string
+    		        u = new Subscriber(UserId,name ,  email, phone, username ,  MemberShipCode); // memnershipcode is int or string
     		        break;
 
     		    case SUPERVISOR:
@@ -512,8 +513,8 @@ public class DBController {
 		        	int tableId = rs.getInt("TableId");
 		        	int capacity = rs.getInt("Capacity");
 		        	Boolean isAvailable = rs.getBoolean("IsAvailable");	        	
-				
-		        	t = new Table(tableId , capacity , isAvailable );
+		        	//wait for table class
+		        	t = new Table(tableId , capacity , isAvailable ); // not exist yet
 			        }
         	        
 			}
@@ -550,7 +551,7 @@ public class DBController {
 	    			int tableId  = rs.getInt("TableId");
 	    			int capacity  = rs.getInt("Capacity"); 
 	    			Boolean isavailable = rs.getBoolean("IsAvailable");
-	    			
+	    			//wait for table class
 	    			Table t = new Table(tableId , capacity , isavailable ); // not exist yet
 	    			tables.add(t);
 	    		
@@ -582,6 +583,7 @@ public class DBController {
 				pst.setBoolean(1, t.getIsAvailable()); // not exist yet
 				pst.setInt(2, t.getTableId()); // not exist yet
 				
+				//wait for table class
 	            int rows = pst.executeUpdate();
 
 	            return rows > 0; 
@@ -611,7 +613,7 @@ public class DBController {
 				pst.setInt(1, t.getTableId()); // not exist yet
 				
 	            int rows = pst.executeUpdate();
-
+	            //wait for table class
 	            return rows > 0; 
 				
 	        } catch (SQLException e) {
@@ -640,6 +642,8 @@ public class DBController {
 	            pst.setDate(3, r.getFrom()); // not exist yet
 	            pst.setDate(4, r.getTo()); // not exist yet
 
+	          //wait for Report class
+	            
 	            int update_status = pst.executeUpdate();
 	            return update_status > 0;
 	
@@ -674,7 +678,7 @@ public class DBController {
 	    			Date from = rs.getDate("From"); // not exist yet
 	    			Date to = rs.getDate("To"); // not exist yet
 	    			
-	    			
+	    			//wait for Report class
 	    			
 	    			Report r = new Report(tableId , Type , from , to  ); // not exist yet
 	    			reports.add(r);
@@ -702,7 +706,7 @@ public class DBController {
 				
 				pst.setTime(1, r.getOpeningHours()); // not exist yet
 				pst.setString(2, r.getDay().name()); // not exist yet 
-				
+				//wait for restaurantsettings class
 	            int rows = pst.executeUpdate();
 
 	            return rows > 0;
@@ -726,7 +730,7 @@ public class DBController {
 				
 				pst.setTime(1, r.getOpeningHours()); // not exist yet
 				pst.setString(2, r.getDay().name()); // not exist yet 
-				
+				//wait for restaurantsettings class
 	            int rows = pst.executeUpdate();
 
 	            return rows > 0;
@@ -753,7 +757,7 @@ public class DBController {
 				
 				pst.setInt(1, r.getOpeningHours()); // not exist yet
 				pst.setString(2, r.getDay().name()); // not exist yet 
-				
+				//wait for restaurantsettings class
 	            int rows = pst.executeUpdate();
 
 	            return rows > 0;
@@ -783,7 +787,7 @@ public class DBController {
 				pst.setTime(2, d.getClosingHours()); // not exist yet
 				pst.setString(3, d.getdescription());// not exist yet
 				pst.setDate(4, d.special_date());// not exist yet
-				
+				//wait for SpecialDates class
 	            int rows = pst.executeUpdate();
 
 	            return rows > 0;
@@ -812,6 +816,8 @@ public class DBController {
 	            pst.setTime(2, d.getOpeningHours()); // not exist yet 
 	            pst.setTime(3, d.getClosingHours()); // not exist yet
 	            pst.setString(4 ,d.getdescription()); // not exist yet	
+	            //wait for SpecialDates class
+	            
 	            
 	            int update_status = pst.executeUpdate();
 	            return update_status > 0;
@@ -842,6 +848,8 @@ public class DBController {
 	            pst.setInt(2, b.getAmount()); // not exist yet 
 	            pst.setInt(3, b.getUserId()); // not exist yet
 	            pst.setArray(4, b.getItems()); // not exist yet
+	            //wait for bill class
+	            
 	            
 	            int update_status = pst.executeUpdate();
 	            return update_status > 0;
@@ -878,7 +886,7 @@ public class DBController {
 		        	@SuppressWarnings("unchecked")
 					List <String> items = (List<String>) rs.getArray("Items");
 			
-		        	b = new Bill(BillId , amount , UserId , items );
+		        	b = new Bill(BillId , amount , UserId , items ); // wait for bill class
 		        }
 				
 			}catch (SQLException e) {
@@ -893,19 +901,25 @@ public class DBController {
 		
 		
 	    /**
-	     * Inserts a new Reservation into the database.
+	     * Inserts a new WaitingListEntry into the database.
 	     *
-	     * @param r the Reservation to insert
+	     * @param w the Reservation to insert
 	     * @return true if the insertion succeeded, false otherwise
 	     */
-			public Boolean addToWitingList(Reservation r) { // not sure if i recive  Reservation Or User
+			public Boolean addToWitingList(WaitingListEntry w) { // not sure if i recive  Reservation Or User
 				
 				Connection con = getConnection();
-				try (PreparedStatement pst = con.prepareStatement("INSERT INTO `waitinglist` (Customer, NumOfGuests, ConfirmationCode) VALUES (?,?,?)")){
+				try (PreparedStatement pst = con.prepareStatement("INSERT INTO `waitinglist` (userID,contactInfo, numOfGuests, confirmationCode,entryTime,exitTime,exitReason) VALUES (?,?,?,?,?,?,?)")){
 					
-		            pst.setInt(1, r.getCustomerId() ); 
-		            pst.setInt(2, r.getNumOfGuests()); 
-		            pst.setInt(3, r.getConfirmationCode()); 
+					pst.setInt(1, w.getUserId());
+					pst.setString(2, w.getContactInfo() );
+					pst.setInt(3, w.getNumOfGuests());
+					pst.setInt(4, w.getConfirmationCode());
+					pst.setTime(5, java.sql.Time.valueOf(w.getEntryTime()));
+					pst.setTime(6, java.sql.Time.valueOf(w.getExitTime()));					
+					pst.setString(7, w.getExitReason().name());
+					
+				
 		            
 		            int update_status = pst.executeUpdate();
 		            return update_status > 0;
@@ -920,18 +934,18 @@ public class DBController {
 			
 			
 		    /**
-		     * Remove an existing Reservation from the database.
+		     * Remove an existing WaitngList from the database.
 		     *
-		     * @param r the Reservation object containing updated data
+		     * @param w the WaitngList object containing updated data
 		     * @return true if the Remove succeeded, false otherwise
 		     */
-			public Boolean removeFromWitingList(Reservation r) { // not sure if i recive  Reservation Or User
+			public Boolean removeFromWitingList(WaitingListEntry w) { 
 				
 				Connection con = getConnection(); //connect to DB
 				
-				try (PreparedStatement pst = con.prepareStatement("DELETE FROM `waitinglist` WHERE Customer = ? ")){
+				try (PreparedStatement pst = con.prepareStatement("DELETE FROM `waitinglist` WHERE userID = ? ")){
 					
-					pst.setInt(1, r.getCustomerId()); // not exist yet
+					pst.setInt(1, w.getUserId()); // not exist yet
 					
 		            int rows = pst.executeUpdate();
 
@@ -956,14 +970,14 @@ public class DBController {
 			    
 
 			    try {
-			       PreparedStatement pst1 = con.prepareStatement("SELECT Customer, NumOfGuests FROM waitinglist LIMIT 1"); // first we  check if there is waitings
+			       PreparedStatement pst1 = con.prepareStatement("SELECT userID, numOfGuests FROM waitinglist LIMIT 1"); // first we  check if there is waitings
 			        ResultSet rs = pst1.executeQuery();
 
 			        if (!rs.next()) 
 			            return false; 
 			        
-			        int customerId = rs.getInt("Customer");
-			        int numGuests = rs.getInt("NumOfGuests");
+			        int userID = rs.getInt("userID");
+			        int numGuests = rs.getInt("numOfGuests");
 			        
 
 	
@@ -977,8 +991,8 @@ public class DBController {
 
 			        int tableId = rs2.getInt("table_id");
 
-			        PreparedStatement pst3 = con.prepareStatement("DELETE FROM waitinglist WHERE Customer=?"); // we remove him from the waiting list
-			        pst3.setInt(1, customerId);
+			        PreparedStatement pst3 = con.prepareStatement("DELETE FROM waitinglist WHERE userID=?"); // we remove him from the waiting list
+			        pst3.setInt(1, userID);
 			        int deleted = pst3.executeUpdate();
 
 			        

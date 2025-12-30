@@ -23,7 +23,7 @@ public class UserController {
 	public boolean addUser(User user) throws Exception {
 		if (user == null) return false;
         // Validation
-        	if (user.getuserId() <= 0) return false;
+        	if (user.getUserId() <= 0) return false;
 
         try {
             return db.InsertUser(user);
@@ -65,7 +65,7 @@ public class UserController {
      */
 	public boolean updateUser(User user) {
         if (user == null) return false;
-        if (user.getuserId() <= 0) return false;
+        if (user.getUserId() <= 0) return false;
 
         try {
             return db.UpdateUser(user);
