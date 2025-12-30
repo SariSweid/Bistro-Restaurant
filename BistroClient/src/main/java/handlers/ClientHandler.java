@@ -1,13 +1,13 @@
-package client;
+package handlers;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import Entities.Reservation;
+import client.GuestReservationUI;
 import common.*;
 import enums.ReservationStatus;
-import handlers.*;
 import messages.*;
 import messages.UpdateReservationRequest;
 import src.ocsf.client.AbstractClient;

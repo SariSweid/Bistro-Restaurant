@@ -6,6 +6,7 @@ import java.util.List;
 
 import Entities.Reservation;
 import enums.ReservationStatus;
+import handlers.ClientHandler;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
