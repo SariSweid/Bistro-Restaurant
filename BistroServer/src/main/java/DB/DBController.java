@@ -272,16 +272,26 @@ public class DBController {
 		        )) {
 	        	
 	            pst.setInt(1, u.getUserId()); 
+	            pst.setString(2, null);
 	            pst.setString(3, u.getPhone());
 	            pst.setString(4, u.getEmail());
+	            pst.setString(5, null);
+	            pst.setInt(6, 0);
 	            pst.setString(7, u.getRole().name());
 	            
-	            if (u instanceof Subscriber) {
-	                Subscriber s = (Subscriber) u;
-
+	            if (u instanceof Subscriber s) {
 	                pst.setString(2, s.getName());
 	                pst.setString(5, s.getUserName());
 	                pst.setInt(6, s.getMembershipCode());
+	            }
+	            
+	            else if (u instanceof RestaurantManager m) {
+	                pst.setString(2, m.getName());
+	                pst.setString(5, m.getUserName());
+	            }
+	            else if (u instanceof RestaurantSupervisor s) {
+	                pst.setString(2, s.getName());
+	                pst.setString(5, s.getUserName());
 	            }
 
 	        	        
@@ -311,8 +321,10 @@ public class DBController {
 			
 			try (PreparedStatement pst = con.prepareStatement("UPDATE `user` SET Name = ?, Phone = ?, Email = ?, UserName = ?  WHERE UserId = ?")) {	
 				
+				pst.setString(1, null);
 				pst.setString(2, u.getPhone());  
 	            pst.setString(3, u.getEmail());
+	            pst.setString(4, null);
   	            pst.setInt(5, u.getUserId());
   	            
   	            
@@ -322,12 +334,12 @@ public class DBController {
 	            }
 	            	            
 	            else if (u instanceof RestaurantManager m) {
-	                pst.setString(2, m.getName());
-	                pst.setString(5, m.getUserName());
+	                pst.setString(1, m.getName());
+	                pst.setString(4, m.getUserName());
 	            }
 	            else if (u instanceof RestaurantSupervisor s) {
-	                pst.setString(2, s.getName());
-	                pst.setString(5, s.getUserName());
+	                pst.setString(1, s.getName());
+	                pst.setString(4, s.getUserName());
 	            }
 	            int rows = pst.executeUpdate();
 
