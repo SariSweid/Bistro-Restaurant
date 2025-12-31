@@ -31,26 +31,22 @@ public class RestaurantSettingsController {
 
     @FXML
     public void updateOpeningHours(ActionEvent event) {
-        System.out.println("Updating opening hours...");
     }
 
     @FXML
     public void updateClosingHours(ActionEvent event) {
-        System.out.println("Updating closing hours...");
     }
 
     @FXML
     public void addSpecialDates(ActionEvent event) {
-        System.out.println("Adding special date...");
     }
 
     @FXML
     public void updateSpecialDates(ActionEvent event) {
-        System.out.println("Updating special date...");
     }
 
     @FXML
     public void previousPage(ActionEvent event) {
-        System.out.println("Going to previous page...");
+        
     }
 }

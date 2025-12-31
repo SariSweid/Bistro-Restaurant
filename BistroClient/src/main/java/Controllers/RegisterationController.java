@@ -39,6 +39,6 @@ public class RegisterationController implements Initializable {
 		 * || userName.getText().isBlank()) {
 	        errorLabel.setText("Fill all Fields");
 	        return;*/
-		SceneManager.switchTo("RestaurantSettingsUI.fxml");
+		SceneManager.switchTo("RestaurantSettingsUI.fxml"); // not sure if he need to switch to this scene after register
 	}/*we should make sure new user is added to the DB  */
 }
