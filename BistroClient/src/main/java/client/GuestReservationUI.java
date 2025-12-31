@@ -15,6 +15,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import util.SceneManager;
 
 public class GuestReservationUI {
 
@@ -151,6 +152,13 @@ public class GuestReservationUI {
         showMessage("Loading reservations...");
         client.getAllReservations();
     }
+    
+	//return back to the main page
+	@FXML
+    private void onPreviousPage() {
+        SceneManager.switchTo("MainMenuUI.fxml");
+    }
+	
 
     @FXML
     private void onUpdateReservation() {

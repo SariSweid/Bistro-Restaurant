@@ -84,6 +84,7 @@
             <HBox spacing="10">
                 <Button onAction="#onLoadReservations" style="-fx-background-radius: 15;" text="Load Reservations" />
                 <Button onAction="#onUpdateReservation" style="-fx-background-radius: 15;" text="Update Reservation" />
+            <Button  onAction="#onPreviousPage" style="-fx-background-radius: 15;" text="PreviousPage" />
             </HBox>
 
             <!-- Status message -->
