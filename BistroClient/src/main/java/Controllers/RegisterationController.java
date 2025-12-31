@@ -39,6 +39,17 @@ public class RegisterationController implements Initializable {
 		 * || userName.getText().isBlank()) {
 	        errorLabel.setText("Fill all Fields");
 	        return;*/
-		SceneManager.switchTo("RestaurantSettingsUI.fxml"); // not sure if he need to switch to this scene after register
+
+		    
+		    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+		    alert.setTitle("Registration");
+		    alert.setHeaderText(null);
+		    alert.setContentText("Registration was successful!");
+		    alert.showAndWait();
+
+		    // לאחר ההודעה ניתן לעבור למסך הבא
+		    SceneManager.switchTo("MainMenuUI.fxml");
+		}
+ // not sure if he need to switch to this scene after register
 	}/*we should make sure new user is added to the DB  */
-}
+
