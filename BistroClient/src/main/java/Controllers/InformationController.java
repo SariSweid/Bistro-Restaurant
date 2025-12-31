@@ -8,7 +8,7 @@ public class InformationController {
 	//return back to the main page
 		@FXML
 		private void onPreviousPage() {
-		    SceneManager.switchTo("MainMenuUI.fxml");
+		    SceneManager.switchTo("SubscriberUI.fxml");
 		}
 		
 		@FXML

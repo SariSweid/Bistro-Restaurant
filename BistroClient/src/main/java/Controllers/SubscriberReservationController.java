@@ -6,7 +6,7 @@ import util.SceneManager;
 public class SubscriberReservationController {
 	@FXML
 	private void onPreviousPage() {
-	    SceneManager.switchTo("MainMenuUI.fxml");
+	    SceneManager.switchTo("SubscriberUI.fxml");
 	}
 	
 	@FXML
