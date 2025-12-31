@@ -32,11 +32,11 @@
     <Button onAction="#onPayment" prefWidth="260" style="-fx-background-radius: 15;" text="Payment" />
     <Button onAction="#onExit" prefWidth="260" text="Exit" />
 
-    <Button text="Login" prefWidth="260" onAction="#onLogin"/>
-    <Button text="Register" prefWidth="260" onAction="#onRegister"/>
-    <Button text="Guest Reservation" prefWidth="260" onAction="#onGuestReservation"/>
-    <Button text="Payment" prefWidth="260" onAction="#onPayment"/>
-    <Button text="Exit" prefWidth="100" onAction="#onExit"/>
+<!--     <Button text="Login" prefWidth="260" onAction="#onLogin"/> -->
+<!--     <Button text="Register" prefWidth="260" onAction="#onRegister"/> -->
+<!--     <Button text="Guest Reservation" prefWidth="260" onAction="#onGuestReservation"/> -->
+<!--     <Button text="Payment" prefWidth="260" onAction="#onPayment"/> -->
+<!--     <Button text="Exit" prefWidth="100" onAction="#onExit"/> -->
 <!-- >>>>>>> 254295c added initial UI's and it is now complete, yet to implement controllers -->
 
 </VBox>
