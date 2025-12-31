@@ -16,7 +16,7 @@ public class PaymentController {
 
     @FXML
     private void onPreviousPage() {
-        SceneManager.switchTo("SubscriberMenuUI.fxml");
+        SceneManager.switchTo("SubscriberUI.fxml");
     }
 }
 

@@ -1,4 +1,4 @@
-package handlers;
+package Controllers;
 
 public class TablesController {
 	

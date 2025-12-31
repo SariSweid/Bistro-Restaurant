@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="BOTTOM_LEFT" prefHeight="300.0" prefWidth="400.0" spacing="14.0" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="handlers.SubscriberController">
+<VBox alignment="BOTTOM_LEFT" prefHeight="300.0" prefWidth="400.0" spacing="14.0" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SubscriberController">
 
     <padding>
         <Insets bottom="30" left="40" right="40" top="30" />
