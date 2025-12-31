@@ -6,27 +6,23 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="14.0"
-      prefHeight="400.0" prefWidth="600.0"
-      xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="handlers.SupervisorController">
+<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="14.0" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="handlers.SupervisorController">
 
     <padding>
-        <Insets top="30" right="40" bottom="30" left="40"/>
+        <Insets bottom="30" left="40" right="40" top="30" />
     </padding>
 
     <Label text=" Welcome ! ">
         <font>
-            <Font size="26.0"/>
+            <Font size="26.0" />
         </font>
     </Label>
 
-    <Button text="Show Waiting List" prefWidth="260" onAction="#onShowWaitingList"/>
-    <Button text="Show Reservations" prefWidth="260" onAction="#onShowReservations"/>
-    <Button text="Edit Tables" prefWidth="260" onAction="#onEditTables"/>
-    <Button text="Edit Opening Hours" prefWidth="260" onAction="#onEditOpeningHours"/>
-    <Button text="Get All Users" prefWidth="260" onAction="#onGetAllUsers"/>
-    <Button text="Log Out" prefWidth="100" onAction="#onLogOut"/>
+    <Button onAction="#onShowWaitingList" prefWidth="260" style="-fx-background-radius: 15;" text="Show Waiting List" />
+    <Button onAction="#onShowReservations" prefWidth="260" style="-fx-background-radius: 15;" text="Show Reservations" />
+    <Button onAction="#onEditTables" prefWidth="260" style="-fx-background-radius: 15;" text="Edit Tables" />
+    <Button onAction="#onEditOpeningHours" prefWidth="260" style="-fx-background-radius: 15;" text="Edit Opening Hours" />
+    <Button onAction="#onGetAllUsers" prefWidth="260" style="-fx-background-radius: 15;" text="Get All Users" />
+    <Button onAction="#onLogOut" prefWidth="100" text="Log Out" />
 
 </VBox>

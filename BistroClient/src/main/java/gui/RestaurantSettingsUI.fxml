@@ -12,26 +12,16 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400" prefWidth="500"
-            xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="handlers.RestaurantSettingsController">
+<AnchorPane prefHeight="400" prefWidth="500" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="handlers.RestaurantSettingsController">
 
     <children>
-        <VBox spacing="12"
-              AnchorPane.topAnchor="10"
-              AnchorPane.bottomAnchor="10"
-              AnchorPane.leftAnchor="10"
-              AnchorPane.rightAnchor="10">
+        <VBox spacing="12" style="-fx-background-color: #f5f5dc;" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10">
 
             
-            <Label text="Restaurant Settings"
-                   style="-fx-font-size: 18px; -fx-font-weight: bold;"
-                   maxWidth="Infinity"
-                   alignment="CENTER" />
+            <Label alignment="CENTER" maxWidth="Infinity" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Restaurant Settings" />
 
             
-            <Label text="Opening Hours" style="-fx-font-weight: bold;" />
+            <Label style="-fx-font-weight: bold;" text="Opening Hours" />
 
             <GridPane hgap="10" vgap="8">
                 <columnConstraints>
@@ -46,22 +36,20 @@
 
                 <children>
                     <Label text="Opening time:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <TextField fx:id="openingTimeField" promptText="09:00"
-                               GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <TextField fx:id="openingTimeField" promptText="09:00" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
                     <Label text="Closing time:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                    <TextField fx:id="closingTimeField" promptText="23:00"
-                               GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <TextField fx:id="closingTimeField" promptText="23:00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 </children>
             </GridPane>
 
             <HBox spacing="10">
-                <Button text="Update Opening Hours" onAction="#updateOpeningHours" />
-                <Button text="Update Closing Hours" onAction="#updateClosingHours" />
+                <Button onAction="#updateOpeningHours" style="-fx-background-radius: 15;" text="Update Opening Hours" />
+                <Button onAction="#updateClosingHours" style="-fx-background-radius: 15;" text="Update Closing Hours" />
             </HBox>
 
            
-            <Label text="Special Dates" style="-fx-font-weight: bold;" />
+            <Label style="-fx-font-weight: bold;" text="Special Dates" />
 
             <TableView fx:id="specialDatesTable" prefHeight="160">
                 <columns>
@@ -90,13 +78,13 @@
             </GridPane>
 
             <HBox spacing="10">
-                <Button text="Add Special Date" onAction="#addSpecialDates" />
-                <Button text="Update Special Date" onAction="#updateSpecialDates" />
+                <Button onAction="#addSpecialDates" style="-fx-background-radius: 15;" text="Add Special Date" />
+                <Button onAction="#updateSpecialDates" style="-fx-background-radius: 15;" text="Update Special Date" />
             </HBox>
 
             
             <HBox alignment="CENTER_LEFT">
-                <Button text="Previous page" onAction="#previousPage" />
+                <Button onAction="#previousPage" text="Previous page" />
             </HBox>
 
         </VBox>

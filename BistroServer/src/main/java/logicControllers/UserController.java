@@ -40,7 +40,7 @@ public class UserController {
         if (userID <= 0) return null;
 
         try {
-            return db.GetUser(userID);
+            return db.getUser(userID);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

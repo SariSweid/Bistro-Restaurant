@@ -6,24 +6,20 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="14.0"
-      prefHeight="400.0" prefWidth="600.0"
-      xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="handlers.ManagerController">
+<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="14.0" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="handlers.ManagerController">
 
     <padding>
-        <Insets top="30" right="40" bottom="30" left="40"/>
+        <Insets bottom="30" left="40" right="40" top="30" />
     </padding>
 
     <Label text=" Welcome ! ">
         <font>
-            <Font size="26.0"/>
+            <Font size="26.0" />
         </font>
     </Label>
     
-    <Button text="Show Suscribers Report" prefWidth="260" onAction="#onShowSubscribersReport"/>
-    <Button text="Show Times Report" prefWidth="260" onAction="#onShowTimesReport"/>
-    <Button text="Log Out" prefWidth="100" onAction="#onLogOut"/>
+    <Button onAction="#onShowSubscribersReport" prefWidth="260" style="-fx-background-radius: 15;" text="Show Suscribers Report" />
+    <Button onAction="#onShowTimesReport" prefWidth="260" style="-fx-background-radius: 15;" text="Show Times Report" />
+    <Button onAction="#onLogOut" prefWidth="100" text="Log Out" />
 
 </VBox>
