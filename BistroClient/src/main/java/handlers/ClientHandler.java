@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
+
+import Controllers.MainMenuController;
 import Entities.Reservation;
 import client.GuestReservationUI;
-import common.*;
+import common.ActionType;
+import common.Message;
 import enums.ReservationStatus;
-import messages.*;
+import messages.AddReservationRequest;
+import messages.GetAllReservationsRequest;
 import messages.UpdateReservationRequest;
 import src.ocsf.client.AbstractClient;
 
@@ -21,6 +25,16 @@ public class ClientHandler extends AbstractClient {
     public static ClientHandler instance;
 
     private GuestReservationUI guestUI; // added by tamer for wiring
+    
+    private MainMenuController mainMenuController;
+
+    public void setMainMenuController(MainMenuController controller) {
+        this.mainMenuController = controller;
+    }
+
+    public MainMenuController getMainMenuController() {
+        return mainMenuController;
+    }
     
     // Constructor
     public ClientHandler(String host, int port) throws IOException {

@@ -7,22 +7,25 @@ import javafx.scene.image.ImageView;
 import util.SceneManager;
 import java.net.URL;
 import java.util.ResourceBundle;
+import handlers.ClientHandler;
 
 public class MainMenuController implements Initializable {
 
     @FXML
     private ImageView logoImageView;
 
+    private ClientHandler client;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        try {
-            Image image = new Image(getClass().getResourceAsStream("/images/BistroLogo.png"));
-            if (image != null) {
-                logoImageView.setImage(image);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        Image image = new Image(getClass().getResourceAsStream("/images/BistroLogo.png"));
+        if (image != null) {
+            logoImageView.setImage(image);
         }
+    }
+
+    public void setClient(ClientHandler client) {
+        this.client = client;
     }
 
     @FXML
