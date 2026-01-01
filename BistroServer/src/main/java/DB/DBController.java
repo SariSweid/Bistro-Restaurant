@@ -601,28 +601,28 @@ public class DBController {
 	     * @param r the report to insert
 	     * @return true if the insertion succeeded, false otherwise
 	     */
-		public Boolean AddReport(Report r) {
-			
-			Connection con = getConnection(); //connect to DB
-			
-			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `report` (Report_Id, Type, From, To) VALUES (?,?,?,?)")){
-				
-	            pst.setInt(1, r.getReportId()); // not exist yet
-	            pst.setString(2, r.getType()); // not exist yet 
-	            pst.setDate(3, r.getFrom()); // not exist yet
-	            pst.setDate(4, r.getTo()); // not exist yet
-
-	          //wait for Report class
-	            
-	            int update_status = pst.executeUpdate();
-	            return update_status > 0;
-	
-		        } catch (SQLException e) {
-		        	e.printStackTrace();
-		        	return false;
-		        }
-				
-			}
+//		public Boolean AddReport(Report r) { // 
+//			
+//			Connection con = getConnection(); //connect to DB
+//			
+//			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `report` (Report_Id, Type, From, To) VALUES (?,?,?,?)")){
+//				
+//	            pst.setInt(1, r.getReportId()); // not exist yet
+//	            pst.setString(2, r.getType()); // not exist yet 
+//	            pst.setDate(3, r.getFrom()); // not exist yet
+//	            pst.setDate(4, r.getTo()); // not exist yet
+//
+//	          //wait for Report class
+//	            
+//	            int update_status = pst.executeUpdate();
+//	            return update_status > 0;
+//	
+//		        } catch (SQLException e) {
+//		        	e.printStackTrace();
+//		        	return false;
+//		        }
+//				
+//			}
 		
 		
 
@@ -632,33 +632,33 @@ public class DBController {
 	     *
 	     * @return a list of Reports
 	     */
-		public List<Report> GetAllReports() {
-
-			Connection con = getConnection(); //connect to DB			
-			List<Report> reports = new ArrayList<>(); // made new list to return
-			
-			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `report`")){ // ask from DB the all reports
-				
-				ResultSet rs = pst.executeQuery();
-				
-	    		while(rs.next()) { // read from DB
-    			
-	    			int tableId  = rs.getInt("Report_Id");// not exist yet
-	    			String Type  = rs.getString("Type"); // not exist yet
-	    			Date from = rs.getDate("From"); // not exist yet
-	    			Date to = rs.getDate("To"); // not exist yet
-	    			
-	    			//wait for Report class
-	    			
-	    			Report r = new Report(tableId , Type , from , to  ); // not exist yet
-	    			reports.add(r);
-	    		
-	    		}			
-			} catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-	    	 return reports;		
-		}
+//		public List<Report> GetAllReports() {
+//
+//			Connection con = getConnection(); //connect to DB			
+//			List<Report> reports = new ArrayList<>(); // made new list to return
+//			
+//			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `report`")){ // ask from DB the all reports
+//				
+//				ResultSet rs = pst.executeQuery();
+//				
+//	    		while(rs.next()) { // read from DB
+//    			
+//	    			int tableId  = rs.getInt("Report_Id");// not exist yet
+//	    			String Type  = rs.getString("Type"); // not exist yet
+//	    			Date from = rs.getDate("From"); // not exist yet
+//	    			Date to = rs.getDate("To"); // not exist yet
+//	    			
+//	    			//wait for Report class
+//	    			
+//	    			Report r = new Report(tableId , Type , from , to  ); // not exist yet
+//	    			reports.add(r);
+//	    		
+//	    		}			
+//			} catch (SQLException e) {
+//	            e.printStackTrace();
+//	        }
+//	    	 return reports;		
+//		}
 	
 	
 		
@@ -669,23 +669,23 @@ public class DBController {
 	     * @param r the SpecialDates object containing updated data
 	     * @return true if the update succeeded, false otherwise
 	     */
-		public Boolean updateOpeningHours(restaurantsettings r) {
-			
-			Connection con = getConnection(); //connect to DB
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? WHERE Day = ? ")){
-				
-				pst.setTime(1, r.getOpeningHours()); // not exist yet
-				pst.setString(2, r.getDay().name()); // not exist yet 
-				//wait for restaurantsettings class
-	            int rows = pst.executeUpdate();
-
-	            return rows > 0;
-		        } catch (SQLException e) {
-	        	System.err.println("SQL Exception during update: " + e.getMessage());
-	        	e.printStackTrace();
-	        	return false; 
-	        }			
-		}
+//		public Boolean updateOpeningHours(restaurantsettings r) {
+//			
+//			Connection con = getConnection(); //connect to DB
+//			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? WHERE Day = ? ")){
+//				
+//				pst.setTime(1, r.getOpeningHours()); // not exist yet
+//				pst.setString(2, r.getDay().name()); // not exist yet 
+//				//wait for restaurantsettings class
+//	            int rows = pst.executeUpdate();
+//
+//	            return rows > 0;
+//		        } catch (SQLException e) {
+//	        	System.err.println("SQL Exception during update: " + e.getMessage());
+//	        	e.printStackTrace();
+//	        	return false; 
+//	        }			
+//		}
 
 	    /**
 	     * Updates the ClosingHours an existing restaurantsettings in the database.
@@ -693,24 +693,24 @@ public class DBController {
 	     * @param r the SpecialDates object containing updated data
 	     * @return true if the update succeeded, false otherwise
 	     */
-		public Boolean updateClosingHours(restaurantsettings r) {
-			
-			Connection con = getConnection(); //connect to DB
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET ClosingHours = ? WHERE Day = ? ")){
-				
-				pst.setTime(1, r.getOpeningHours()); // not exist yet
-				pst.setString(2, r.getDay().name()); // not exist yet 
-				//wait for restaurantsettings class
-	            int rows = pst.executeUpdate();
-
-	            return rows > 0;
-		        } catch (SQLException e) {
-	        	System.err.println("SQL Exception during update: " + e.getMessage());
-	        	e.printStackTrace();
-	        	return false; 
-	        }	
-			
-		}
+//		public Boolean updateClosingHours(restaurantsettings r) {
+//			
+//			Connection con = getConnection(); //connect to DB
+//			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET ClosingHours = ? WHERE Day = ? ")){
+//				
+//				pst.setTime(1, r.getOpeningHours()); // not exist yet
+//				pst.setString(2, r.getDay().name()); // not exist yet 
+//				//wait for restaurantsettings class
+//	            int rows = pst.executeUpdate();
+//
+//	            return rows > 0;
+//		        } catch (SQLException e) {
+//	        	System.err.println("SQL Exception during update: " + e.getMessage());
+//	        	e.printStackTrace();
+//	        	return false; 
+//	        }	
+//			
+//		}
 		
 		
 		
@@ -720,24 +720,24 @@ public class DBController {
 	     * @param r the SpecialDates object containing updated data
 	     * @return true if the update succeeded, false otherwise
 	     */
-		public Boolean updateMaxTable(restaurantsettings r) {
-			
-			Connection con = getConnection(); //connect to DB
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET MaxTables = ? WHERE Day = ? ")){
-				
-				pst.setInt(1, r.getOpeningHours()); // not exist yet
-				pst.setString(2, r.getDay().name()); // not exist yet 
-				//wait for restaurantsettings class
-	            int rows = pst.executeUpdate();
-
-	            return rows > 0;
-		        } catch (SQLException e) {
-	        	System.err.println("SQL Exception during update: " + e.getMessage());
-	        	e.printStackTrace();
-	        	return false; 
-	        }	
-			
-		}
+//		public Boolean updateMaxTable(restaurantsettings r) {
+//			
+//			Connection con = getConnection(); //connect to DB
+//			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET MaxTables = ? WHERE Day = ? ")){
+//				
+//				pst.setInt(1, r.getOpeningHours()); // not exist yet
+//				pst.setString(2, r.getDay().name()); // not exist yet 
+//				//wait for restaurantsettings class
+//	            int rows = pst.executeUpdate();
+//
+//	            return rows > 0;
+//		        } catch (SQLException e) {
+//	        	System.err.println("SQL Exception during update: " + e.getMessage());
+//	        	e.printStackTrace();
+//	        	return false; 
+//	        }	
+//			
+//		}
 
 	
 		
@@ -747,26 +747,26 @@ public class DBController {
 	     * @param d the SpecialDates object containing updated data
 	     * @return true if the update succeeded, false otherwise
 	     */
-		public Boolean updateSpecialDates(SpecialDates d) {
-			
-			Connection con = getConnection(); //connect to DB
-			
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? , ClosingHours = ? , description = ?   WHERE special_date = ? ")){
-				
-				pst.setTime(1, d.getOpeningHours()); // not exist yet
-				pst.setTime(2, d.getClosingHours()); // not exist yet
-				pst.setString(3, d.getdescription());// not exist yet
-				pst.setDate(4, d.special_date());// not exist yet
-				//wait for SpecialDates class
-	            int rows = pst.executeUpdate();
-
-	            return rows > 0;
-		        } catch (SQLException e) {
-	        	System.err.println("SQL Exception during update: " + e.getMessage());
-	        	e.printStackTrace();
-	        	return false; 
-	        }			
-		}
+//		public Boolean updateSpecialDates(SpecialDates d) {
+//			
+//			Connection con = getConnection(); //connect to DB
+//			
+//			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? , ClosingHours = ? , description = ?   WHERE special_date = ? ")){
+//				
+//				pst.setTime(1, d.getOpeningHours()); // not exist yet
+//				pst.setTime(2, d.getClosingHours()); // not exist yet
+//				pst.setString(3, d.getdescription());// not exist yet
+//				pst.setDate(4, d.special_date());// not exist yet
+//				//wait for SpecialDates class
+//	            int rows = pst.executeUpdate();
+//
+//	            return rows > 0;
+//		        } catch (SQLException e) {
+//	        	System.err.println("SQL Exception during update: " + e.getMessage());
+//	        	e.printStackTrace();
+//	        	return false; 
+//	        }			
+//		}
 		
 		
 		
@@ -777,27 +777,27 @@ public class DBController {
 	     * @param d the SpecailDates to insert
 	     * @return true if the insertion succeeded, false otherwise
 	     */
-		public Boolean addSpecialDates(SpecialDates d) {
-			Connection con = getConnection(); //connect to DB
-			
-			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `specialdates` (special_date, OpeningHours, ClosingHours, description) VALUES (?,?,?,?)")){  
-				
-	            pst.setDate(1, d.special_date()); // not exist yet
-	            pst.setTime(2, d.getOpeningHours()); // not exist yet 
-	            pst.setTime(3, d.getClosingHours()); // not exist yet
-	            pst.setString(4 ,d.getdescription()); // not exist yet	
-	            //wait for SpecialDates class
-	            
-	            
-	            int update_status = pst.executeUpdate();
-	            return update_status > 0;
-	
-		        } catch (SQLException e) {
-		        	e.printStackTrace();
-		        	return false;
-		        }
-				
-			}
+//		public Boolean addSpecialDates(SpecialDates d) {
+//			Connection con = getConnection(); //connect to DB
+//			
+//			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `specialdates` (special_date, OpeningHours, ClosingHours, description) VALUES (?,?,?,?)")){  
+//				
+//	            pst.setDate(1, d.special_date()); // not exist yet
+//	            pst.setTime(2, d.getOpeningHours()); // not exist yet 
+//	            pst.setTime(3, d.getClosingHours()); // not exist yet
+//	            pst.setString(4 ,d.getdescription()); // not exist yet	
+//	            //wait for SpecialDates class
+//	            
+//	            
+//	            int update_status = pst.executeUpdate();
+//	            return update_status > 0;
+//	
+//		        } catch (SQLException e) {
+//		        	e.printStackTrace();
+//		        	return false;
+//		        }
+//				
+//			}
 			
 
 		
