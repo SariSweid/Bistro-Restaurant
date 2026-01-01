@@ -17,6 +17,11 @@
             <Font size="26.0" />
         </font>
     </Label>
+   <Button mnemonicParsing="false" onAction="#onRegister" prefWidth="260.0" style="-fx-background-radius: 15;" text="Register">
+      <opaqueInsets>
+         <Insets />
+      </opaqueInsets>
+   </Button>
 
     <Button onAction="#onShowWaitingList" prefWidth="260" style="-fx-background-radius: 15;" text="Show Waiting List" />
     <Button onAction="#onShowReservations" prefWidth="260" style="-fx-background-radius: 15;" text="Show Reservations" />

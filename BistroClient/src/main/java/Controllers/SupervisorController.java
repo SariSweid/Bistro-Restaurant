@@ -28,6 +28,11 @@ public class SupervisorController {
     private void onGetAllUsers() {
         SceneManager.switchTo("SubscribersInformationUI.fxml");
     }
+    
+  @FXML
+  private void onRegister() { // it can made only by Supervisor
+      SceneManager.switchTo("RegistrationUI.fxml");
+  }
 
     @FXML
     private void onLogOut() {

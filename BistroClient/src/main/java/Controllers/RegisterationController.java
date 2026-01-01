@@ -29,7 +29,7 @@ public class RegisterationController implements Initializable {
 	//return back to the main page
 	@FXML
 	private void onPreviousPage() {
-	    SceneManager.switchTo("MainMenuUI.fxml");
+	    SceneManager.switchTo("SupervisorUI.fxml");
 	}
 	
 	@FXML
@@ -48,7 +48,7 @@ public class RegisterationController implements Initializable {
 		    alert.showAndWait();
 
 		    // לאחר ההודעה ניתן לעבור למסך הבא
-		    SceneManager.switchTo("MainMenuUI.fxml");
+		    SceneManager.switchTo("SupervisorUI.fxml");
 		}
  // not sure if he need to switch to this scene after register
 	}/*we should make sure new user is added to the DB  */

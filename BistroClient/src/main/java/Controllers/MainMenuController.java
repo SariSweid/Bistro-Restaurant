@@ -33,10 +33,10 @@ public class MainMenuController implements Initializable {
         SceneManager.switchTo("LoginUI.fxml");
     }
 
-    @FXML
-    private void onRegister() {
-        SceneManager.switchTo("RegistrationUI.fxml");
-    }
+//    @FXML
+//    private void onRegister() { // it can made only by Supervisor
+//        SceneManager.switchTo("RegistrationUI.fxml");
+//    }
 
     @FXML
     private void onGuestReservation() {
