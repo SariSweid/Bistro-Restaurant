@@ -607,7 +607,7 @@ public class DBController {
 			
 			Connection con = getConnection(); //connect to DB
 			
-			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `report` (Report_Id, Type, From, To, generatedAt,content) VALUES (?,?,?,?,?,?)")){
+			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `report` (Report_Id, Type, `From`, `To`, generatedAt,content) VALUES (?,?,?,?,?,?)")){
 				
 	            pst.setInt(1, r.getReportID()); 
 	            pst.setString(2, r.getReportType().name()); 
@@ -676,7 +676,7 @@ public class DBController {
 		public Boolean updateOpeningHours(RestaurantSettings r) {
 			
 			Connection con = getConnection(); //connect to DB
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? WHERE Day = ? ")){
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `OpeningHours` SET OpeningHours = ? WHERE Day = ? ")){
 				
 				pst.setTime(1, java.sql.Time.valueOf(r.getOpeningTime()));
 				pst.setString(2, r.getDay().name()); 
@@ -700,7 +700,7 @@ public class DBController {
 		public Boolean updateClosingHours(RestaurantSettings r) {
 			
 			Connection con = getConnection(); //connect to DB
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET ClosingHours = ? WHERE Day = ? ")){
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `ClosingHours` SET ClosingHours = ? WHERE Day = ? ")){
 				
 				pst.setTime(1, java.sql.Time.valueOf(r.getClosingTime()));
 				pst.setString(2, r.getDay().name()); 
@@ -727,7 +727,7 @@ public class DBController {
 		public Boolean updateMaxTable(RestaurantSettings r) {
 			
 			Connection con = getConnection(); //connect to DB
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET MaxTables = ? WHERE Day = ? ")){
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `MaxTables` SET MaxTables = ? WHERE Day = ? ")){
 				
 				pst.setInt(1, r.getMaxTables()); 
 				pst.setString(2, r.getDay().name()); 
@@ -966,7 +966,7 @@ public class DBController {
 			           return false; 
 			        
 
-			        int tableId = rs2.getInt("table_id");
+			        int tableId = rs2.getInt("TableId");
 
 			        PreparedStatement pst3 = con.prepareStatement("DELETE FROM waitinglist WHERE userID=?"); // we remove him from the waiting list
 			        pst3.setInt(1, userID);
