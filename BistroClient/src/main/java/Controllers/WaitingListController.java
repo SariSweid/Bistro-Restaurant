@@ -6,6 +6,6 @@ import util.SceneManager;
 public class WaitingListController {
 	@FXML
 	private void onPreviousPage() {
-		SceneManager.switchTo("ManagerUI.fxml");
+		SceneManager.switchTo("SupervisorUI.fxml");
 	}
 }
