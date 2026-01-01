@@ -20,6 +20,7 @@ import Entities.Reservation;
 import Entities.RestaurantManager;
 import Entities.RestaurantSettings;
 import Entities.RestaurantSupervisor;
+import Entities.SpecialDates;
 import Entities.Table;
 import Entities.User;
 import Entities.WaitingListEntry;
@@ -750,26 +751,28 @@ public class DBController {
 	     * @param d the SpecialDates object containing updated data
 	     * @return true if the update succeeded, false otherwise
 	     */
-//		public Boolean updateSpecialDates(SpecialDates d) {
-//			
-//			Connection con = getConnection(); //connect to DB
-//			
-//			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? , ClosingHours = ? , description = ?   WHERE special_date = ? ")){
-//				
-//				pst.setTime(1, d.getOpeningHours()); // not exist yet
-//				pst.setTime(2, d.getClosingHours()); // not exist yet
-//				pst.setString(3, d.getdescription());// not exist yet
-//				pst.setDate(4, d.special_date());// not exist yet
-//				//wait for SpecialDates class
-//	            int rows = pst.executeUpdate();
-//
-//	            return rows > 0;
-//		        } catch (SQLException e) {
-//	        	System.err.println("SQL Exception during update: " + e.getMessage());
-//	        	e.printStackTrace();
-//	        	return false; 
-//	        }			
-//		}
+		public Boolean updateSpecialDates(SpecialDates d) {
+			
+			Connection con = getConnection(); //connect to DB
+			
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? , ClosingHours = ? , description = ?   WHERE special_date = ? ")){
+				
+				
+				pst.setDate(1, java.sql.Date.valueOf(d.getDate()));
+				pst.setTime(2, java.sql.Time.valueOf(d.getOpeningTime()));
+				pst.setTime(3, java.sql.Time.valueOf(d.getClosingTime()));
+				pst.setString(4, d.getDescription());
+				
+				
+	            int rows = pst.executeUpdate();
+
+	            return rows > 0;
+		        } catch (SQLException e) {
+	        	System.err.println("SQL Exception during update: " + e.getMessage());
+	        	e.printStackTrace();
+	        	return false; 
+	        }			
+		}
 		
 		
 		
@@ -780,27 +783,26 @@ public class DBController {
 	     * @param d the SpecailDates to insert
 	     * @return true if the insertion succeeded, false otherwise
 	     */
-//		public Boolean addSpecialDates(SpecialDates d) {
-//			Connection con = getConnection(); //connect to DB
-//			
-//			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `specialdates` (special_date, OpeningHours, ClosingHours, description) VALUES (?,?,?,?)")){  
-//				
-//	            pst.setDate(1, d.special_date()); // not exist yet
-//	            pst.setTime(2, d.getOpeningHours()); // not exist yet 
-//	            pst.setTime(3, d.getClosingHours()); // not exist yet
-//	            pst.setString(4 ,d.getdescription()); // not exist yet	
-//	            //wait for SpecialDates class
-//	            
-//	            
-//	            int update_status = pst.executeUpdate();
-//	            return update_status > 0;
-//	
-//		        } catch (SQLException e) {
-//		        	e.printStackTrace();
-//		        	return false;
-//		        }
-//				
-//			}
+		public Boolean addSpecialDates(SpecialDates d) {
+			Connection con = getConnection(); //connect to DB
+			
+			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `specialdates` (special_date, OpeningHours, ClosingHours, description) VALUES (?,?,?,?)")){  
+				
+				pst.setDate(1, java.sql.Date.valueOf(d.getDate()));
+				pst.setTime(2, java.sql.Time.valueOf(d.getOpeningTime()));
+				pst.setTime(3, java.sql.Time.valueOf(d.getClosingTime()));
+				pst.setString(4, d.getDescription());
+	            
+	            
+	            int update_status = pst.executeUpdate();
+	            return update_status > 0;
+	
+		        } catch (SQLException e) {
+		        	e.printStackTrace();
+		        	return false;
+		        }
+				
+			}
 			
 
 		
