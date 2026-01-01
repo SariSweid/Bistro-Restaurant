@@ -47,7 +47,7 @@ public class RegisterationController implements Initializable {
 		    alert.setContentText("Registration was successful!");
 		    alert.showAndWait();
 
-		    // לאחר ההודעה ניתן לעבור למסך הבא
+		    
 		    SceneManager.switchTo("SupervisorUI.fxml");
 		}
  // not sure if he need to switch to this scene after register
