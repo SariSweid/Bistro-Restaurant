@@ -18,6 +18,7 @@ import Entities.Guest;
 import Entities.Report;
 import Entities.Reservation;
 import Entities.RestaurantManager;
+import Entities.RestaurantSettings;
 import Entities.RestaurantSupervisor;
 import Entities.Table;
 import Entities.User;
@@ -671,23 +672,23 @@ public class DBController {
 	     * @param r the SpecialDates object containing updated data
 	     * @return true if the update succeeded, false otherwise
 	     */
-//		public Boolean updateOpeningHours(restaurantsettings r) {
-//			
-//			Connection con = getConnection(); //connect to DB
-//			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? WHERE Day = ? ")){
-//				
-//				pst.setTime(1, r.getOpeningHours()); // not exist yet
-//				pst.setString(2, r.getDay().name()); // not exist yet 
-//				//wait for restaurantsettings class
-//	            int rows = pst.executeUpdate();
-//
-//	            return rows > 0;
-//		        } catch (SQLException e) {
-//	        	System.err.println("SQL Exception during update: " + e.getMessage());
-//	        	e.printStackTrace();
-//	        	return false; 
-//	        }			
-//		}
+		public Boolean updateOpeningHours(RestaurantSettings r) {
+			
+			Connection con = getConnection(); //connect to DB
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? WHERE Day = ? ")){
+				
+				pst.setTime(1, java.sql.Time.valueOf(r.getOpeningTime()));
+				pst.setString(2, r.getDay().name()); 
+			
+	            int rows = pst.executeUpdate();
+
+	            return rows > 0;
+		        } catch (SQLException e) {
+		        	System.err.println("SQL Exception during update: " + e.getMessage());
+		        	e.printStackTrace();
+		        	return false; 
+	        }			
+		}
 
 	    /**
 	     * Updates the ClosingHours an existing restaurantsettings in the database.
@@ -695,24 +696,24 @@ public class DBController {
 	     * @param r the SpecialDates object containing updated data
 	     * @return true if the update succeeded, false otherwise
 	     */
-//		public Boolean updateClosingHours(restaurantsettings r) {
-//			
-//			Connection con = getConnection(); //connect to DB
-//			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET ClosingHours = ? WHERE Day = ? ")){
-//				
-//				pst.setTime(1, r.getOpeningHours()); // not exist yet
-//				pst.setString(2, r.getDay().name()); // not exist yet 
-//				//wait for restaurantsettings class
-//	            int rows = pst.executeUpdate();
-//
-//	            return rows > 0;
-//		        } catch (SQLException e) {
-//	        	System.err.println("SQL Exception during update: " + e.getMessage());
-//	        	e.printStackTrace();
-//	        	return false; 
-//	        }	
-//			
-//		}
+		public Boolean updateClosingHours(RestaurantSettings r) {
+			
+			Connection con = getConnection(); //connect to DB
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET ClosingHours = ? WHERE Day = ? ")){
+				
+				pst.setTime(1, java.sql.Time.valueOf(r.getClosingTime()));
+				pst.setString(2, r.getDay().name()); 
+				
+	            int rows = pst.executeUpdate();
+
+	            return rows > 0;
+		        } catch (SQLException e) {
+	        	System.err.println("SQL Exception during update: " + e.getMessage());
+	        	e.printStackTrace();
+	        	return false; 
+	        }	
+			
+		}
 		
 		
 		
@@ -722,24 +723,24 @@ public class DBController {
 	     * @param r the SpecialDates object containing updated data
 	     * @return true if the update succeeded, false otherwise
 	     */
-//		public Boolean updateMaxTable(restaurantsettings r) {
-//			
-//			Connection con = getConnection(); //connect to DB
-//			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET MaxTables = ? WHERE Day = ? ")){
-//				
-//				pst.setInt(1, r.getOpeningHours()); // not exist yet
-//				pst.setString(2, r.getDay().name()); // not exist yet 
-//				//wait for restaurantsettings class
-//	            int rows = pst.executeUpdate();
-//
-//	            return rows > 0;
-//		        } catch (SQLException e) {
-//	        	System.err.println("SQL Exception during update: " + e.getMessage());
-//	        	e.printStackTrace();
-//	        	return false; 
-//	        }	
-//			
-//		}
+		public Boolean updateMaxTable(RestaurantSettings r) {
+			
+			Connection con = getConnection(); //connect to DB
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET MaxTables = ? WHERE Day = ? ")){
+				
+				pst.setInt(1, r.getMaxTables()); 
+				pst.setString(2, r.getDay().name()); 
+				
+	            int rows = pst.executeUpdate();
+
+	            return rows > 0;
+		        } catch (SQLException e) {
+	        	System.err.println("SQL Exception during update: " + e.getMessage());
+	        	e.printStackTrace();
+	        	return false; 
+	        }	
+			
+		}
 
 	
 		
