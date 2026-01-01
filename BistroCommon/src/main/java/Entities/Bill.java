@@ -34,7 +34,7 @@ public class Bill {
 	}
 	
 	public int getReservationID() {
-		return this.reservationID;
+		return this.reservationID;//
 	}
 	
 	public double getTotalAmount() {
