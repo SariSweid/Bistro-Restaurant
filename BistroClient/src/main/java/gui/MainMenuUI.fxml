@@ -27,7 +27,6 @@
 
 <!-- <<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project -->
     <Button onAction="#onLogin" prefWidth="260" style="-fx-background-radius: 12;" text="Login" />
-    <Button onAction="#onRegister" prefWidth="260" style="-fx-background-radius: 15;" text="Register" />
     <Button onAction="#onGuestReservation" prefWidth="260" style="-fx-background-radius: 15;" text="Guest Reservation" />
     <Button onAction="#onPayment" prefWidth="260" style="-fx-background-radius: 15;" text="Payment" />
     <Button onAction="#onExit" prefWidth="260" text="Exit" />
