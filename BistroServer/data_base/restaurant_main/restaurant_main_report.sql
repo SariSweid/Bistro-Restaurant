@@ -24,9 +24,11 @@ DROP TABLE IF EXISTS `report`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `report` (
   `Report_Id` int NOT NULL,
-  `Type` varchar(45) DEFAULT NULL,
+  `Type` enum('SCHEDULE','SUBSCRIBERS') DEFAULT NULL,
   `From` date DEFAULT NULL,
   `To` date DEFAULT NULL,
+  `generatedAt` datetime DEFAULT NULL,
+  `content` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`Report_Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -40,4 +42,4 @@ CREATE TABLE `report` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-27 18:24:36
+-- Dump completed on 2026-01-01 23:42:00

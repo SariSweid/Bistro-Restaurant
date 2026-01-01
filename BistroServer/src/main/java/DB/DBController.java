@@ -601,28 +601,27 @@ public class DBController {
 	     * @param r the report to insert
 	     * @return true if the insertion succeeded, false otherwise
 	     */
-//		public Boolean AddReport(Report r) { // 
-//			
-//			Connection con = getConnection(); //connect to DB
-//			
-//			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `report` (Report_Id, Type, From, To) VALUES (?,?,?,?)")){
-//				
-//	            pst.setInt(1, r.getReportId()); // not exist yet
-//	            pst.setString(2, r.getType()); // not exist yet 
-//	            pst.setDate(3, r.getFrom()); // not exist yet
-//	            pst.setDate(4, r.getTo()); // not exist yet
-//
-//	          //wait for Report class
-//	            
-//	            int update_status = pst.executeUpdate();
-//	            return update_status > 0;
-//	
-//		        } catch (SQLException e) {
-//		        	e.printStackTrace();
-//		        	return false;
-//		        }
-//				
-//			}
+		public Boolean AddReport(Report r) { // 
+			
+			Connection con = getConnection(); //connect to DB
+			
+			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `report` (Report_Id, Type, From, To, generatedAt,content) VALUES (?,?,?,?,?,?)")){
+				
+	            pst.setInt(1, r.getReportID()); 
+	            pst.setString(2, r.getReportType().name()); 
+	            pst.setDate(3, java.sql.Date.valueOf(r.getStartDate())); 
+	            pst.setDate(4, java.sql.Date.valueOf(r.getEndDate()));
+	            pst.setTimestamp(5, java.sql.Timestamp.valueOf(r.getGeneratedAt()));
+	            pst.setString(6, r.getContent());
+	            
+	            int update_status = pst.executeUpdate();
+	            return update_status > 0;
+	
+		        } catch (SQLException e) {
+		        	e.printStackTrace();
+		        	return false;
+		        }			
+			}
 		
 		
 
@@ -632,33 +631,36 @@ public class DBController {
 	     *
 	     * @return a list of Reports
 	     */
-//		public List<Report> GetAllReports() {
-//
-//			Connection con = getConnection(); //connect to DB			
-//			List<Report> reports = new ArrayList<>(); // made new list to return
-//			
-//			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `report`")){ // ask from DB the all reports
-//				
-//				ResultSet rs = pst.executeQuery();
-//				
-//	    		while(rs.next()) { // read from DB
-//    			
-//	    			int tableId  = rs.getInt("Report_Id");// not exist yet
-//	    			String Type  = rs.getString("Type"); // not exist yet
-//	    			Date from = rs.getDate("From"); // not exist yet
-//	    			Date to = rs.getDate("To"); // not exist yet
-//	    			
-//	    			//wait for Report class
-//	    			
-//	    			Report r = new Report(tableId , Type , from , to  ); // not exist yet
-//	    			reports.add(r);
-//	    		
-//	    		}			
-//			} catch (SQLException e) {
-//	            e.printStackTrace();
-//	        }
-//	    	 return reports;		
-//		}
+		public List<Report> GetAllReports() {
+
+			Connection con = getConnection(); //connect to DB			
+			List<Report> reports = new ArrayList<>(); // made new list to return
+			
+			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `report`")){ // ask from DB the all reports
+				
+				ResultSet rs = pst.executeQuery();
+				
+	    		while(rs.next()) { // read from DB
+    			
+	    			int tableId  = rs.getInt("Report_Id");
+	    			enums.ReportType Type  = enums.ReportType.valueOf(rs.getString("Type")); 
+	    			LocalDate from = rs.getDate("From").toLocalDate(); 
+	    			LocalDate to = rs.getDate("To").toLocalDate();
+	    			LocalDateTime generatedAt = rs.getTimestamp("generatedAt").toLocalDateTime();
+	    			String contant = rs.getString("content");
+	    			
+	    			
+	    			
+	    			
+	    			Report r = new Report(tableId , Type , from , to ,generatedAt,contant); // not exist yet
+	    			reports.add(r);
+	    		
+	    		}			
+			} catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    	 return reports;		
+		}
 	
 	
 		
