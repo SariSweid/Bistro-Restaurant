@@ -38,6 +38,6 @@ public class LoginController implements Initializable {
 		/*if (userID.getText().isBlank() || membershipCode.getText().isBlank()) {
 	        errorLabel.setText("Enter username and password");
 	        return;*/
-		SceneManager.switchTo("SubscriberUI.fxml");
+		SceneManager.switchTo("SupervisorUI.fxml");
 	}/*should add request to server (search for the subscriber)*/
 }

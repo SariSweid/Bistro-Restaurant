@@ -11,7 +11,7 @@ public class SupervisorController {
 
     @FXML
     private void onShowReservations() {
-        SceneManager.switchTo("ReservationUI.fxml");
+        SceneManager.switchTo("ReservationsUI.fxml");
     }
 
     @FXML
@@ -21,12 +21,12 @@ public class SupervisorController {
     
     @FXML
     private void onEditOpeningHours() {
-        SceneManager.switchTo("RestaurantSettingsUI");
+        SceneManager.switchTo("RestaurantSettingsUI.fxml");
     }
     
     @FXML
     private void onGetAllUsers() {
-        SceneManager.switchTo("SubscribersInformationUI.fxml");
+        SceneManager.switchTo("SubscribersInformationUI.fxml"); // not exist
     }
     
   @FXML
