@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -816,7 +817,7 @@ public class DBController {
 	            pst.setInt(1, b.getBillID()); 
 	            pst.setInt(2, b.getReservationID()); 
 	            pst.setDouble(3, b.getTotalAmount()); 
-	            pst.setTime(4, java.sql.Time.valueOf(b.getIssuedAt())); 
+	            pst.setTimestamp(4, java.sql.Timestamp.valueOf(b.getIssuedAt()));
 	            pst.setBoolean(5, b.isPaid());
 	            
 	            
@@ -838,33 +839,35 @@ public class DBController {
 	     * @param Billid the bill ID
 	     * @return the Bill if found, or null if not found
 	     */
-		public Bill GetBill(int Billid) {
-			
-			Connection con = getConnection();
-			Bill b = null;
-			
-			try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `bill` WHERE BillId = ?")){
-				
-				pst.setInt(1, Billid);
-				ResultSet rs = pst.executeQuery();
-				
-		        if (rs.next()) {
-		        	
-		        	int BillId = rs.getInt("BillId");
-		        	int amount = rs.getInt("Amount");
-		        	int UserId = rs.getInt("User_Id");	
+		public Bill GetBill(int billId) {
 
-			
-		        	b = new Bill(BillId , amount , UserId , items ); // wait for bill class
+		    Connection con = getConnection();
+		    Bill b = null;
+
+		    try (PreparedStatement pst = con.prepareStatement(
+		            "SELECT * FROM bill WHERE BillId = ?")) {
+
+		        pst.setInt(1, billId);
+		        ResultSet rs = pst.executeQuery();
+
+		        if (rs.next()) {
+
+		            int id = rs.getInt("BillId");
+		            int reservationID = rs.getInt("reservationID");
+		            double amount = rs.getDouble("Amount");
+		            LocalDateTime issuedAt =  rs.getTimestamp("issuedAt").toLocalDateTime();
+		            boolean paid = rs.getBoolean("paid");
+
+		            b = new Bill(id, reservationID, amount, issuedAt, paid);
 		        }
-				
-			}catch (SQLException e) {
-				e.printStackTrace();
-			}
-	
-			return b; // There isnt Res with this ID.
-			}
-		
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+
+		    return b; 
+		}
+
 		
 		
 		
