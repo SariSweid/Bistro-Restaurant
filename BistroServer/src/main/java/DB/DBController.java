@@ -549,10 +549,10 @@ public class DBController {
 			
 			try (PreparedStatement pst = con.prepareStatement("UPDATE `table` SET IsAvailable = ?   WHERE TableId = ? ")){
 				
-				pst.setBoolean(1, t.isAvailable()); // not exist yet
-				pst.setInt(2, t.getTableID()); // not exist yet
+				pst.setBoolean(1, t.isAvailable()); 
+				pst.setInt(2, t.getTableID()); 
 				
-				//wait for table class
+				
 	            int rows = pst.executeUpdate();
 
 	            return rows > 0; 
@@ -579,10 +579,10 @@ public class DBController {
 			
 			try (PreparedStatement pst = con.prepareStatement("DELETE FROM `table` WHERE TableId = ? ")){
 				
-				pst.setInt(1, t.getTableID()); // not exist yet
+				pst.setInt(1, t.getTableID()); 
 				
 	            int rows = pst.executeUpdate();
-	            //wait for table class
+	            
 	            return rows > 0; 
 				
 	        } catch (SQLException e) {
@@ -811,13 +811,14 @@ public class DBController {
 			
 			Connection con = getConnection(); //connect to DB
 			
-			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `bill` (BillId, Amount, User_Id, Items) VALUES (?,?,?,?)")){
+			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `bill` (BillId, reservationID, Amount, issuedAt , paid) VALUES (?,?,?,?,?)")){
 				
-	            pst.setInt(1, b.getBillID()); // not exist yet
-	            pst.setDouble(2, b.getTotalAmount()); // not exist yet 
-	            pst.setInt(3, b.getReservationID()); // not exist yet
-	            pst.setArray(4, b.()); // not exist yet
-	            //wait for bill class
+	            pst.setInt(1, b.getBillID()); 
+	            pst.setInt(2, b.getReservationID()); 
+	            pst.setDouble(3, b.getTotalAmount()); 
+	            pst.setTime(4, java.sql.Time.valueOf(b.getIssuedAt())); 
+	            pst.setBoolean(5, b.isPaid());
+	            
 	            
 	            
 	            int update_status = pst.executeUpdate();
@@ -852,8 +853,7 @@ public class DBController {
 		        	int BillId = rs.getInt("BillId");
 		        	int amount = rs.getInt("Amount");
 		        	int UserId = rs.getInt("User_Id");	
-		        	@SuppressWarnings("unchecked")
-					List <String> items = (List<String>) rs.getArray("Items");
+
 			
 		        	b = new Bill(BillId , amount , UserId , items ); // wait for bill class
 		        }
