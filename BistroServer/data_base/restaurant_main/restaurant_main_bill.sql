@@ -26,7 +26,7 @@ CREATE TABLE `bill` (
   `BillId` int NOT NULL,
   `reservationID` int DEFAULT NULL,
   `Amount` double DEFAULT NULL,
-  `issuedAt` time DEFAULT NULL,
+  `issuedAt` datetime DEFAULT NULL,
   `paid` tinyint DEFAULT NULL,
   PRIMARY KEY (`BillId`),
   KEY `User_Id_idx` (`reservationID`),
@@ -43,4 +43,4 @@ CREATE TABLE `bill` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-01 14:55:58
+-- Dump completed on 2026-01-01 15:13:02
