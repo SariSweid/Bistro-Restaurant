@@ -676,7 +676,7 @@ public class DBController {
 		public Boolean updateOpeningHours(RestaurantSettings r) {
 			
 			Connection con = getConnection(); //connect to DB
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `OpeningHours` SET OpeningHours = ? WHERE Day = ? ")){
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `restaurantsettings` SET OpeningHours = ? WHERE Day = ? ")){
 				
 				pst.setTime(1, java.sql.Time.valueOf(r.getOpeningTime()));
 				pst.setString(2, r.getDay().name()); 
@@ -700,7 +700,7 @@ public class DBController {
 		public Boolean updateClosingHours(RestaurantSettings r) {
 			
 			Connection con = getConnection(); //connect to DB
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `ClosingHours` SET ClosingHours = ? WHERE Day = ? ")){
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `restaurantsettings` SET ClosingHours = ? WHERE Day = ? ")){
 				
 				pst.setTime(1, java.sql.Time.valueOf(r.getClosingTime()));
 				pst.setString(2, r.getDay().name()); 
@@ -727,7 +727,7 @@ public class DBController {
 		public Boolean updateMaxTable(RestaurantSettings r) {
 			
 			Connection con = getConnection(); //connect to DB
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `MaxTables` SET MaxTables = ? WHERE Day = ? ")){
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `restaurantsettings` SET MaxTables = ? WHERE Day = ? ")){
 				
 				pst.setInt(1, r.getMaxTables()); 
 				pst.setString(2, r.getDay().name()); 
@@ -757,11 +757,14 @@ public class DBController {
 			
 			try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? , ClosingHours = ? , description = ?   WHERE special_date = ? ")){
 				
+								
+				pst.setTime(1, java.sql.Time.valueOf(d.getOpeningTime()));
+				pst.setTime(2, java.sql.Time.valueOf(d.getClosingTime()));
+				pst.setString(3, d.getDescription());
+				pst.setDate(4, java.sql.Date.valueOf(d.getDate()));
 				
-				pst.setDate(1, java.sql.Date.valueOf(d.getDate()));
-				pst.setTime(2, java.sql.Time.valueOf(d.getOpeningTime()));
-				pst.setTime(3, java.sql.Time.valueOf(d.getClosingTime()));
-				pst.setString(4, d.getDescription());
+				
+				
 				
 				
 	            int rows = pst.executeUpdate();
