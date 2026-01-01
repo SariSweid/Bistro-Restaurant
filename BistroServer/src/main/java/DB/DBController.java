@@ -549,8 +549,8 @@ public class DBController {
 			
 			try (PreparedStatement pst = con.prepareStatement("UPDATE `table` SET IsAvailable = ?   WHERE TableId = ? ")){
 				
-				pst.setBoolean(1, t.getIsAvailable()); // not exist yet
-				pst.setInt(2, t.getTableId()); // not exist yet
+				pst.setBoolean(1, t.isAvailable()); // not exist yet
+				pst.setInt(2, t.getTableID()); // not exist yet
 				
 				//wait for table class
 	            int rows = pst.executeUpdate();
@@ -579,7 +579,7 @@ public class DBController {
 			
 			try (PreparedStatement pst = con.prepareStatement("DELETE FROM `table` WHERE TableId = ? ")){
 				
-				pst.setInt(1, t.getTableId()); // not exist yet
+				pst.setInt(1, t.getTableID()); // not exist yet
 				
 	            int rows = pst.executeUpdate();
 	            //wait for table class
@@ -813,10 +813,10 @@ public class DBController {
 			
 			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `bill` (BillId, Amount, User_Id, Items) VALUES (?,?,?,?)")){
 				
-	            pst.setInt(1, b.getBillId()); // not exist yet
-	            pst.setInt(2, b.getAmount()); // not exist yet 
-	            pst.setInt(3, b.getUserId()); // not exist yet
-	            pst.setArray(4, b.getItems()); // not exist yet
+	            pst.setInt(1, b.getBillID()); // not exist yet
+	            pst.setDouble(2, b.getTotalAmount()); // not exist yet 
+	            pst.setInt(3, b.getReservationID()); // not exist yet
+	            pst.setArray(4, b.()); // not exist yet
 	            //wait for bill class
 	            
 	            

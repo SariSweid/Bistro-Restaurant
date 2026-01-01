@@ -24,12 +24,13 @@ DROP TABLE IF EXISTS `bill`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `bill` (
   `BillId` int NOT NULL,
-  `Amount` int DEFAULT NULL,
-  `User_Id` int DEFAULT NULL,
-  `Items` varchar(45) DEFAULT NULL,
+  `reservationID` int DEFAULT NULL,
+  `Amount` double DEFAULT NULL,
+  `issuedAt` time DEFAULT NULL,
+  `paid` tinyint DEFAULT NULL,
   PRIMARY KEY (`BillId`),
-  KEY `User_Id_idx` (`User_Id`),
-  CONSTRAINT `User_Id` FOREIGN KEY (`User_Id`) REFERENCES `reservation` (`customerID`)
+  KEY `User_Id_idx` (`reservationID`),
+  CONSTRAINT `reservationID` FOREIGN KEY (`reservationID`) REFERENCES `reservation` (`reservationID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -42,4 +43,4 @@ CREATE TABLE `bill` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-27 18:24:35
+-- Dump completed on 2026-01-01 14:55:58
