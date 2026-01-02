@@ -19,6 +19,8 @@ public class SceneManager {
                 SceneManager.class.getResource("/gui/" + fxml)
             );
             stage.setScene(new Scene(root));
+            String title = fxml.replace("UI.fxml", "");
+            stage.setTitle(title);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
