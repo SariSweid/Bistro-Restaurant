@@ -1,6 +1,6 @@
 package handlers;
 
-import client.GuestReservationUI;
+import client.GuestUpdateReservationUI;
 import javafx.application.Platform;
 
 /**
@@ -9,9 +9,9 @@ import javafx.application.Platform;
  */
 public class UpdateReservationHandler implements ResponseHandler {
 
-    private final GuestReservationUI ui;
+    private final GuestUpdateReservationUI ui;
 
-    public UpdateReservationHandler(GuestReservationUI ui) {
+    public UpdateReservationHandler(GuestUpdateReservationUI ui) {
         this.ui = ui;
     }
 

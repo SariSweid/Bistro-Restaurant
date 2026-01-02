@@ -1,10 +1,8 @@
 package handlers;
 
-import common.ServerResponse;
-import enums.ActionType;
-import javafx.application.Platform;
 import Entities.User;
-import client.GuestReservationUI;
+import common.ServerResponse;
+import javafx.application.Platform;
 import util.SceneManager;
 
 public class LoginHandler implements ResponseHandler {

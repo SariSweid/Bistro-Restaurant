@@ -3,7 +3,7 @@ package Controllers;
 import javafx.fxml.FXML;
 import util.SceneManager;
 
-public class GuestReservation2controller {
+public class GuestReservationcontroller {
 
 	
     @FXML

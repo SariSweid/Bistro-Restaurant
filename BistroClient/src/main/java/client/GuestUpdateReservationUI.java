@@ -17,7 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import util.SceneManager;
 
-public class GuestReservationUI {
+public class GuestUpdateReservationUI {
 
     @FXML
     private TableView<Reservation> reservationsTable;
@@ -73,7 +73,7 @@ public class GuestReservationUI {
     private final ObservableList<Reservation> reservations = FXCollections.observableArrayList();
 
     //empty constructor
-    public GuestReservationUI() {
+    public GuestUpdateReservationUI() {
     }
 
     
@@ -156,7 +156,7 @@ public class GuestReservationUI {
 	//return back to the main page
 	@FXML
     private void onPreviousPage() {
-        SceneManager.switchTo("GuestReservationUI2.fxml");
+        SceneManager.switchTo("GuestReservationUI.fxml");
     }
 	
 

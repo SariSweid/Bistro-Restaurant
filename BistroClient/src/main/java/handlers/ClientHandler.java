@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 import Controllers.MainMenuController;
 import Entities.Reservation;
-import client.GuestReservationUI;
+import client.GuestUpdateReservationUI;
 import common.Message;
 import enums.ActionType;
 import enums.ReservationStatus;
@@ -26,7 +26,7 @@ public class ClientHandler extends AbstractClient {
 	// Singleton instance of ClientHandler
     public static ClientHandler instance;
 
-    private GuestReservationUI guestUI; // added by tamer for wiring
+    private GuestUpdateReservationUI guestUI; // added by tamer for wiring
     
     private MainMenuController mainMenuController;
 
@@ -50,7 +50,7 @@ public class ClientHandler extends AbstractClient {
         
     }
     
-    public void setGuestUI(GuestReservationUI guestUI) { // added setter tamer
+    public void setGuestUI(GuestUpdateReservationUI guestUI) { // added setter tamer
         this.guestUI = guestUI;
         initializeHandlers();
     }

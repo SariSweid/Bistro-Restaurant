@@ -3,7 +3,7 @@ package handlers;
 import java.util.List;
 
 import Entities.Reservation;
-import client.GuestReservationUI;
+import client.GuestUpdateReservationUI;
 import javafx.application.Platform;
 
 /**
@@ -12,9 +12,9 @@ import javafx.application.Platform;
  */
 public class GetAllReservationsHandler implements ResponseHandler {
 
-    private final GuestReservationUI ui;
+    private final GuestUpdateReservationUI ui;
 
-    public GetAllReservationsHandler(GuestReservationUI ui) {
+    public GetAllReservationsHandler(GuestUpdateReservationUI ui) {
         this.ui = ui;
     }
 

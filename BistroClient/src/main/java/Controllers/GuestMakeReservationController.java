@@ -10,7 +10,7 @@ import util.SceneManager;
 public class GuestMakeReservationController {
 	@FXML
 	private void onPreviousPage() {
-	    SceneManager.switchTo("GuestReservationUI2.fxml");
+	    SceneManager.switchTo("GuestReservationUI.fxml");
 	}
 	
 	@FXML

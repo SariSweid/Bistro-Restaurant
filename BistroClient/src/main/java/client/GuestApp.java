@@ -19,7 +19,7 @@ public class GuestApp extends Application {
         Parent root = loader.load();
 
         // Get UI controller
-        GuestReservationUI ui = loader.getController();
+        GuestUpdateReservationUI ui = loader.getController();
 
         //get ip address from args[0]
         Parameters parms = getParameters();
