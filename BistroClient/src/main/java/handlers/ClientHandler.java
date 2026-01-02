@@ -13,6 +13,8 @@ import common.Message;
 import enums.ReservationStatus;
 import messages.AddReservationRequest;
 import messages.GetAllReservationsRequest;
+import messages.LoginRequest;
+import messages.RegisterRequest;
 import messages.UpdateReservationRequest;
 import src.ocsf.client.AbstractClient;
 
@@ -43,6 +45,8 @@ public class ClientHandler extends AbstractClient {
         openConnection();
         System.out.println(">> Connected to server at " + host + ":" + port);
         handlers = new HashMap<>();
+        handlers.put(ActionType.LOGIN, new LoginHandler());
+        handlers.put(ActionType.ADD_USER, new RegisterHandler());
         
     }
     
@@ -63,6 +67,7 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.UPDATE_RESERVATION, new UpdateReservationHandler(guestUI));
         // When Server add reservation --> Run AddReservationHandler
         handlers.put(ActionType.ADD_RESERVATION, new AddReservationHandler(guestUI));
+
     }
     
     private void sendRequest(Message msg) {
@@ -76,6 +81,14 @@ public class ClientHandler extends AbstractClient {
     
     // ==== SEND REQUESTS ====
 
+    public void register(RegisterRequest req) {
+        sendRequest(new Message(ActionType.ADD_USER, req));
+    }
+    
+    public void login(int userID, int membershipCode) {
+        sendRequest(new Message(ActionType.LOGIN, new LoginRequest(userID, membershipCode)));
+    }
+    
     public void getAllReservations() {
         sendRequest(new Message(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsRequest()));
     }
@@ -86,7 +99,7 @@ public class ClientHandler extends AbstractClient {
     }
 
     public void updateReservation(int id, LocalDate date,LocalTime time , int guests, ReservationStatus status) {
-    	sendRequest(new Message(ActionType.UPDATE_RESERVATION, new UpdateReservationRequest(id, date, time, guests, status)));
+    		sendRequest(new Message(ActionType.UPDATE_RESERVATION, new UpdateReservationRequest(id, date, time, guests, status)));
     }
     
 

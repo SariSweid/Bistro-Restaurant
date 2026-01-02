@@ -47,6 +47,19 @@ public class UserController {
         }
     }
 	
+	
+	/**
+     * Return User from DB by code.
+     */
+	public User getUserByMembershipCode(int code) {
+	    try {
+	   		return db.getUserByMembershipCode(code);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
+	
 	/**
      * Return all users from DB.
      */
@@ -75,5 +88,6 @@ public class UserController {
         }
     }
 	
+
 	
 }

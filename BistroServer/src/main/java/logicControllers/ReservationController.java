@@ -47,7 +47,6 @@ public class ReservationController {
         Reservation existing = db.GetReservation(ur.getReservationID());
         if (existing == null) return false;
 
-        // עדכון שדות מותרים בלבד
         existing.setReservationDate(ur.getReservationDate());
         existing.setReservationTime(ur.getReservationTime());
         existing.setNumOfGuests(ur.getNumOfGuests());

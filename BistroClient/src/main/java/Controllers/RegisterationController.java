@@ -3,16 +3,23 @@ package Controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import handlers.ClientHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import messages.RegisterRequest;
 import util.SceneManager;
 
 public class RegisterationController implements Initializable {
 
     @FXML
     private ImageView logoImageView;
+    
+    @FXML
+    private TextField userID, name, phone, email, userName, membershipCode;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -34,6 +41,47 @@ public class RegisterationController implements Initializable {
 	
 	@FXML
 	private void onEnter() {
+		// Validation
+		if (name.getText().isBlank() || phone.getText().isBlank() ||
+	            email.getText().isBlank() || userName.getText().isBlank()) {
+
+	            Alert alert = new Alert(Alert.AlertType.ERROR);
+	            alert.setTitle("Registration");
+	            alert.setHeaderText(null);
+	            alert.setContentText("Please fill all required fields!");
+	            alert.showAndWait();
+	            return;
+	        }
+		
+		// Membership code (only relevant if Subscriber)
+        int memCode = 0;
+        if (!membershipCode.getText().isBlank()) {
+            try {
+                memCode = Integer.parseInt(membershipCode.getText());
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Registration");
+                alert.setHeaderText(null);
+                alert.setContentText("Membership code must be a number");
+                alert.showAndWait();
+                return;
+            }
+        }
+        
+        // Create RegisterRequest
+        // Here we assume Supervisor registration
+        RegisterRequest request = new RegisterRequest(
+                Integer.parseInt(userID.getText()),
+                name.getText(),
+                email.getText(),
+                phone.getText(),
+                userName.getText(),
+                memCode
+        );
+        
+        // Send to server
+        ClientHandler.getClient().register(request);
+        
 		/*if (userID.getText().isBlank() || membershipCode.getText().isBlank() || 
 		 * name.getText().isBlank() || phone.getText().isBlank() || email.getText().isBlank()
 		 * || userName.getText().isBlank()) {
@@ -50,6 +98,6 @@ public class RegisterationController implements Initializable {
 		    
 		    SceneManager.switchTo("SupervisorUI.fxml");
 		}
- // not sure if he need to switch to this scene after register
+ // not sure if need to switch to this scene after register
 	}/*we should make sure new user is added to the DB  */
 

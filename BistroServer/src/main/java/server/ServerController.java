@@ -85,6 +85,9 @@ public class ServerController extends AbstractServer {
 
         // Command #3: Get All Reservations
         commands.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsCommand());
+        
+        // Command #4: Login 
+        commands.put(ActionType.LOGIN, new LoginCommand()); // <- added this
     }
     
     /**

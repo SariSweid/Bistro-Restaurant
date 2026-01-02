@@ -414,7 +414,18 @@ public class DBController {
 	    }
 
 			
-			
+	    // ---- ADDED - get User code----
+	    // Fetch subscriber by membership code
+	    public User getUserByMembershipCode(int code) {
+	        try (Connection con = getConnection();
+	             PreparedStatement pst = con.prepareStatement(
+	                 "SELECT * FROM `user` WHERE MemberShipCode = ?")) {
+	            pst.setInt(1, code);
+	            ResultSet rs = pst.executeQuery();
+	            if (rs.next()) return UserFactory.createUser(rs);
+	        } catch (SQLException e) { e.printStackTrace(); }
+	        return null;
+	    }
 		
 
 	    /**
