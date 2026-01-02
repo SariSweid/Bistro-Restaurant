@@ -156,7 +156,7 @@ public class GuestReservationUI {
 	//return back to the main page
 	@FXML
     private void onPreviousPage() {
-        SceneManager.switchTo("MainMenuUI.fxml");
+        SceneManager.switchTo("GuestReservationUI2.fxml");
     }
 	
 

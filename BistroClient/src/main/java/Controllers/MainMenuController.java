@@ -40,7 +40,7 @@ public class MainMenuController implements Initializable {
 
     @FXML
     private void onGuestReservation() {
-        SceneManager.switchTo("GuestReservationUI.fxml");
+        SceneManager.switchTo("GuestReservationUI2.fxml");
     }
 
     @FXML
