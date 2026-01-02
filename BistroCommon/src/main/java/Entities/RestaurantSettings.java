@@ -4,12 +4,15 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import enums.Day;
+
 /**
  * RestaurantSettings class represents the restaurant configuration which include special dates, max tables and opening and closing hours
  * singleton - in order to create a single instance in the system
  */
 public class RestaurantSettings {
 	private static RestaurantSettings instance;
+	private Day day;
 	private LocalTime openingTime;
 	private LocalTime closingTime;
 	private int maxTables;
@@ -28,10 +31,15 @@ public class RestaurantSettings {
 	
 	//getters
 	
+	public Day getDay() {
+		return day;
+	}
+	
 	public LocalTime getOpeningTime() {
 		return this.openingTime;
 	}
 	
+
 	public LocalTime getClosingTime() {
 		return this.closingTime;
 	}
@@ -45,6 +53,11 @@ public class RestaurantSettings {
 	}
 	
 	//setters
+	
+	public void setDay(Day day) {
+		this.day = day;
+	}
+
 	
 	public void setOpeningTime(LocalTime newOpeningTime) {
 		this.openingTime = newOpeningTime;
