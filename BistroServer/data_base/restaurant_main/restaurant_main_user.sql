@@ -29,7 +29,7 @@ CREATE TABLE `user` (
   `Email` varchar(100) DEFAULT NULL,
   `UserName` varchar(45) DEFAULT NULL,
   `MemberShipCode` int DEFAULT NULL,
-  `Role` enum('GUEST','SUBSCRIBER','STAFF','MANAGER') NOT NULL,
+  `Role` enum('GUEST','SUBSCRIBER','SUPERVISOR','MANAGER') NOT NULL,
   PRIMARY KEY (`UserId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -43,4 +43,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-27 18:24:36
+-- Dump completed on 2026-01-02 17:16:28
