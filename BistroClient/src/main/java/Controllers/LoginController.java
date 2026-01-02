@@ -2,11 +2,11 @@ package Controllers;
 
 import java.io.IOException;
 import common.Message;
+import enums.ActionType;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
-
-import common.ActionType;
 import handlers.ClientHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

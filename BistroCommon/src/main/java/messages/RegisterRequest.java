@@ -13,16 +13,18 @@ public class RegisterRequest implements Serializable {
     private final String phone;
     private final String username;
     private final int membershipCode;
+    private final UserRole role;
 
     // Constructor
     public RegisterRequest(int userID, String name, String email, String phone,
-                           String username, int membershipCode) {
+                           String username, int membershipCode,UserRole role) {
         this.userID = userID;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.username = username;
         this.membershipCode = membershipCode;
+		this.role = role;
     }
 
     // Getters
@@ -32,4 +34,6 @@ public class RegisterRequest implements Serializable {
     public String getPhone() { return phone; }
     public String getUsername() { return username; }
     public int getMembershipCode() { return membershipCode; }
+	public UserRole getRole() {return role;}
+    
 }

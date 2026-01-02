@@ -22,7 +22,7 @@ public class GetAllReservationsCommand implements Command {
 
 	        // Send a Message object to the client
 	        client.sendToClient(new common.Message(
-	            common.ActionType.GET_ALL_RESERVATIONS,
+	            enums.ActionType.GET_ALL_RESERVATIONS,
 	            reservations
 	        ));
 
@@ -30,7 +30,7 @@ public class GetAllReservationsCommand implements Command {
 	        e.printStackTrace();
 	        try {
 	            client.sendToClient(new common.Message(
-	                common.ActionType.GET_ALL_RESERVATIONS,
+	                enums.ActionType.GET_ALL_RESERVATIONS,
 	                "SERVER_ERROR"
 	            ));
 	        } catch (Exception ignored) {}

@@ -3,6 +3,7 @@ package Controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import enums.UserRole;
 import handlers.ClientHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -76,7 +77,8 @@ public class RegisterationController implements Initializable {
                 email.getText(),
                 phone.getText(),
                 userName.getText(),
-                memCode
+                memCode,
+                UserRole.SUBSCRIBER
         );
         
         // Send to server
@@ -89,14 +91,14 @@ public class RegisterationController implements Initializable {
 	        return;*/
 
 		    
-		    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-		    alert.setTitle("Registration");
-		    alert.setHeaderText(null);
-		    alert.setContentText("Registration was successful!");
-		    alert.showAndWait();
-
-		    
-		    SceneManager.switchTo("SupervisorUI.fxml");
+//		    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+//		    alert.setTitle("Registration");
+//		    alert.setHeaderText(null);
+//		    alert.setContentText("Registration was successful!");
+//		    alert.showAndWait();
+//
+//		    
+//		    SceneManager.switchTo("SupervisorUI.fxml");
 		}
  // not sure if need to switch to this scene after register
 	}/*we should make sure new user is added to the DB  */

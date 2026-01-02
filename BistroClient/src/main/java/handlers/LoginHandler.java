@@ -1,8 +1,8 @@
 package handlers;
 
 import common.ServerResponse;
+import enums.ActionType;
 import javafx.application.Platform;
-import common.ActionType;
 import Entities.User;
 import client.GuestReservationUI;
 import util.SceneManager;

@@ -8,6 +8,7 @@ import logicControllers.ReservationController;
 import messages.*;
 import commands.*;
 import common.*;
+import enums.ActionType;
 import src.ocsf.server.AbstractServer;
 import src.ocsf.server.ConnectionToClient;
 
@@ -88,6 +89,11 @@ public class ServerController extends AbstractServer {
         
         // Command #4: Login 
         commands.put(ActionType.LOGIN, new LoginCommand()); // <- added this
+        
+        // Command #4: Register
+        commands.put(ActionType.ADD_USER, new RegisterCommand()); // <- added this
+        
+        
     }
     
     /**

@@ -14,6 +14,7 @@ public class RegisterHandler implements ResponseHandler {
             return;
         }
 
+        
         // Must run UI updates on JavaFX thread
         Platform.runLater(() -> {
             Alert alert = new Alert(response.isSuccess() ?

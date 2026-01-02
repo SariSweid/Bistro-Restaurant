@@ -2,6 +2,8 @@ package common;
 
 import java.io.Serializable;
 
+import enums.ActionType;
+
 public class Message implements Serializable {
     private static final long serialVersionUID = 1L;
     private ActionType action;

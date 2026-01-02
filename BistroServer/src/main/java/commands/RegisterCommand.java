@@ -4,6 +4,7 @@ import Entities.*;
 import logicControllers.UserController;
 import messages.RegisterRequest;
 import common.*;
+import enums.ActionType;
 import enums.UserRole;
 import server.Command;
 import src.ocsf.server.ConnectionToClient;
@@ -23,7 +24,7 @@ public class RegisterCommand implements Command {
 
             // Create subscriber
             User user = new Subscriber(
-                    0, // userID auto-generated
+                    req.getUserID(), // userID auto-generated
                     req.getName(),
                     req.getEmail(),
                     req.getPhone(),
