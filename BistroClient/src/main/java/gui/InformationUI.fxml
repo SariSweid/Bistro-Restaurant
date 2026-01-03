@@ -30,8 +30,6 @@
         </columnConstraints>
 
         <children>
-        	<Label text="User ID:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <TextField fx:id="userID" GridPane.columnIndex="1" GridPane.rowIndex="0" />
             
             <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
             <TextField fx:id="name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -44,9 +42,6 @@
             
             <Label text="User Name:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
             <TextField fx:id="userName" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-
-            <Label text="membership Code:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-            <TextField fx:id="membershipCode" GridPane.columnIndex="1" GridPane.rowIndex="5" />
         </children>
       <rowConstraints>
          <RowConstraints />
