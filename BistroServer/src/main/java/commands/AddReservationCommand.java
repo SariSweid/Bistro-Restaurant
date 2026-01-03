@@ -1,6 +1,11 @@
 package commands;
 
+import java.io.IOException;
+
 import Entities.Reservation;
+import common.Message;
+import common.ServerResponse;
+import enums.ActionType;
 import logicControllers.ReservationController;
 import messages.AddReservationRequest;
 import server.Command;
@@ -11,25 +16,34 @@ public class AddReservationCommand implements Command {
 	// Controller responsible for reservation business logic
     private ReservationController reservationController = new ReservationController();
     
+    
     /**
      * Command responsible for handling ADD_RESERVATION requests.
      */
 	@Override
 	public void execute(Object data, ConnectionToClient client) {
-		// Cast the data object to AddReservationRequest
-        AddReservationRequest req = (AddReservationRequest) data;
+		
+		try {
+	        if (!(data instanceof AddReservationRequest req)) return;
 
-        // Extract the Reservation object
-        Reservation reservation = req.getReservation();
+	        Reservation r = req.getReservation();
 
-        // Call business logic to add the reservation
-        boolean success = reservationController.addReservation(reservation);
+	        boolean success = reservationController.addReservation(r);
 
-        // Send response back to the client
-        try {
-            client.sendToClient(success ? "ADD_OK" : "ADD_FAIL");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	        ServerResponse res = success
+	            ? new ServerResponse(true, r, "Reservation approved")
+	            : new ServerResponse(false, null, "Reservation denied");
+
+	        client.sendToClient(new Message(ActionType.ADD_RESERVATION, res));
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        try {
+				client.sendToClient(new Message(ActionType.ADD_RESERVATION,
+				        new ServerResponse(false, null, "Server error")));
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+	    }
     }
 }

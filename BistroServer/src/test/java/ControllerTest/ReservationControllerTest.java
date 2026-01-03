@@ -30,7 +30,7 @@ class ReservationControllerTest {
     @BeforeEach
     void setup() {
         mockDb = mock(DBController.class);
-        controller = new ReservationController(mockDb);
+        controller = new ReservationController();
     }
 
     @Test

@@ -28,11 +28,10 @@ public class ServerController extends AbstractServer {
     private ReservationController reservationController;
     
     private ServerUIController ui;
-
-    public void setUi(ServerUIController ui) { //wiring to serveruicontroller
+    
+    public void setUi(ServerUIController ui) {
         this.ui = ui;
     }
-
    
     /**
      * Constructs a new ServerController on the specified port.
@@ -82,18 +81,19 @@ public class ServerController extends AbstractServer {
         commands.put(ActionType.UPDATE_RESERVATION, new UpdateReservationCommand());
         
         // Command #2: Add Reservation
-        commands.put(ActionType.ADD_RESERVATION, new AddReservationCommand());
+       commands.put(ActionType.ADD_RESERVATION, new AddReservationCommand());
 
         // Command #3: Get All Reservations
         commands.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsCommand());
         
         // Command #4: Login 
-        commands.put(ActionType.LOGIN, new LoginCommand()); // <- added this
+        commands.put(ActionType.LOGIN, new LoginCommand());
         
         // Command #4: Register
-        commands.put(ActionType.ADD_USER, new RegisterCommand()); // <- added this
+        commands.put(ActionType.ADD_USER, new RegisterCommand());
         
-        
+        //Command #5: Get all available times  // <- ADDED THIS
+        commands.put(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesCommand());
     }
     
     /**
