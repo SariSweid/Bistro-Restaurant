@@ -1,10 +1,11 @@
 package Entities;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WaitingList {
+public class WaitingList implements Serializable{
 	private LocalDate waitingListDate;
 	private List<WaitingListEntry> waitingList;
 	
