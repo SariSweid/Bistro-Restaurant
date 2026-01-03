@@ -28,7 +28,6 @@ public class WaitingList {
 	}
 	
 	/**
-	 * getCurrentWaitingList method returns the current waiting list
 	 * @return the current waiting list - all entries who's exit reason is still null
 	 */
 	public List<WaitingListEntry> getCurrentWaitingList(){
