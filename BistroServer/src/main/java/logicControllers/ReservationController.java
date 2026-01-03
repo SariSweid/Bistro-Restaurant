@@ -107,7 +107,7 @@ public class ReservationController {
        // generate confirmation code
        r.setConfirmationCode(generateConfirmationCode());
        r.setStatus(enums.ReservationStatus.CONFIRMED);
-
+       
        return db.insertReservation(r);
    }
    

@@ -238,8 +238,9 @@ public class DBController {
 
 	            pst.setInt(1, r.getReservationID());
 	            pst.setInt(2, r.getCustomerId());
-	            pst.setInt(3, r.getTableID());
-	            pst.setInt(4, r.getBillID());
+	         // Handle nullable tableID
+	            pst.setObject(3 , r.getTableID(), java.sql.Types.INTEGER);
+	            pst.setObject(4, r.getBillID(), java.sql.Types.INTEGER);
 	            pst.setInt(5, r.getNumOfGuests());
 	            pst.setInt(6, r.getConfirmationCode());
 	            pst.setDate(7, java.sql.Date.valueOf(r.getReservationDate()));

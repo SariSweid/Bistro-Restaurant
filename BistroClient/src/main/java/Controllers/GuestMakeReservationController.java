@@ -92,9 +92,9 @@ public class GuestMakeReservationController {
         String contact = emailOrPhone.getText();
 
         // Create Reservation (0 for guest ID for now)
-        Reservation r = new Reservation(
-                0, // reservationID will be assigned by DB
-                0, // customerID for guest
+        Reservation r = new Reservation(	
+                8, // reservationID will be assigned by DB
+                1, // customerID for guest
                 diners,
                 generateConfirmationCode(),
                 resDate,
@@ -102,18 +102,20 @@ public class GuestMakeReservationController {
                 ReservationStatus.CONFIRMED
         );
 
+        
+        System.out.println("Sending reservation: " + r);
         // Send reservation to server
-        ClientHandler.getClient().addReservation(r);
+        ClientHandler.getClient().addReservation(r);	
 
-        // Show confirmation
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Reservation Confirmed");
-        alert.setHeaderText(null);
-        alert.setContentText("Your reservation is confirmed! Check your confirmation code.");
-        alert.showAndWait();
-
-        // Go back to main menu
-        SceneManager.switchTo("MainMenuUI.fxml");
+//        // Show confirmation
+//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//        alert.setTitle("Reservation Confirmed");
+//        alert.setHeaderText(null);
+//        alert.setContentText("Your reservation is confirmed! Check your confirmation code.");
+//        alert.showAndWait();
+//
+//        // Go back to main menu
+//        SceneManager.switchTo("MainMenuUI.fxml");
     }
     
     private int generateConfirmationCode() {

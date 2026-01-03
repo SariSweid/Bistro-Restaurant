@@ -38,9 +38,6 @@
 
             <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
             <TextField fx:id="date" promptText="yyyy-MM-dd" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-            <Label text="Time:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <TextField fx:id="timeField" promptText="HH:mm" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         </children>
 
         <rowConstraints>
@@ -55,8 +52,8 @@
     <Button onAction="#onPreviousPage" prefWidth="100.0" style="-fx-background-radius: 15;" text="Previous Page" />
 
     <!-- Hidden by default: Available times & Confirm button -->
-    <Label text="Available Times:" fx:id="timesLabel" visible="false" managed="false" />
-    <ComboBox fx:id="timeComboBox" visible="false" managed="false" />
-    <Button text="Confirm Reservation" onAction="#onSubmitOrder" fx:id="confirmButton" visible="false" managed="false" />
+    <Label fx:id="timesLabel" managed="false" text="Available Times:" visible="false" />
+    <ComboBox fx:id="timeComboBox" managed="false" visible="false" />
+    <Button fx:id="confirmButton" managed="false" onAction="#onSubmitOrder" text="Confirm Reservation" visible="false" />
 
 </VBox>
