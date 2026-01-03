@@ -24,6 +24,8 @@ import Entities.SpecialDates;
 import Entities.Table;
 import Entities.User;
 import Entities.WaitingListEntry;
+import Entities.WeeklyOpeningHours;
+import enums.Day;
 import logicControllers.UserFactory;
 import Entities.Subscriber;
 
@@ -683,15 +685,19 @@ public class DBController {
 	     * Updates the OpeningHours an existing restaurantsettings in the database.
 	     *
 	     * @param r the SpecialDates object containing updated data
+	     * @param d the Day we want to change
 	     * @return true if the update succeeded, false otherwise
 	     */
-		public Boolean updateOpeningHours(RestaurantSettings r) {
+		public Boolean updateOpeningHours(RestaurantSettings r , Day d  ) {
 			
 			Connection con = getConnection(); //connect to DB
 			try (PreparedStatement pst = con.prepareStatement("UPDATE `restaurantsettings` SET OpeningHours = ? WHERE Day = ? ")){
 				
-				pst.setTime(1, java.sql.Time.valueOf(r.getOpeningTime()));
-				pst.setString(2, r.getDay().name()); 
+				
+				WeeklyOpeningHours wh = r.getOpeningHoursForDay(d);
+				
+				pst.setTime(1, java.sql.Time.valueOf(wh.getOpeningTime()));
+				pst.setString(2, d.name()); 
 			
 	            int rows = pst.executeUpdate();
 
@@ -707,15 +713,18 @@ public class DBController {
 	     * Updates the ClosingHours an existing restaurantsettings in the database.
 	     *
 	     * @param r the SpecialDates object containing updated data
+	     * @param d the Day we want to change
 	     * @return true if the update succeeded, false otherwise
 	     */
-		public Boolean updateClosingHours(RestaurantSettings r) {
+		public Boolean updateClosingHours(RestaurantSettings r , Day d) {
 			
 			Connection con = getConnection(); //connect to DB
 			try (PreparedStatement pst = con.prepareStatement("UPDATE `restaurantsettings` SET ClosingHours = ? WHERE Day = ? ")){
 				
-				pst.setTime(1, java.sql.Time.valueOf(r.getClosingTime()));
-				pst.setString(2, r.getDay().name()); 
+				WeeklyOpeningHours wh = r.getOpeningHoursForDay(d);
+				
+				pst.setTime(1, java.sql.Time.valueOf(wh.getClosingTime()));
+				pst.setString(2, d.name()); 
 				
 	            int rows = pst.executeUpdate();
 
@@ -734,15 +743,18 @@ public class DBController {
 	     * Updates the MaxTable an existing restaurantsettings in the database.
 	     *
 	     * @param r the SpecialDates object containing updated data
+	     * @param d the Day we want to change
 	     * @return true if the update succeeded, false otherwise
 	     */
-		public Boolean updateMaxTable(RestaurantSettings r) {
+		public Boolean updateMaxTable(RestaurantSettings r , Day d) {
 			
 			Connection con = getConnection(); //connect to DB
 			try (PreparedStatement pst = con.prepareStatement("UPDATE `restaurantsettings` SET MaxTables = ? WHERE Day = ? ")){
 				
+				
+				
 				pst.setInt(1, r.getMaxTables()); 
-				pst.setString(2, r.getDay().name()); 
+				pst.setString(2, d.name()); 
 				
 	            int rows = pst.executeUpdate();
 
