@@ -1,15 +1,24 @@
 package Entities;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Bill {
+/**
+ * Bill class represents the bill of the reservation
+ */
+public class Bill implements Serializable {
 	private int billID;
 	private int reservationID;
 	private double totalAmount;
 	private LocalDateTime issuedAt;
 	private boolean paid;
 	
-	//constructor for new bill
+	/**
+	 * constructor for new bill
+	 * @param billID
+	 * @param reservationID
+	 * @param totalAmount
+	 */
 	public Bill(int billID, int reservationID, double totalAmount) {
 		this.billID = billID;
 		this.reservationID = reservationID;
@@ -18,7 +27,14 @@ public class Bill {
 		this.paid = false;
 	}
 	
-	//constructor for bill from db
+	/**
+	 * constructor for bill from db
+	 * @param billID
+	 * @param reservationID
+	 * @param totalAmount
+	 * @param issuedAt
+	 * @param paid
+	 */
 	public Bill(int billID, int reservationID, double totalAmount, LocalDateTime issuedAt, boolean paid) {
 		this.billID = billID;
 		this.reservationID = reservationID;
@@ -49,6 +65,9 @@ public class Bill {
 		return this.paid;
 	}
 	
+	/**
+	 * sets the bill as paid
+	 */
 	public void markAsPaid() {
 		this.paid = true;
 	}

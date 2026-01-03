@@ -1,14 +1,20 @@
 package Entities;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 
 /**
- * base class for opening hours
+ * base class for opening hours, used for WeeklyOpeningHours and SpecialDates
  */
-public abstract class OpeningHours {
+public abstract class OpeningHours implements Serializable {
 	private LocalTime openingTime;
 	private LocalTime closingTime;
 	
+	/**
+	 * constructor for setting opening time and closing time of the restaurant
+	 * @param openingTime
+	 * @param closingTime
+	 */
 	protected OpeningHours(LocalTime openingTime, LocalTime closingTime) {
 		this.openingTime = openingTime;
 		this.closingTime = closingTime;

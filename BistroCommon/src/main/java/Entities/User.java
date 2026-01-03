@@ -19,7 +19,7 @@ public abstract class User implements Serializable {
 	private UserRole role;
 	
 	/**
-	 * 
+	 * constructor for new user
 	 * @param userID
 	 * @param email
 	 * @param phone
@@ -32,37 +32,25 @@ public abstract class User implements Serializable {
 		this.role = role;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
+	//getters
+	
 	public int getUserId() {
 	    return this.userID;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	public String getEmail() {
 		return this.email;
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
+
 	public String getPhone() {
 		return this.phone;
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
+
 	public UserRole getRole() {
 		return this.role;
 	}
+	
+	//setters
 	
 	public void setEmail(String newEmail) {
 		this.email = newEmail;

@@ -15,11 +15,19 @@ import enums.UserRole;
  */
 public class UserFactory {
 	
-	//private in order to prevent instantiation
+	/**
+	 * private constructor in order to prevent instantiation
+	 */
 	private UserFactory(){
 		
 	}
 	
+	/**
+	 * creates user object based on the result query from db and based on the role
+	 * @param rs holds the result of the query of getting a user from db
+	 * @return the user object depends on the role
+	 * @throws SQLException
+	 */
 	public static User createUser(ResultSet rs) throws SQLException {
 		int userID = rs.getInt("UserId");
 		String name = rs.getString("Name");

@@ -1,11 +1,24 @@
 package Entities;
 
+import java.io.Serializable;
+
 import enums.UserRole;
 
-public class RestaurantSupervisor extends User{
+/**
+ * RestaurantSupervisor represents a Restaurant Supervisor
+ */
+public class RestaurantSupervisor extends User implements Serializable {
 	private String name;
 	private String userName;
 	
+	/**
+	 * constructor for new Restaurant Supervisor
+	 * @param userID
+	 * @param name
+	 * @param email
+	 * @param phone
+	 * @param userName
+	 */
 	public RestaurantSupervisor(int userID, String name, String email, String phone, String userName) {
 		super(userID, email, phone, UserRole.SUPERVISOR);
 		this.name = name;

@@ -7,6 +7,9 @@ import java.util.Date;
 
 import enums.ReservationStatus;
 
+/**
+ * Reservation class represents a reservation in the restaurant
+ */
 public class Reservation implements Serializable {
 	
 	private int reservationID;
@@ -19,7 +22,7 @@ public class Reservation implements Serializable {
 	private LocalTime reservationTime; //future time the customer reserved a place
 	private LocalDate reservationPlacedDate; //the date the reservation was placed in the site
 	private LocalTime reservationPlacedTime; ///the time the reservation was placed in the site
-	private ReservationStatus status; //use after the prototype
+	private ReservationStatus status;
 	
 	/**
 	 * Constructor for new Reservation
@@ -164,7 +167,7 @@ public class Reservation implements Serializable {
 	//status methods
 	
 	/**
-	 * 
+	 * isReservationActive returns if the reservation is still active or not
 	 * @return True if the Reservation is Still Active, False else
 	 */
 	public boolean isReservationActive() {
@@ -172,7 +175,7 @@ public class Reservation implements Serializable {
 	}
 	
 	/**
-	 * 
+	 * isReservationCancelled returns if the reservation is cancelled or not
 	 * @return True if the Reservation is Cancelled, False else
 	 */
 	public boolean isReservationCancelled() {

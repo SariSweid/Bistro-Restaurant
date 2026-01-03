@@ -1,12 +1,26 @@
 package Entities;
 
+import java.io.Serializable;
+
 import enums.UserRole;
 
-public class Subscriber extends User{
+/**
+ * Subscriber class represents a subscriber in the restaurant
+ */
+public class Subscriber extends User implements Serializable {
 	private String name;
 	private String userName;
 	private int membershipCode;
 	
+	/**
+	 * constructor for a new subscriber
+	 * @param userID
+	 * @param name
+	 * @param email
+	 * @param phone
+	 * @param userName
+	 * @param membershipCode
+	 */
 	public Subscriber(int userID, String name, String email, String phone, String userName, int membershipCode) {
 		super(userID, email, phone, UserRole.SUBSCRIBER);
 		this.name = name;
