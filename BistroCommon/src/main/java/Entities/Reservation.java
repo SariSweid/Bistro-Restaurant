@@ -8,7 +8,6 @@ import java.util.Date;
 import enums.ReservationStatus;
 
 public class Reservation implements Serializable {
-
 	
 	private int reservationID;
 	private final int customerID;
@@ -22,7 +21,16 @@ public class Reservation implements Serializable {
 	private LocalTime reservationPlacedTime; ///the time the reservation was placed in the site
 	private ReservationStatus status; //use after the prototype
 	
-	//Constructor for creating a new reservation - use after prototype
+	/**
+	 * Constructor for new Reservation
+	 * @param reservationID
+	 * @param customerID
+	 * @param numOfGuests
+	 * @param confirmationCode
+	 * @param reservationDate
+	 * @param reservationTime
+	 * @param status
+	 */
 	public Reservation(int reservationID, int customerID, int numOfGuests, int confirmationCode, LocalDate reservationDate,
 					   LocalTime reservationTime, ReservationStatus status) {
 		this.reservationID = reservationID;
@@ -38,7 +46,20 @@ public class Reservation implements Serializable {
 		this.billID = null;
 	}
 	
-	//constructor for getting a reservation from the db
+	/**
+	 * Constructor for Reservation from db
+	 * @param reservationID
+	 * @param customerID
+	 * @param tableID
+	 * @param billID
+	 * @param numOfGuests
+	 * @param confirmationCode
+	 * @param reservationDate
+	 * @param reservationTime
+	 * @param reservationPlacedDate
+	 * @param reservationPlacedTime
+	 * @param status
+	 */
 	public Reservation(int reservationID, int customerID, Integer tableID, Integer billID, int numOfGuests,
 					   int confirmationCode, LocalDate reservationDate, LocalTime reservationTime,
 					   LocalDate reservationPlacedDate, LocalTime reservationPlacedTime, ReservationStatus status) {
@@ -142,10 +163,18 @@ public class Reservation implements Serializable {
 	
 	//status methods
 	
+	/**
+	 * 
+	 * @return True if the Reservation is Still Active, False else
+	 */
 	public boolean isReservationActive() {
 		return (this.status == ReservationStatus.CONFIRMED) || (this.status == ReservationStatus.PENDING);
 	}
 	
+	/**
+	 * 
+	 * @return True if the Reservation is Cancelled, False else
+	 */
 	public boolean isReservationCancelled() {
 		return this.status == ReservationStatus.CANCELLED;
 	}
