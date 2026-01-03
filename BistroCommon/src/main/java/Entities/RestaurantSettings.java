@@ -12,13 +12,12 @@ import enums.Day;
  */
 public class RestaurantSettings {
 	private static RestaurantSettings instance;
-	private Day day;
-	private LocalTime openingTime;
-	private LocalTime closingTime;
 	private int maxTables;
+	private List<WeeklyOpeningHours> weeklyOpeningHours;
 	private List<SpecialDates> specialDates;
 	
 	private RestaurantSettings() {
+		this.weeklyOpeningHours = new ArrayList<WeeklyOpeningHours>();
 		this.specialDates = new ArrayList<SpecialDates>();
 	}
 	
@@ -31,21 +30,12 @@ public class RestaurantSettings {
 	
 	//getters
 	
-	public Day getDay() {
-		return day;
-	}
-	
-	public LocalTime getOpeningTime() {
-		return this.openingTime;
-	}
-	
-
-	public LocalTime getClosingTime() {
-		return this.closingTime;
-	}
-	
 	public int getMaxTables() {
 		return this.maxTables;
+	}
+	
+	public List<WeeklyOpeningHours> getWeeklyOpeningHours(){
+		return this.weeklyOpeningHours;
 	}
 	
 	public List<SpecialDates> getSpecialDates(){
@@ -54,21 +44,12 @@ public class RestaurantSettings {
 	
 	//setters
 	
-	public void setDay(Day day) {
-		this.day = day;
-	}
-
-	
-	public void setOpeningTime(LocalTime newOpeningTime) {
-		this.openingTime = newOpeningTime;
-	}
-	
-	public void setClosingTime(LocalTime newClosingTime) {
-		this.closingTime = newClosingTime;
-	}
-	
 	public void setMaxTables(int newMaxTables) {
 		this.maxTables = newMaxTables;
+	}
+	
+	public WeeklyOpeningHours getOpeningHoursForDay(Day day) {
+		return this.weeklyOpeningHours.stream().filter(e -> e.getDay() == day).findFirst().orElse(null);
 	}
 	
 	public void addSpecialDate(SpecialDates specialDate) {

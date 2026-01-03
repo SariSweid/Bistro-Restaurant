@@ -3,16 +3,13 @@ package Entities;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class SpecialDates {
+public class SpecialDates extends OpeningHours{
 	private LocalDate date;
-	private LocalTime openingTime;
-	private LocalTime closingTime;
 	private String description;
 	
-	public SpecialDates(LocalDate date, LocalTime openingTime, LocalTime closingTime, String description) {
+	public SpecialDates(LocalTime openingTime, LocalTime closingTime, LocalDate date, String description) {
+		super(openingTime, closingTime);
 		this.date = date;
-		this.openingTime = openingTime;
-		this.closingTime = closingTime;
 		this.description = description;
 	}
 	
@@ -20,14 +17,6 @@ public class SpecialDates {
 	
 	public LocalDate getDate() {
 		return this.date;
-	}
-	
-	public LocalTime getOpeningTime() {
-		return this.openingTime;
-	}
-	
-	public LocalTime getClosingTime() {
-		return this.closingTime;
 	}
 	
 	public String getDescription() {
@@ -38,14 +27,6 @@ public class SpecialDates {
 	
 	public void setDate(LocalDate newDate) {
 		this.date = newDate;
-	}
-	
-	public void setOpeningTime(LocalTime newOpeningTime) {
-		this.openingTime = newOpeningTime;
-	}
-	
-	public void setClosingTime(LocalTime newClosingTime) {
-		this.closingTime = newClosingTime;
 	}
 	
 	public void setDescription(String newDescription) {
