@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -10,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="14.0" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.GuestMakeReservationController">
+<VBox alignment="CENTER" prefHeight="450.0" prefWidth="600.0" spacing="14.0" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.GuestMakeReservationController">
 
     <padding>
         <Insets bottom="30" left="40" right="40" top="30" />
@@ -21,7 +22,7 @@
             <Font size="26.0" />
         </font>
     </Label>
-    
+
     <GridPane hgap="10.0" vgap="8.0">
         <columnConstraints>
             <ColumnConstraints prefWidth="120.0" />
@@ -29,26 +30,33 @@
         </columnConstraints>
 
         <children>
-        	<Label text="Number of Diners:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <Label text="Number of Diners:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
             <TextField fx:id="NumberOfDiners" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-            
+
+            <Label text="Email / Phone:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="emailOrPhone" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
             <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                    <TextField fx:id="date" promptText="yyyy-mm-dd" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            
+            <TextField fx:id="date" promptText="yyyy-MM-dd" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
             <Label text="Time:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-					<TextField fx:id="timeField" promptText="HH:mm" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-         <Label text="Email/phone" GridPane.rowIndex="1" />
-         <TextField fx:id="emailorphone" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            
+            <TextField fx:id="timeField" promptText="HH:mm" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         </children>
-      <rowConstraints>
-         <RowConstraints />
-         <RowConstraints minHeight="10.0" prefHeight="30.0" />
-         <RowConstraints />
-         <RowConstraints />
-      </rowConstraints>
+
+        <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+        </rowConstraints>
     </GridPane>
-	<Button onAction="#onSubmitOrder" prefWidth="160.0" style="-fx-background-radius: 15;" text="Submit Order" />
-    <Button onAction="#onPreviousPage" prefWidth="100.0" style="-fx-background-radius: 15;" text="Previous page" />
+
+    <Button onAction="#onCheckAvailability" prefWidth="160.0" style="-fx-background-radius: 15;" text="Check Availability" />
+    <Button onAction="#onPreviousPage" prefWidth="100.0" style="-fx-background-radius: 15;" text="Previous Page" />
+
+    <!-- Hidden by default: Available times & Confirm button -->
+    <Label text="Available Times:" fx:id="timesLabel" visible="false" managed="false" />
+    <ComboBox fx:id="timeComboBox" visible="false" managed="false" />
+    <Button text="Confirm Reservation" onAction="#onSubmitOrder" fx:id="confirmButton" visible="false" managed="false" />
 
 </VBox>

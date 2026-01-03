@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 
+import Controllers.GuestMakeReservationController;
 import Controllers.MainMenuController;
 import Entities.Reservation;
 import client.GuestUpdateReservationUI;
@@ -13,6 +14,7 @@ import enums.ActionType;
 import enums.ReservationStatus;
 import messages.AddReservationRequest;
 import messages.GetAllReservationsRequest;
+import messages.GetAvailableTimesRequest;
 import messages.LoginRequest;
 import messages.RegisterRequest;
 import messages.UpdateReservationRequest;
@@ -27,6 +29,8 @@ public class ClientHandler extends AbstractClient {
     public static ClientHandler instance;
 
     private GuestUpdateReservationUI guestUI; // added by tamer for wiring
+    
+    private GuestMakeReservationController guestMakeReservationController;
     
     private MainMenuController mainMenuController;
 
@@ -45,14 +49,11 @@ public class ClientHandler extends AbstractClient {
         openConnection();
         System.out.println(">> Connected to server at " + host + ":" + port);
         handlers = new HashMap<>();
-        handlers.put(ActionType.LOGIN, new LoginHandler());
-        handlers.put(ActionType.ADD_USER, new RegisterHandler());
-        
+        initializeHandlers();
     }
     
     public void setGuestUI(GuestUpdateReservationUI guestUI) { // added setter tamer
         this.guestUI = guestUI;
-        initializeHandlers();
     }
     
     // Return the active ClientHandler instance
@@ -65,9 +66,15 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler(guestUI));
         // When Server confirms update --> Run UpdateConfirmHandler
         handlers.put(ActionType.UPDATE_RESERVATION, new UpdateReservationHandler(guestUI));
+        // When Client login
+        handlers.put(ActionType.LOGIN, new LoginHandler());
+        // When Server add user
+        handlers.put(ActionType.ADD_USER, new RegisterHandler());
         // When Server add reservation --> Run AddReservationHandler
-        handlers.put(ActionType.ADD_RESERVATION, new AddReservationHandler(guestUI));
-
+        handlers.put(ActionType.ADD_RESERVATION, new AddReservationHandler(guestMakeReservationController));
+        // When Server returns Available times
+        handlers.put(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesHandler(guestMakeReservationController));
+        
     }
     
     private void sendRequest(Message msg) {
@@ -100,6 +107,10 @@ public class ClientHandler extends AbstractClient {
 
     public void updateReservation(int id, LocalDate date,LocalTime time , int guests, ReservationStatus status) {
     		sendRequest(new Message(ActionType.UPDATE_RESERVATION, new UpdateReservationRequest(id, date, time, guests, status)));
+    }
+    
+    public void getAvailableTimes(LocalDate date, int guests) {
+        sendRequest(new Message(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesRequest(date, guests)));
     }
     
 

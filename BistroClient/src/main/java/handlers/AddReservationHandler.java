@@ -1,6 +1,8 @@
 package handlers;
 
+import Controllers.GuestMakeReservationController;
 import client.GuestUpdateReservationUI;
+import common.ServerResponse;
 import javafx.application.Platform;
 
 /**
@@ -9,21 +11,24 @@ import javafx.application.Platform;
  */
 public class AddReservationHandler implements ResponseHandler {
 
-    private final GuestUpdateReservationUI ui;
+	private final GuestMakeReservationController controller;
 
-    public AddReservationHandler(GuestUpdateReservationUI ui) {
-        this.ui = ui;
+    public AddReservationHandler(GuestMakeReservationController controller) {
+        this.controller = controller;
     }
 
     @Override
     public void handle(Object data) {
-    		Platform.runLater(() -> {
-            if ("ADD_OK".equals(data)) {
-                ui.showMessage("Reservation added successfully!");
-            } else if ("ADD_FAIL".equals(data)) {
-                ui.showMessage("Failed to add reservation.");
+        Platform.runLater(() -> {
+            if (data instanceof ServerResponse res) {
+                if (res.isSuccess()) {
+                    controller.showConfirmation("Reservation added successfully!\nConfirmation code: " +
+                            ((res.getData() instanceof Entities.Reservation r) ? r.getConfirmationCode() : "N/A"));
+                } else {
+                    controller.showError("Failed to add reservation: " + res.getMessage());
+                }
             } else {
-                ui.showMessage("Unexpected server response for Add Reservation.");
+                controller.showError("Unexpected server response for Add Reservation.");
             }
         });
     }
