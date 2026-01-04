@@ -314,32 +314,29 @@ public class DBController {
 	    }
 	    
 	    
-	    
 	    /**
-	     * delete a reservation from the database.
+	     * Cancel a reservation in the database by setting its status to 'CANCELLED'.
 	     * The database auto-generates reservationID.
-	     * Delete the reservation object with the assigned ID.
+	     * This method updates the reservation object with the given ID.
 	     *
-	     * @param r the reservation to Delete
-	     * @return true if Delete succeeded, false otherwise
+	     * @param reservationID the ID of the reservation to cancel
+	     * @return true if the cancellation succeeded, false otherwise
 	     */
 	    public boolean deleteReservation(int reservationID) {
 	        Connection con = getConnection(); 
 
 	        try (PreparedStatement pst = con.prepareStatement(
-	                "DELETE FROM `reservation` WHERE reservationID = ?"
-	        )) {
+	                "UPDATE `reservation` SET status = 'CANCELLED' WHERE reservationID = ?")) {
 	            pst.setInt(1, reservationID); 
 	            int affectedRows = pst.executeUpdate(); 
 
 	            return affectedRows > 0; 
 
 	        } catch (SQLException e) {
-	            e.printStackTrace(); // 
+	            e.printStackTrace();  
 	            return false;
 	        }
 	    }
-
 
 		
 	    
