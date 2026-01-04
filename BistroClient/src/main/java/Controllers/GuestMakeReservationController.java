@@ -12,7 +12,7 @@ public class GuestMakeReservationController extends BaseReservationController {
 
     @FXML
 	public void initialize() {
-        // חיבור השדות ל-Base
+      
         this.numberOfDinersField = NumberOfDiners;
 
 
