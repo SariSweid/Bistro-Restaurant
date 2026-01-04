@@ -218,7 +218,7 @@ public class DBController {
 	    	List<Reservation> reservations = new ArrayList<>(); // made new list to return
 	    	Connection con = getConnection(); //connect to DB
 	    	
-	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation`")){ // ask from DB the all Orders
+	    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation`")){ // ask from DB the all Orders 
 	    		
 	    		ResultSet rs = pst.executeQuery();
 	    		
@@ -278,12 +278,13 @@ public class DBController {
 	        Connection con = getConnection();
 
 	        try (PreparedStatement pst = con.prepareStatement(
-	                "INSERT INTO `reservation` " +
+	                "INSERT INTO `reservation` " + 
 	                "(customerID, tableId, billId, numOfGuests, confirmationCode, reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime, status) " +
 	                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 	                java.sql.Statement.RETURN_GENERATED_KEYS // Allows us to retrieve auto-generated reservationID
 	        )) {
 
+	        	
 	            pst.setInt(1, r.getCustomerId());
 	            pst.setObject(2, r.getTableID(), java.sql.Types.INTEGER);
 	            pst.setObject(3, r.getBillID(), java.sql.Types.INTEGER);

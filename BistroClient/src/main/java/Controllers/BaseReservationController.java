@@ -7,6 +7,7 @@ import java.util.List;
 import Entities.Reservation;
 import enums.ReservationStatus;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -16,14 +17,25 @@ import util.SceneManager;
 import handlers.ClientHandler;
 
 public abstract class BaseReservationController {
-
+	@FXML
     protected ComboBox<LocalTime> timeComboBox;
+	
+	@FXML
     protected DatePicker datePicker;
+	
+	@FXML
     protected Button confirmButton;
+	
+	@FXML
     protected TextField numberOfDinersField;
 
     // The customer ID for this reservation
     protected int customerId;
+    
+    @FXML
+    public void initialize() {
+        ClientHandler.getClient().setActiveReservationController(this);
+    }
 
     // --- Check Availability ---
     protected void checkAvailability() {
@@ -105,7 +117,7 @@ public abstract class BaseReservationController {
         LocalDate resDate = datePicker.getValue();
 
         Reservation r = new Reservation(
-                0,              // server assigns
+                0,             // server assigns
                 customerId,     // guest ID or subscriber ID
                 diners,
                 0,              // confirmation code

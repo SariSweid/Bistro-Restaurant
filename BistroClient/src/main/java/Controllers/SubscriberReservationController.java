@@ -8,31 +8,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import util.SceneManager;
 
 public class SubscriberReservationController extends BaseReservationController {
 
-    @FXML
-    private TextField NumberOfDiners;
-
-    @FXML
-    private DatePicker date;
-
-    @FXML
-    private ComboBox<LocalTime> timeField;
-
-    @FXML
-    private Button confirmButton;
 
     private Subscriber currentSubscriber;
 
-    @FXML
-    private void initialize() {
-        this.customerId = currentSubscriber.getUserId();
-        this.datePicker = date;
-        this.timeComboBox = timeField;
-        this.confirmButton = confirmButton;
-        this.numberOfDinersField = NumberOfDiners;
-    }
+
 
     public void setSubscriber(Subscriber s) {
         this.currentSubscriber = s;
@@ -47,5 +30,11 @@ public class SubscriberReservationController extends BaseReservationController {
     @FXML
     private void onSubmitOrder() {
         submitReservation();
+    }
+    
+    
+    @FXML
+    private void onPreviousPage() {
+        SceneManager.switchTo("SubscriberUI.fxml");
     }
 }

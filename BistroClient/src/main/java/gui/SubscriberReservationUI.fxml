@@ -32,7 +32,7 @@
 
         <children>
         	<Label text="Number of Diners:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <TextField fx:id="NumberOfDiners" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <TextField fx:id="numberOfDinersField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
             
          <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
           	<DatePicker fx:id="datePicker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -48,7 +48,7 @@
       </rowConstraints>
     </GridPane>
     <Button onAction="#onCheckAvailability" prefWidth="160.0" style="-fx-background-radius: 15;" text="Check Availability" />
-	<Button onAction="#onSubmitOrder" prefWidth="160.0" style="-fx-background-radius: 15;" text="Submit Order" />
+	<Button fx:id="confirmButton" onAction="#onSubmitOrder" prefWidth="160.0" style="-fx-background-radius: 15;" text="Submit Order" />
     <Button onAction="#onPreviousPage" prefWidth="100.0" style="-fx-background-radius: 15;" text="Previous page" />
 
 </VBox>
