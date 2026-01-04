@@ -5,19 +5,16 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 
+import Controllers.BaseReservationController;
 import Controllers.GuestMakeReservationController;
 import Controllers.MainMenuController;
+import Controllers.SubscriberReservationController;
 import Entities.Reservation;
 import client.GuestUpdateReservationUI;
 import common.Message;
 import enums.ActionType;
 import enums.ReservationStatus;
-import messages.AddReservationRequest;
-import messages.GetAllReservationsRequest;
-import messages.GetAvailableTimesRequest;
-import messages.LoginRequest;
-import messages.RegisterRequest;
-import messages.UpdateReservationRequest;
+import messages.*;
 import src.ocsf.client.AbstractClient;
 
 public class ClientHandler extends AbstractClient {
@@ -30,27 +27,11 @@ public class ClientHandler extends AbstractClient {
 
     private GuestUpdateReservationUI guestUI; // added by tamer for wiring
     
-    public GuestMakeReservationController getGuestMakeReservationController() {
-		return guestMakeReservationController;
-	}
-
-	public void setGuestMakeReservationController(GuestMakeReservationController guestMakeReservationController) {
-		this.guestMakeReservationController = guestMakeReservationController;
-	}
-
-
-	private GuestMakeReservationController guestMakeReservationController;
+    // --- Keep track of the active reservation controller (Guest or Subscriber) ---
+    private BaseReservationController activeReservationController;
     
     private MainMenuController mainMenuController;
 
-    public void setMainMenuController(MainMenuController controller) {
-        this.mainMenuController = controller;
-    }
-
-    public MainMenuController getMainMenuController() {
-        return mainMenuController;
-    }
-    
     // Constructor
     public ClientHandler(String host, int port) throws IOException {
         super(host, port);
@@ -61,6 +42,24 @@ public class ClientHandler extends AbstractClient {
         initializeHandlers();
     }
     
+    public void setMainMenuController(MainMenuController controller) {
+        this.mainMenuController = controller;
+    }
+
+    public MainMenuController getMainMenuController() {
+        return mainMenuController;
+    }
+    
+    // Setter & Getter for active controller
+    public void setActiveReservationController(BaseReservationController controller) {
+        this.activeReservationController = controller;
+    }
+
+    public BaseReservationController getActiveReservationController() {
+        return this.activeReservationController;
+    }
+ 
+    
     public void setGuestUI(GuestUpdateReservationUI guestUI) { // added setter tamer
         this.guestUI = guestUI;
     }
@@ -69,6 +68,7 @@ public class ClientHandler extends AbstractClient {
     public static ClientHandler getClient() { 
     		return instance;
     	}
+    
     
     private void initializeHandlers() {
         // When Server sends reservations --> Run GetAllReservationsHandler
@@ -82,7 +82,9 @@ public class ClientHandler extends AbstractClient {
         // When Server add reservation --> Run AddReservationHandler
         handlers.put(ActionType.ADD_RESERVATION, new AddReservationHandler());
         // When Server returns Available times
-        handlers.put(ActionType.GET_AVAILABLE_TIMES,new GetAvailableTimesHandler());
+        handlers.put(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesHandler());
+        // When Server returns nearest available times
+        handlers.put(ActionType.GET_NEAREST_TIMES, new GetNearestAvailableTimesHandler());
         
     }
     
@@ -122,6 +124,11 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesRequest(date, guests)));
     }
     
+    public void getNearestAvailableTimes(LocalDate date, int guests) {
+        sendRequest(new Message(ActionType.GET_NEAREST_TIMES, new GetNearestAvailableTimesRequest(date, guests)));
+    }
+
+    
 
     // ==== RECEIVE RESPONSE ====
     @Override
@@ -144,5 +151,6 @@ public class ClientHandler extends AbstractClient {
             awaitResponse = false;
         }
     }
+
 }
 

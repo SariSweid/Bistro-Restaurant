@@ -1,5 +1,6 @@
 package util;
 
+import Controllers.BaseReservationController;
 import Controllers.GuestMakeReservationController;
 import handlers.ClientHandler;
 import javafx.fxml.FXMLLoader;
@@ -25,10 +26,9 @@ public class SceneManager {
             Object controller = loader.getController();
 
             if (controller instanceof GuestMakeReservationController) {
-                ClientHandler.getClient()
-                        .setGuestMakeReservationController(
-                                (GuestMakeReservationController) controller
-                        );
+            			ClientHandler.getClient().setActiveReservationController(
+                        (BaseReservationController) controller
+                    );
             }
 
             stage.setScene(new Scene(root));

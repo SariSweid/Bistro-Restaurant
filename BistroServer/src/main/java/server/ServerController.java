@@ -92,8 +92,11 @@ public class ServerController extends AbstractServer {
         // Command #4: Register
         commands.put(ActionType.ADD_USER, new RegisterCommand());
         
-        //Command #5: Get all available times  // <- ADDED THIS
+        // Command #5: Get all available times  // <- ADDED THIS
         commands.put(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesCommand());
+        
+        // Command #6: Get nearest available times (alternatives) <- ADDED THIS
+        commands.put(ActionType.GET_NEAREST_TIMES, new GetNearestAvailableTimesCommand());
     }
     
     /**
