@@ -312,6 +312,34 @@ public class DBController {
 	            return false;
 	        }
 	    }
+	    
+	    
+	    
+	    /**
+	     * delete a reservation from the database.
+	     * The database auto-generates reservationID.
+	     * Delete the reservation object with the assigned ID.
+	     *
+	     * @param r the reservation to Delete
+	     * @return true if Delete succeeded, false otherwise
+	     */
+	    public boolean deleteReservation(int reservationID) {
+	        Connection con = getConnection(); 
+
+	        try (PreparedStatement pst = con.prepareStatement(
+	                "DELETE FROM `reservation` WHERE reservationID = ?"
+	        )) {
+	            pst.setInt(1, reservationID); 
+	            int affectedRows = pst.executeUpdate(); 
+
+	            return affectedRows > 0; 
+
+	        } catch (SQLException e) {
+	            e.printStackTrace(); // 
+	            return false;
+	        }
+	    }
+
 
 		
 	    
