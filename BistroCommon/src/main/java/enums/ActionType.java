@@ -6,6 +6,7 @@ public enum ActionType {
     ADD_RESERVATION,
     UPDATE_RESERVATION,
     GET_AVAILABLE_TIMES,
+    GET_NEAREST_TIMES,
     
     // User
     LOGIN,

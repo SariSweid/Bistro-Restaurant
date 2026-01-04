@@ -1,16 +1,17 @@
 package handlers;
 
+import Controllers.BaseReservationController;
 import Controllers.GuestMakeReservationController;
 import common.ServerResponse;
 import javafx.application.Platform;
 import util.SceneManager;
 
 public class AddReservationHandler implements ResponseHandler {
-
+	
     @Override
     public void handle(Object data) {
-        GuestMakeReservationController controller =
-            ClientHandler.getClient().getGuestMakeReservationController();
+    	
+    		BaseReservationController controller = ClientHandler.getClient().getActiveReservationController();
 
         if (controller == null) {
             System.out.println("ERROR: GuestMakeReservationController is null");

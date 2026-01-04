@@ -2,6 +2,7 @@ package logicControllers;
 
 import Entities.Reservation;
 import Entities.Table;
+import messages.AvailableDateTimes;
 import messages.UpdateReservationRequest;
 import DB.DBController;
 import java.time.LocalDate;
@@ -16,7 +17,7 @@ public class ReservationController {
 	
     private static final LocalTime OPEN_TIME = LocalTime.of(10, 0);  // From 10:00
     private static final LocalTime CLOSE_TIME = LocalTime.of(22, 0);  // To 22:00
-    private static final int RESERVATION_DURATION = 30;  // Minutes
+    private static final int RESERVATION_DURATION = 2;  // Hours
     
     private final DBController db;
     
@@ -37,7 +38,7 @@ public class ReservationController {
     		
         LocalTime time = OPEN_TIME;
 
-        while (!time.isAfter(CLOSE_TIME.minusMinutes(RESERVATION_DURATION))) {
+        while (!time.isAfter(CLOSE_TIME.minusHours(RESERVATION_DURATION))) {
 
 	        	if (findAvailableTable(date, time, guests, tables) != null) {
 	                available.add(time);
@@ -48,6 +49,32 @@ public class ReservationController {
 
         return available;
     }
+    
+    
+    // ======================
+    // Return alternative available times
+    // ======================
+    public List<AvailableDateTimes> getNearestAvailableDates(LocalDate requestedDate, int guests) {
+
+        List<AvailableDateTimes> result = new ArrayList<>();
+
+        for (int i = 1; i <= 2; i++) {
+            LocalDate dateToCheck = requestedDate.plusDays(i);
+
+            List<LocalTime> times =
+                getAvailableTimes(dateToCheck, guests);
+
+            if (!times.isEmpty()) {
+                result.add(
+                    new AvailableDateTimes(dateToCheck, times)
+                );
+                break;
+            }
+        }
+
+        return result;
+    }
+
     
     // ======================
     // Find a table for given time
@@ -67,8 +94,8 @@ public class ReservationController {
     	        		if (r.getTableID() != null && r.getTableID().equals(table.getTableID())) {
     	                // Check overlap
     	                LocalTime rStart = r.getReservationTime();
-    	                LocalTime rEnd = rStart.plusMinutes(RESERVATION_DURATION); // End time of existing reservation
-    	                LocalTime newEnd = time.plusMinutes(RESERVATION_DURATION); // End time of the new reservation
+    	                LocalTime rEnd = rStart.plusHours(RESERVATION_DURATION); // End time of existing reservation
+    	                LocalTime newEnd = time.plusHours(RESERVATION_DURATION); // End time of the new reservation
 
     	                // If the new reservation starts before existing ends AND
     	                // ends after existing starts, then it overlaps
