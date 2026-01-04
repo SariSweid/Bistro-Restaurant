@@ -8,6 +8,7 @@ public class GuestMakeReservationController extends BaseReservationController {
 
     @FXML
     private TextField NumberOfDiners, emailOrPhone;
+	private int customerId;
 
     @FXML
 	public void initialize() {

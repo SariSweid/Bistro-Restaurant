@@ -31,6 +31,17 @@ public class ClientHandler extends AbstractClient {
     private BaseReservationController activeReservationController;
     
     private MainMenuController mainMenuController;
+    
+    private int currentUserId;
+    
+    
+    public void setCurrentUserId(int id) {
+        this.currentUserId = id;
+    }
+
+    public int getCurrentUserId() {
+        return currentUserId;
+    }
 
     // Constructor
     public ClientHandler(String host, int port) throws IOException {
@@ -104,6 +115,7 @@ public class ClientHandler extends AbstractClient {
     }
     
     public void login(int userID, int membershipCode) {
+    	setCurrentUserId(userID);
         sendRequest(new Message(ActionType.LOGIN, new LoginRequest(userID, membershipCode)));
     }
     

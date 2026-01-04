@@ -13,14 +13,7 @@ import util.SceneManager;
 public class SubscriberReservationController extends BaseReservationController {
 
 
-    private Subscriber currentSubscriber;
 
-
-
-    public void setSubscriber(Subscriber s) {
-        this.currentSubscriber = s;
-        this.customerId = s.getUserId(); // real subscriber ID
-    }
 
     @FXML
     private void onCheckAvailability() {

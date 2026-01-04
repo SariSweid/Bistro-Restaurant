@@ -29,9 +29,6 @@ public abstract class BaseReservationController {
 	@FXML
     protected TextField numberOfDinersField;
 
-    // The customer ID for this reservation
-    protected int customerId;
-    
     @FXML
     public void initialize() {
         ClientHandler.getClient().setActiveReservationController(this);
@@ -115,6 +112,9 @@ public abstract class BaseReservationController {
 
         int diners = Integer.parseInt(numberOfDinersField.getText());
         LocalDate resDate = datePicker.getValue();
+        
+        
+        int customerId = ClientHandler.getClient().getCurrentUserId();
 
         Reservation r = new Reservation(
                 0,             // server assigns
