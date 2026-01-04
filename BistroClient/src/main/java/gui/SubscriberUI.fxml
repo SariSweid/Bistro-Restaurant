@@ -22,6 +22,7 @@
     <Button onAction="#onNewReservation" prefWidth="260" style="-fx-background-radius: 15;" text="New Reservation" />
     
     <Button onAction="#onEditPersonalInfo" prefWidth="260" style="-fx-background-radius: 15;" text="Edit Personal info" />
+    <Button onAction="#onCancelOrder" prefWidth="260" style="-fx-background-radius: 15;" text="Cancel Order" />
     <Button onAction="#onLogOut" prefWidth="100" text="Log Out" />
 
 </VBox>

@@ -1,6 +1,7 @@
 package Controllers;
 
 import java.time.LocalDate;
+import javafx.scene.control.DateCell;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -32,6 +33,33 @@ public abstract class BaseReservationController {
     @FXML
     public void initialize() {
         ClientHandler.getClient().setActiveReservationController(this);
+    }
+    
+    // Limit DatePicker one hour from now TO one month
+    protected void setupDatePickerLimits() {
+
+        LocalDate today = LocalDate.now();
+        LocalDate maxDate = today.plusMonths(1);
+
+        datePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+
+                if (empty || date == null) {
+                    setDisable(true);
+                    return;
+                }
+                
+                LocalDate today = LocalDate.now();
+                LocalDate maxDate = today.plusMonths(1);
+
+                // Disable past dates and dates beyond 1 month
+                if (date.isBefore(today) || date.isAfter(maxDate)) {
+                    setDisable(true);
+                }
+            }
+        });
     }
 
     // --- Check Availability ---
@@ -132,21 +160,12 @@ public abstract class BaseReservationController {
 
     // --- Helper ---
     public void showError(String msg) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
+        SceneManager.showError(msg);
     }
     
     public void showConfirmation(String msg) {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-        alert.setTitle("Reservation Confirmed");
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
-        // Optionally return to main menu
-        SceneManager.switchTo("MainMenuUI.fxml");
+        SceneManager.showInfo(msg);
+        SceneManager.switchTo("MainMenuUI.fxml"); // optional: return to main menu
     }
 
 }

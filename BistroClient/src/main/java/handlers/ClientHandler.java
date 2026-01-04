@@ -6,9 +6,8 @@ import java.time.LocalTime;
 import java.util.HashMap;
 
 import Controllers.BaseReservationController;
-import Controllers.GuestMakeReservationController;
+import Controllers.CancelReservationController;
 import Controllers.MainMenuController;
-import Controllers.SubscriberReservationController;
 import Entities.Reservation;
 import client.GuestUpdateReservationUI;
 import common.Message;
@@ -29,6 +28,8 @@ public class ClientHandler extends AbstractClient {
     
     // --- Keep track of the active reservation controller (Guest or Subscriber) ---
     private BaseReservationController activeReservationController;
+    
+    private CancelReservationController activeCancelController;
     
     private MainMenuController mainMenuController;
     
@@ -61,7 +62,7 @@ public class ClientHandler extends AbstractClient {
         return mainMenuController;
     }
     
-    // Setter & Getter for active controller
+    // Setter & Getter for active makeReservation controller
     public void setActiveReservationController(BaseReservationController controller) {
         this.activeReservationController = controller;
     }
@@ -70,6 +71,15 @@ public class ClientHandler extends AbstractClient {
         return this.activeReservationController;
     }
  
+    // Setter & Getter for active cancel controller
+    public void setActiveCancelController(CancelReservationController controller) {
+        this.activeCancelController = controller;
+    }
+
+    public CancelReservationController getActiveCancelController() {
+        return activeCancelController;
+    }
+
     
     public void setGuestUI(GuestUpdateReservationUI guestUI) { // added setter tamer
         this.guestUI = guestUI;
@@ -96,6 +106,10 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesHandler());
         // When Server returns nearest available times
         handlers.put(ActionType.GET_NEAREST_TIMES, new GetNearestAvailableTimesHandler());
+        // When Server returns user (confirmed) reservations 
+        handlers.put(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsHandler());
+        // When Server cancel reservation
+        handlers.put(ActionType.CANCEL_RESERVATION, new CancelReservationHandler());
         
     }
     
@@ -126,6 +140,14 @@ public class ClientHandler extends AbstractClient {
     public void addReservation(Reservation reservation) {
         awaitResponse = true;
         sendRequest(new Message(ActionType.ADD_RESERVATION, new AddReservationRequest(reservation)));
+    }
+    
+    public void getUserReservations(int userId) {
+        sendRequest(new Message(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsRequest(userId)));
+    }
+    
+    public void cancelReservation(int reservationId) {
+        sendRequest(new Message(ActionType.CANCEL_RESERVATION, new CancelReservationRequest(reservationId)));
     }
 
     public void updateReservation(int id, LocalDate date,LocalTime time , int guests, ReservationStatus status) {

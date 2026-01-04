@@ -6,11 +6,11 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="306.0" prefWidth="327.0" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.GuestReservationcontroller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="306.0" prefWidth="327.0" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.GuestReservationController">
    <children>
-      <Button layoutX="35.0" layoutY="101.0" mnemonicParsing="false" onAction="#onordertable" style="-fx-background-radius: 15;" text="Order Table" />
+      <Button layoutX="35.0" layoutY="101.0" mnemonicParsing="false" onAction="#onOrderTable" style="-fx-background-radius: 15;" text="Order Table" />
       <Label layoutX="5.0" layoutY="7.0" style="-fx-font-size: 25; -fx-font-weight: bold;" text="Hello!" />
-      <Button layoutX="143.0" layoutY="101.0" mnemonicParsing="false" onAction="#onupdateorder" style="-fx-background-radius: 15;" text="Update Order" />
+      <Button layoutX="143.0" layoutY="101.0" mnemonicParsing="false" onAction="#onCancelOrder" style="-fx-background-radius: 15;" text="Cancel Order" />
       <ImageView fitHeight="116.0" fitWidth="119.0" layoutX="211.0" layoutY="190.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../../../../../../../../BistroLogo.png" />

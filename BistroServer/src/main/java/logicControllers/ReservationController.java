@@ -38,6 +38,25 @@ public class ReservationController {
     		
         LocalTime time = OPEN_TIME;
 
+        // If reservation is for TODAY → start from now + 1 hour
+        if (date.equals(LocalDate.now())) {
+            LocalTime oneHourFromNow = LocalTime.now().plusHours(1);
+
+            if (oneHourFromNow.isAfter(time)) {
+                // round up to next 30-minute slot
+                int minute = oneHourFromNow.getMinute();
+                if (minute > 0 && minute <= 30) {
+                    oneHourFromNow = oneHourFromNow.withMinute(30);
+                } else if (minute > 30) {
+                    oneHourFromNow = oneHourFromNow.plusHours(1).withMinute(0);
+                } else {
+                    oneHourFromNow = oneHourFromNow.withMinute(0);
+                }
+
+                time = oneHourFromNow;
+            }
+        }
+        
         while (!time.isAfter(CLOSE_TIME.minusHours(RESERVATION_DURATION))) {
 
 	        	if (findAvailableTable(date, time, guests, tables) != null) {
@@ -177,9 +196,28 @@ public class ReservationController {
        return db.insertReservation(r);
    }
    
-   
    private int generateConfirmationCode() {
        return 100000 + new java.util.Random().nextInt(900000);
    }
+   
+   
+    /**
+    * Cancel reservation. Returns true on success.
+    */
+   public boolean cancelReservation(int reservationId) {
+
+	    Reservation r = db.GetReservation(reservationId);
+	    if (r == null) return false;
+
+	    r.setStatus(enums.ReservationStatus.CANCELLED);
+
+	    return db.updateReservation(r);
+	}
+   
+   
+   public List<Reservation> getReservationsByCustomer(int customerId) {
+	    return db.getReservationsByCustomer(customerId);
+	}
+
    
 }

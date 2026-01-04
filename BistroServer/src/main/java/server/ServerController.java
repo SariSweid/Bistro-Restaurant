@@ -97,6 +97,12 @@ public class ServerController extends AbstractServer {
         
         // Command #6: Get nearest available times (alternatives) <- ADDED THIS
         commands.put(ActionType.GET_NEAREST_TIMES, new GetNearestAvailableTimesCommand());
+        
+        // Command #7: Get all user reservations (active)
+        commands.put(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsCommand());
+        
+        // Command #8: Cancel Reservation
+        commands.put(ActionType.CANCEL_RESERVATION, new CancelReservationCommand());
     }
     
     /**

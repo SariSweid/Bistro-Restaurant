@@ -41,6 +41,11 @@ public class SubscriberController {
     }
 
     
+    @FXML
+    private void onCancelOrder() {
+    		SceneManager.switchTo("CancelOrderUI.fxml");
+    }
+    
     
     public int getUserId() {
         return userId;

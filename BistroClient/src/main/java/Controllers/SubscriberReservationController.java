@@ -12,8 +12,10 @@ import util.SceneManager;
 
 public class SubscriberReservationController extends BaseReservationController {
 
-
-
+	@FXML
+	public void initialize() {
+		setupDatePickerLimits();
+	}
 
     @FXML
     private void onCheckAvailability() {

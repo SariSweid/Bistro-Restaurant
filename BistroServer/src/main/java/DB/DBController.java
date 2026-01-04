@@ -208,6 +208,39 @@ public class DBController {
 		}
 
 	    
+		// Retrieves all reservation for a specific customer
+		public List<Reservation> getReservationsByCustomer(int customerId) {
+		    List<Reservation> list = new ArrayList<>();
+		    String sql = "SELECT * FROM reservation " +
+		                 "WHERE customerID = ? AND status IN ('CONFIRMED','PENDING','SEATED')";
+
+		    try (Connection con = getConnection();
+		         PreparedStatement pst = con.prepareStatement(sql)) {
+		        pst.setInt(1, customerId);
+
+		        ResultSet rs = pst.executeQuery();
+		        while (rs.next()) {
+		            list.add(new Reservation(
+		                rs.getInt("reservationID"),
+		                rs.getInt("customerID"),
+		                rs.getInt("TableId"),
+		                rs.getInt("BillId"),
+		                rs.getInt("numOfGuests"),
+		                rs.getInt("confirmationCode"),
+		                rs.getDate("reservationDate").toLocalDate(),
+		                rs.getTime("reservationTime").toLocalTime(),
+		                rs.getDate("reservationPlacedDate").toLocalDate(),
+		                rs.getTime("reservationPlacedTime").toLocalTime(),
+		                enums.ReservationStatus.valueOf(rs.getString("status"))
+		            ));
+		        }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+		    return list;
+		}
+
+		
 	    /**
 	     * Retrieves all reservations from the database.
 	     *
@@ -321,7 +354,7 @@ public class DBController {
 	     *
 	     * @param reservationID the ID of the reservation to cancel
 	     * @return true if the cancellation succeeded, false otherwise
-	     */
+	     
 	    public boolean deleteReservation(int reservationID) {
 	        Connection con = getConnection(); 
 
@@ -337,7 +370,9 @@ public class DBController {
 	            return false;
 	        }
 	    }
-
+	    
+	    NOT NEEDED FOR NOW...
+		*/
 		
 	    
 	    

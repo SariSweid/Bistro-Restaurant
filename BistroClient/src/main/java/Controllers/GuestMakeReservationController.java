@@ -15,9 +15,10 @@ public class GuestMakeReservationController extends BaseReservationController {
       
         this.numberOfDinersField = NumberOfDiners;
 
-
         // Set dummy ID for guest
         this.customerId = 1;
+        
+        setupDatePickerLimits();
     }
 
     @FXML
