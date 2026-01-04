@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -37,7 +38,7 @@
             <TextField fx:id="emailOrPhone" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
             <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <TextField fx:id="date" promptText="yyyy-MM-dd" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <DatePicker fx:id="datePicker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
         </children>
 
         <rowConstraints>

@@ -11,6 +11,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import util.SceneManager;
 import handlers.ClientHandler;
@@ -18,8 +20,11 @@ import handlers.ClientHandler;
 public class GuestMakeReservationController {
 
     @FXML
-    private TextField NumberOfDiners, date, timeField, emailOrPhone;
+    private TextField NumberOfDiners, emailOrPhone;
 
+    @FXML
+    private DatePicker datePicker;
+    
     @FXML
     private ComboBox<LocalTime> timeComboBox;
 
@@ -27,7 +32,7 @@ public class GuestMakeReservationController {
     private Button confirmButton;
 
     @FXML
-    private javafx.scene.control.Label timesLabel;
+    private Label timesLabel;
 
     // --- Previous Page ---
     @FXML
@@ -38,13 +43,20 @@ public class GuestMakeReservationController {
     // --- Check Availability ---
     @FXML
     private void onCheckAvailability() {
+    	
         int diners;
-        LocalDate resDate;
+        LocalDate resDate = datePicker.getValue();
+        
+        if (resDate == null) {
+            showError("Please select a valid date.");
+            return;
+        }
+        
         try {
             diners = Integer.parseInt(NumberOfDiners.getText());
-            resDate = LocalDate.parse(date.getText());
+            if (diners <= 0) throw new NumberFormatException();
         } catch (Exception e) {
-            showError("Please enter a valid number of diners and date (yyyy-MM-dd)");
+            showError("Please enter a valid number of diners");
             return;
         }
 
@@ -61,7 +73,7 @@ public class GuestMakeReservationController {
     public void updateAvailableTimes(List<LocalTime> times) {
         Platform.runLater(() -> {
             if (times.isEmpty()) {
-                showError("No available times. Try another day or fewer diners.");
+                showError("No available times. Try another day or fewer diners");
                 return;
             }
 
@@ -88,15 +100,15 @@ public class GuestMakeReservationController {
         }
 
         int diners = Integer.parseInt(NumberOfDiners.getText());
-        LocalDate resDate = LocalDate.parse(date.getText());
+        LocalDate resDate = datePicker.getValue();
         String contact = emailOrPhone.getText();
 
-        // Create Reservation (0 for guest ID for now)
+        // ReservationID = 0, confirmation code generated server-side
         Reservation r = new Reservation(	
-                8, // reservationID will be assigned by DB
-                1, // customerID for guest
+                0,  // reservationID (server assigns)
+                1,  // customerID for guest
                 diners,
-                generateConfirmationCode(),
+                0,  // confirmationCode (server generates)
                 resDate,
                 selectedTime,
                 ReservationStatus.CONFIRMED
@@ -118,10 +130,6 @@ public class GuestMakeReservationController {
 //        SceneManager.switchTo("MainMenuUI.fxml");
     }
     
-    private int generateConfirmationCode() {
-        return (int) (Math.random() * 900000) + 100000; // 6-digit code
-    }
-
     
     // --- Helper methods ---
     public void showError(String msg) {

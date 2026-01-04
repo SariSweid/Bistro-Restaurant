@@ -136,6 +136,10 @@ public class Reservation implements Serializable {
 	
 	//setters
 	
+	public void setReservationID(int reservationID) {
+        this.reservationID = reservationID;
+    }
+	
 	public void setTableID(Integer newTableID) {
 		this.tableID = newTableID;
 	}

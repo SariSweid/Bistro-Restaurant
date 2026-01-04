@@ -166,6 +166,47 @@ public class DBController {
 		}
 
 
+		/**
+	     * “Which tables are already taken at THIS exact time?”
+	     *
+	     * @return a list reservations at the specific date (input)
+	     */
+		// ADDED:
+		public List<Reservation> getReservationsAt(LocalDate date, LocalTime time) {
+		    List<Reservation> list = new ArrayList<>();
+		    Connection con = getConnection();
+
+		    try (PreparedStatement pst = con.prepareStatement(
+		        "SELECT * FROM `reservation` " +
+		        "WHERE reservationDate = ? AND reservationTime = ? " +
+		        "AND status IN ('CONFIRMED','PENDING','SEATED')"
+		    )) {
+		        pst.setDate(1, Date.valueOf(date));
+		        pst.setTime(2, Time.valueOf(time));
+
+		        ResultSet rs = pst.executeQuery();
+		        while (rs.next()) {
+		            list.add(new Reservation(
+		                rs.getInt("reservationID"),
+		                rs.getInt("customerID"),
+		                rs.getInt("TableId"),
+		                rs.getInt("BillId"),
+		                rs.getInt("numOfGuests"),
+		                rs.getInt("confirmationCode"),
+		                rs.getDate("reservationDate").toLocalDate(),
+		                rs.getTime("reservationTime").toLocalTime(),
+		                rs.getDate("reservationPlacedDate").toLocalDate(),
+		                rs.getTime("reservationPlacedTime").toLocalTime(),
+		                enums.ReservationStatus.valueOf(rs.getString("status"))
+		            ));
+		        }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+
+		    return list;
+		}
+
 	    
 	    /**
 	     * Retrieves all reservations from the database.
@@ -223,35 +264,46 @@ public class DBController {
 			return reservations;    	
 	    }
 	    	    
-
-
+  
+	    
 	    /**
 	     * Inserts a new reservation into the database.
+	     * The database auto-generates reservationID.
+	     * Updates the reservation object with the assigned ID.
 	     *
 	     * @param r the reservation to insert
-	     * @return true if the insertion succeeded, false otherwise
+	     * @return true if insertion succeeded, false otherwise
 	     */
 	    public boolean insertReservation(Reservation r) {
-	        Connection con = getConnection(); 
-	        
+	        Connection con = getConnection();
+
 	        try (PreparedStatement pst = con.prepareStatement(
-	            "INSERT INTO `reservation`  (reservationID, customerID, tableId, billId, numOfGuests, confirmationCode,  reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	                "INSERT INTO `reservation` " +
+	                "(customerID, tableId, billId, numOfGuests, confirmationCode, reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime, status) " +
+	                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+	                java.sql.Statement.RETURN_GENERATED_KEYS // Allows us to retrieve auto-generated reservationID
 	        )) {
 
-	            pst.setInt(1, r.getReservationID());
-	            pst.setInt(2, r.getCustomerId());
-	         // Handle nullable tableID
-	            pst.setObject(3 , r.getTableID(), java.sql.Types.INTEGER);
-	            pst.setObject(4, r.getBillID(), java.sql.Types.INTEGER);
-	            pst.setInt(5, r.getNumOfGuests());
-	            pst.setInt(6, r.getConfirmationCode());
-	            pst.setDate(7, java.sql.Date.valueOf(r.getReservationDate()));
-	            pst.setTime(8, java.sql.Time.valueOf(r.getReservationTime()));
-	            pst.setDate(9, java.sql.Date.valueOf(r.getReservationPlacedDate()));
-	            pst.setTime(10, java.sql.Time.valueOf(r.getReservationPlacedTime()));
-	            pst.setString(11, r.getStatus().name());
+	            pst.setInt(1, r.getCustomerId());
+	            pst.setObject(2, r.getTableID(), java.sql.Types.INTEGER);
+	            pst.setObject(3, r.getBillID(), java.sql.Types.INTEGER);
+	            pst.setInt(4, r.getNumOfGuests());
+	            pst.setInt(5, r.getConfirmationCode());
+	            pst.setDate(6, java.sql.Date.valueOf(r.getReservationDate()));
+	            pst.setTime(7, java.sql.Time.valueOf(r.getReservationTime()));
+	            pst.setDate(8, java.sql.Date.valueOf(r.getReservationPlacedDate()));
+	            pst.setTime(9, java.sql.Time.valueOf(r.getReservationPlacedTime()));
+	            pst.setString(10, r.getStatus().name());
 
 	            int update_status = pst.executeUpdate();
+
+	            // Retrieve the auto-generated reservationID
+	            try (ResultSet generatedKeys = pst.getGeneratedKeys()) {
+	                if (generatedKeys.next()) {
+	                    r.setReservationID(generatedKeys.getInt(1));
+	                }
+	            }
+
 	            return update_status > 0;
 
 	        } catch (SQLException e) {
@@ -261,7 +313,7 @@ public class DBController {
 	    }
 
 		
-
+	    
 	    
 	    /**
 	     * Inserts a new user into the database.
