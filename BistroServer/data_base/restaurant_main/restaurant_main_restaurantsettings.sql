@@ -40,4 +40,4 @@ CREATE TABLE `restaurantsettings` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-02 17:16:28
+-- Dump completed on 2026-01-04 15:08:56
