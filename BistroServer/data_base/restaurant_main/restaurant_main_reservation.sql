@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `reservation`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `reservation` (
-  `reservationID` int NOT NULL,
+  `reservationID INT AUTO_INCREMENT PRIMARY KEY` int NOT NULL,
   `reservationDate` date DEFAULT NULL,
   `reservationTime` time DEFAULT NULL,
   `numOfGuests` int DEFAULT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE `reservation` (
   `BillId` int DEFAULT NULL,
   `reservationPlacedDate` date DEFAULT NULL,
   `reservationPlacedTime` time DEFAULT NULL,
-  PRIMARY KEY (`reservationID`),
+  PRIMARY KEY (`reservationID INT AUTO_INCREMENT PRIMARY KEY`),
   KEY `customerID_idx` (`customerID`),
   KEY `TableId_idx` (`TableId`),
   CONSTRAINT `customerID` FOREIGN KEY (`customerID`) REFERENCES `user` (`UserId`),
@@ -51,4 +51,4 @@ CREATE TABLE `reservation` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-02 17:16:28
+-- Dump completed on 2026-01-04 11:33:59
