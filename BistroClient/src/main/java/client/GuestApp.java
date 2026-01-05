@@ -31,7 +31,7 @@ public class GuestApp extends Application {
             host = list.get(0);
         }
         // Now create client safely
-        ClientHandler client = new ClientHandler(host, 5555); // or your port
+        ClientHandler client = ClientHandler.getClient(); // or your port
         client.setGuestUI(ui);
 
         client.openConnection();

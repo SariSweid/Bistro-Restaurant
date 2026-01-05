@@ -90,7 +90,7 @@ public abstract class BaseReservationController {
         Platform.runLater(() -> {
             if (times.isEmpty()) {
                 // Ask server for nearest alternative dates
-                ClientHandler.getClient().getNearestAvailableTimes(
+                ClientHandler.getClient().getAvailableTimes(
                     datePicker.getValue(),
                     Integer.parseInt(numberOfDinersField.getText())
                 );
