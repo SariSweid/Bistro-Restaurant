@@ -166,6 +166,11 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.GET_NEAREST_TIMES,
                 new GetNearestAvailableTimesRequest(date, guests)));
     }
+    
+    public void Pay(PaymentRequest req) {
+        connect();
+        sendRequest(new Message(ActionType.PAY, req));
+    }
 
     @Override
     protected void handleMessageFromServer(Object msg) {

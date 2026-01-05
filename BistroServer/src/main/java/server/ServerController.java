@@ -103,6 +103,9 @@ public class ServerController extends AbstractServer {
         
         // Command #8: Cancel Reservation
         commands.put(ActionType.CANCEL_RESERVATION, new CancelReservationCommand());
+        
+        // Command #9: Add payment
+        commands.put(ActionType.PAY, new PayCommand());
     }
     
     /**

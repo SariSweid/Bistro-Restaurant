@@ -16,5 +16,9 @@ public enum ActionType {
     GET_ALL_USERS,
     ADD_USER,
     UPDATE_USER,
-    CHECKUSERIDEXISTS
+    CHECKUSERIDEXISTS,
+    
+    
+    // Payment
+    PAY
 }
