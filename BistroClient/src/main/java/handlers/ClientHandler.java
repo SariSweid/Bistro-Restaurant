@@ -96,6 +96,10 @@ public class ClientHandler extends AbstractClient {
     public void setGuestUI(GuestUpdateReservationUI guestUI) {
         this.guestUI = guestUI;
     }
+    
+    public void setHandler(ActionType type, ResponseHandler handler) {
+        handlers.put(type, handler);
+    }
 
     private void initializeHandlers() {
         handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler(guestUI));
@@ -107,6 +111,7 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_NEAREST_TIMES, new GetNearestAvailableTimesHandler());
         handlers.put(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsHandler());
         handlers.put(ActionType.CANCEL_RESERVATION, new CancelReservationHandler());
+        handlers.put(ActionType.PAY, new PaymentHandler( null, null));
     }
 
     private void sendRequest(Message msg) {
@@ -177,7 +182,7 @@ public class ClientHandler extends AbstractClient {
         if (msg instanceof Message) {
             Message m = (Message) msg;
 
-            // הדפס סוג הפעולה והנתונים שהתקבלו
+            // 
             System.out.println("Received message from server:");
             System.out.println("Action: " + m.getAction());
             System.out.println("Data: " + m.getData());

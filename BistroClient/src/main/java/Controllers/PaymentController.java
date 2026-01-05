@@ -1,18 +1,33 @@
 package Controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog; // חובה לייבא
+import javafx.scene.control.TextInputDialog;
 import messages.PaymentRequest;
 import util.SceneManager;
 import java.util.Optional;
 
 import handlers.ClientHandler;
+import handlers.PaymentHandler;
+import common.ServerResponse;
+import enums.ActionType;
 
-public class PaymentController {
+public class PaymentController  {
+	
+
+
+	@FXML
+	private Label amountLabel;
 
     @FXML
     private Label statusLabel;
+    
+    @FXML
+    public void initialize() {
+        ClientHandler.getClient()
+            .setHandler(ActionType.PAY, new PaymentHandler(statusLabel, amountLabel));
+    }
 
     @FXML
     private void onPay() {
@@ -26,14 +41,10 @@ public class PaymentController {
         if (result.isPresent()) {
             try {
                 int confirmationCode = Integer.parseInt(result.get());
-
-                // שליחה לשרת
                 PaymentRequest request = new PaymentRequest(confirmationCode);
                 ClientHandler.getClient().Pay(request);
-
                 statusLabel.setText("Payment request sent");
                 statusLabel.setStyle("-fx-text-fill: green;");
-
             } catch (NumberFormatException e) {
                 statusLabel.setText("Error: Please enter a valid number");
                 statusLabel.setStyle("-fx-text-fill: red;");
@@ -41,8 +52,17 @@ public class PaymentController {
         }
     }
 
-    
-
+    public void handlePaymentResponse(ServerResponse response) {
+        Platform.runLater(() -> {
+            if (response.isSuccess()) {
+                statusLabel.setText("Payment processed successfully");
+                statusLabel.setStyle("-fx-text-fill: green;");
+            } else {
+                statusLabel.setText(response.getMessage());
+                statusLabel.setStyle("-fx-text-fill: red;");
+            }
+        });
+    }
 
     @FXML
     private void onPreviousPage() {

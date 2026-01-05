@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -164,6 +165,27 @@ public class DBController {
 			
 			return r; // There isnt Res with this ID.
 		}
+		
+	    public Bill getBillById(int billId) {
+	    	Connection con = getConnection();
+
+	        try ( PreparedStatement ps = conn.prepareStatement("SELECT * FROM bill WHERE billID = ?")) {
+	            ps.setInt(1, billId);
+	            ResultSet rs = ps.executeQuery();
+	            if (rs.next()) {
+	                int id = rs.getInt("BillId");
+	                int reservationId = rs.getInt("reservationId");
+	                double totalAmount = rs.getDouble("Amount");
+	                Timestamp issuedAtTS = rs.getTimestamp("issuedAt");
+	                boolean paid = rs.getBoolean("paid");
+	                LocalDateTime issuedAt = issuedAtTS.toLocalDateTime();
+	                return new Bill(id, reservationId, totalAmount, issuedAt, paid);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return null;
+	    }
 
 
 		/**
