@@ -41,6 +41,6 @@ public class SubscriberReservationController extends BaseReservationController {
     
     @FXML
     private void onPreviousPage() {
-        SceneManager.switchTo("SubscriberControllerUI.fxml");
+        SceneManager.switchTo("SubscriberUI.fxml");
     }
 }
