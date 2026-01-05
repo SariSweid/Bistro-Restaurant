@@ -171,11 +171,20 @@ public class ClientHandler extends AbstractClient {
     protected void handleMessageFromServer(Object msg) {
         if (msg instanceof Message) {
             Message m = (Message) msg;
+
+            // הדפס סוג הפעולה והנתונים שהתקבלו
+            System.out.println("Received message from server:");
+            System.out.println("Action: " + m.getAction());
+            System.out.println("Data: " + m.getData());
+
             ActionType type = m.getAction();
             if (handlers.containsKey(type)) {
                 handlers.get(type).handle(m.getData());
             }
             awaitResponse = false;
+        } else {
+            System.out.println("Received unknown object from server: " + msg);
         }
     }
+
 }

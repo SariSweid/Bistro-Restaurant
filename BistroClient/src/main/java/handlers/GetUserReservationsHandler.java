@@ -11,21 +11,22 @@ import util.SceneManager;
 public class GetUserReservationsHandler implements ResponseHandler {
 
 	@Override
-    public void handle(Object data) {
-        ServerResponse res = (ServerResponse) data;
-
-        Platform.runLater(() -> {
-            CancelReservationController controller = 
-                (CancelReservationController) ClientHandler.getClient().getActiveCancelController();
-
-            if (controller == null) return;
-
-            if (res.isSuccess() && res.getData() instanceof List<?> list) {
-                //noinspection unchecked
-                controller.loadReservations((List<Reservation>) list);
-            } else {
-                SceneManager.showError("Failed to load your reservations: " + res.getMessage());
-            }
-        });
-    }
+	public void handle(Object data) {
+	    if (data instanceof List<?> list) {
+	        System.out.println("[GetUserReservationsHandler] received " + list.size() + " reservations");
+//	        for (Object obj : list) {
+//	            if (obj instanceof Reservation r) {
+//	                System.out.println("Reservation ID: " + r.getReservationID() +
+//	                                   ", Date: " + r.getReservationDate() +
+//	                                   ", Time: " + r.getReservationTime() +
+//	                                   ", Guests: " + r.getNumOfGuests());
+//	            }
+//	        }
+	        if (ClientHandler.getClient().getActiveCancelController() != null) {
+	            ClientHandler.getClient().getActiveCancelController().showUserReservations(
+	                (List<Reservation>) list
+	            );
+	        }
+	    }
+	}
 }
