@@ -86,6 +86,7 @@ public abstract class BaseReservationController {
 
     // --- Called by server handler ---
     public void updateAvailableTimes(List<LocalTime> times) {
+    	System.out.println("updateAvailableTimes called with: " + times);
         Platform.runLater(() -> {
             if (times.isEmpty()) {
                 // Ask server for nearest alternative dates

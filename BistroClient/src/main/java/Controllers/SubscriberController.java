@@ -5,15 +5,17 @@ import javafx.fxml.FXML;
 
 import util.SceneManager;
 
-public class SubscriberController {
+public class SubscriberController extends BaseReservationController {
 	
 	private int userId;
 	
     @FXML
     public void initialize() {
         
+    	ClientHandler.getClient().setActiveReservationController(this);
         this.userId = ClientHandler.getClient().getCurrentUserId();
         System.out.println("Subscriber logged in with userId: " + userId);
+        
     }
     
     
@@ -43,7 +45,7 @@ public class SubscriberController {
     
     @FXML
     private void onCancelOrder() {
-    		SceneManager.switchTo("CancelOrderUI.fxml");
+    		SceneManager.switchTo("CancelReservationUI.fxml");
     }
     
     

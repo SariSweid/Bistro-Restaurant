@@ -24,6 +24,7 @@ public class GuestMakeReservationController extends BaseReservationController {
         this.numberOfDinersField = NumberOfDiners;
         this.customerId = 0;
         setupDatePickerLimits();
+        ClientHandler.getClient().setActiveReservationController(this);
     }
 
     @FXML
