@@ -127,7 +127,7 @@ public class ClientHandler extends AbstractClient {
     public void register(RegisterRequest req) {
         sendRequest(new Message(ActionType.ADD_USER, req));
     }
-    
+     
     public void login(int userID, int membershipCode) {
     	setCurrentUserId(userID);
         sendRequest(new Message(ActionType.LOGIN, new LoginRequest(userID, membershipCode)));

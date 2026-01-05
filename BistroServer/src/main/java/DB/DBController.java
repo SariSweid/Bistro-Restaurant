@@ -382,47 +382,57 @@ public class DBController {
 	     * @param u the user to insert
 	     * @return true if the insertion succeeded, false otherwise
 	     */
-		public Boolean InsertUser(User u) {
-			
-			Connection con = getConnection();
-			
+	    public Boolean InsertUser(User u) {
+	        Connection con = getConnection();
+
 	        try (PreparedStatement pst = con.prepareStatement(
-		            "INSERT INTO `user`  (UserId, Name, Phone, Email, UserName, MemberShipCode, Role)  VALUES (?, ?, ?, ?, ?, ?, ?)"
-		        )) {
-	        	
-	            pst.setInt(1, u.getUserId()); 
-	            pst.setString(2, null);
-	            pst.setString(3, u.getPhone());
-	            pst.setString(4, u.getEmail());
-	            pst.setString(5, null);
-	            pst.setInt(6, 0);
-	            pst.setString(7, u.getRole().name());
-	            
+	                "INSERT INTO `user`  (UserId, Name, Phone, Email, UserName, MemberShipCode, Role)  VALUES (?, ?, ?, ?, ?, ?, ?)"
+	        )) {
+
+	            pst.setInt(1, u.getUserId());
+
 	            if (u instanceof Subscriber s) {
 	                pst.setString(2, s.getName());
+	                pst.setString(3, s.getPhone());
+	                pst.setString(4, s.getEmail());
 	                pst.setString(5, s.getUserName());
 	                pst.setInt(6, s.getMembershipCode());
-	            }
-	            
+	                pst.setString(7, s.getRole().name());
+	            } 
+	            else if (u instanceof Guest g) {
+	                pst.setString(2, null);          // name
+	                pst.setString(3, g.getPhone());  // phone
+	                pst.setString(4, g.getEmail());  // email
+	                pst.setString(5, null);          // username
+	                pst.setNull(6, java.sql.Types.INTEGER);              // membershipCode
+	                pst.setString(7, g.getRole().name()); // GUEST
+	            } 
 	            else if (u instanceof RestaurantManager m) {
 	                pst.setString(2, m.getName());
+	                pst.setString(3, m.getPhone());
+	                pst.setString(4, m.getEmail());
 	                pst.setString(5, m.getUserName());
-	            }
+	                pst.setInt(6, 0);
+	                pst.setString(7, m.getRole().name());
+	            } 
 	            else if (u instanceof RestaurantSupervisor s) {
 	                pst.setString(2, s.getName());
+	                pst.setString(3, s.getPhone());
+	                pst.setString(4, s.getEmail());
 	                pst.setString(5, s.getUserName());
+	                pst.setInt(6, 0);
+	                pst.setString(7, s.getRole().name());
 	            }
 
-	        	        
 	            int update_status = pst.executeUpdate();
 	            return update_status > 0;
 
 	        } catch (SQLException e) {
-	        	e.printStackTrace();
-	        	return false;
+	            e.printStackTrace();
+	            return false;
 	        }
-			
-		}
+	    }
+
 		
 		
 		
