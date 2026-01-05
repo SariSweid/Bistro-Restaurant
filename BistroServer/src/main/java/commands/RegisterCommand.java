@@ -22,20 +22,30 @@ public class RegisterCommand implements Command {
         try {
             if (!(data instanceof RegisterRequest req)) return;
 
-            // Create subscriber
-            User user = new Subscriber(
-                    req.getUserID(), // userID auto-generated
-                    req.getName(),
-                    req.getEmail(),
-                    req.getPhone(),
-                    req.getUsername(),
-                    req.getMembershipCode()
-            );
+            boolean success = false;
+            User user = null;
 
-            boolean success = userController.addUser(user);
+            if (req.getRole() == UserRole.SUBSCRIBER) {
+                user = new Subscriber(
+                        req.getUserID(),
+                        req.getName(),
+                        req.getEmail(),
+                        req.getPhone(),
+                        req.getUsername(),
+                        req.getMembershipCode()
+                );
+                success = userController.addUser(user);
+            } else if (req.getRole() == UserRole.GUEST) {
+                user = new Guest(
+                        req.getUserID(),
+                        req.getEmail(),
+                        req.getPhone()
+                );
+                success = userController.addUser(user);
+            }
 
             ServerResponse response = success ?
-                    new ServerResponse(true, user, "Subscriber registration successful") :
+                    new ServerResponse(true, user, req.getRole() + " registration successful") :
                     new ServerResponse(false, null, "Registration failed");
 
             client.sendToClient(new Message(ActionType.ADD_USER, response));
@@ -48,4 +58,5 @@ public class RegisterCommand implements Command {
             } catch (Exception ignored) {}
         }
     }
+
 }

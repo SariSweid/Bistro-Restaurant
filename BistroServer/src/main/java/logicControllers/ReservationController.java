@@ -26,6 +26,14 @@ public class ReservationController {
         this.db = new DBController(); // implement DBController to connect to your DB
     }
     
+    public Reservation getReservationByCode(int code) {
+        List<Reservation> all = db.readAllReservations();
+        for (Reservation r : all) {
+            if (r.getConfirmationCode() == code) return r;
+        }
+        return null;
+    }
+    
 
 
     // ======================

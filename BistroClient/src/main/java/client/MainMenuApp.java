@@ -30,7 +30,7 @@ public class MainMenuApp extends Application {
             host = args.get(0);
         }
 
-        ClientHandler client = new ClientHandler(host, 5555);
+        ClientHandler client = ClientHandler.getClient();
         client.setMainMenuController(controller);
         client.openConnection();
 

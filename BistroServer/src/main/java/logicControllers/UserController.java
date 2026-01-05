@@ -3,6 +3,7 @@ package logicControllers;
 import java.util.List;
 
 import DB.DBController;
+import Entities.Guest;
 import Entities.User;
 
 /**
@@ -72,6 +73,7 @@ public class UserController {
         }
     }
 	
+	
 	 /**
      * Update a reservation's date and guest count.
      * Returns true if update succeeded, false otherwise.
@@ -87,6 +89,48 @@ public class UserController {
             return false;
         }
     }
+	
+	
+	/**
+	 * Find existing guest by email or phone.
+	 * If not found, create a new guest user.
+	 * Returns userID.
+	 */
+	public int getOrCreateGuest(String contact) {
+
+	    if (contact == null || contact.isEmpty())
+	        return -1;
+
+	    try {
+	        // Decide if email or phone
+	        User existingUser;
+
+	        if (contact.contains("@")) {
+	            existingUser = db.getUserByEmail(contact);
+	        } else {
+	            existingUser = db.getUserByPhone(contact);
+	        }
+
+	        // If found – return ID
+	        if (existingUser != null) {
+	            return existingUser.getUserId();
+	        }
+
+	        // Else – create new guest
+	        String email = contact.contains("@") ? contact : null;
+	        String phone = contact.contains("@") ? null : contact;
+
+	        User newGuest = new Guest(0, email, phone); 
+	        // userID = 0 means "DB will generate it"
+
+	        return db.insertGuestAndReturnId(newGuest);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return -1;
+	    }
+	}
+
 	
 
 	

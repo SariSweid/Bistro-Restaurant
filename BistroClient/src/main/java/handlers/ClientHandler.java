@@ -17,25 +17,50 @@ import messages.*;
 import src.ocsf.client.AbstractClient;
 
 public class ClientHandler extends AbstractClient {
-	public boolean awaitResponse = false;
-	
-	private HashMap<ActionType, ResponseHandler> handlers;
-	
-	// Singleton instance of ClientHandler
+
+    public boolean awaitResponse = false;
+    private HashMap<ActionType, ResponseHandler> handlers;
+
     public static ClientHandler instance;
 
-    private GuestUpdateReservationUI guestUI; // added by tamer for wiring
-    
-    // --- Keep track of the active reservation controller (Guest or Subscriber) ---
+    private GuestUpdateReservationUI guestUI;
+
     private BaseReservationController activeReservationController;
-    
     private CancelReservationController activeCancelController;
-    
     private MainMenuController mainMenuController;
-    
+
     private int currentUserId;
-    
-    
+    private boolean connected = false;
+
+    private ClientHandler(String host, int port) throws IOException {
+        super(host, port);
+        handlers = new HashMap<>();
+        initializeHandlers();
+    }
+
+    public static ClientHandler getClient() {
+        if (instance == null) {
+            try {
+                instance = new ClientHandler("localhost", 5555);
+                instance.connect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return instance;
+    }
+
+    public void connect() {
+        if (!connected) {
+            try {
+                openConnection();
+                connected = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void setCurrentUserId(int id) {
         this.currentUserId = id;
     }
@@ -44,16 +69,6 @@ public class ClientHandler extends AbstractClient {
         return currentUserId;
     }
 
-    // Constructor
-    public ClientHandler(String host, int port) throws IOException {
-        super(host, port);
-        instance = this;
-        openConnection();
-        System.out.println(">> Connected to server at " + host + ":" + port);
-        handlers = new HashMap<>();
-        initializeHandlers();
-    }
-    
     public void setMainMenuController(MainMenuController controller) {
         this.mainMenuController = controller;
     }
@@ -61,17 +76,15 @@ public class ClientHandler extends AbstractClient {
     public MainMenuController getMainMenuController() {
         return mainMenuController;
     }
-    
-    // Setter & Getter for active makeReservation controller
+
     public void setActiveReservationController(BaseReservationController controller) {
         this.activeReservationController = controller;
     }
 
     public BaseReservationController getActiveReservationController() {
-        return this.activeReservationController;
+        return activeReservationController;
     }
- 
-    // Setter & Getter for active cancel controller
+
     public void setActiveCancelController(CancelReservationController controller) {
         this.activeCancelController = controller;
     }
@@ -80,39 +93,27 @@ public class ClientHandler extends AbstractClient {
         return activeCancelController;
     }
 
-    
-    public void setGuestUI(GuestUpdateReservationUI guestUI) { // added setter tamer
+    public void setGuestUI(GuestUpdateReservationUI guestUI) {
         this.guestUI = guestUI;
     }
     
-    // Return the active ClientHandler instance
-    public static ClientHandler getClient() { 
-    		return instance;
-    	}
-    
-    
-    private void initializeHandlers() {
-        // When Server sends reservations --> Run GetAllReservationsHandler
-        handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler(guestUI));
-        // When Server confirms update --> Run UpdateConfirmHandler
-        handlers.put(ActionType.UPDATE_RESERVATION, new UpdateReservationHandler(guestUI));
-        // When Client login
-        handlers.put(ActionType.LOGIN, new LoginHandler());
-        // When Server add user
-        handlers.put(ActionType.ADD_USER, new RegisterHandler());
-        // When Server add reservation --> Run AddReservationHandler
-        handlers.put(ActionType.ADD_RESERVATION, new AddReservationHandler());
-        // When Server returns Available times
-        handlers.put(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesHandler());
-        // When Server returns nearest available times
-        handlers.put(ActionType.GET_NEAREST_TIMES, new GetNearestAvailableTimesHandler());
-        // When Server returns user (confirmed) reservations 
-        handlers.put(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsHandler());
-        // When Server cancel reservation
-        handlers.put(ActionType.CANCEL_RESERVATION, new CancelReservationHandler());
-        
+    public void setHandler(ActionType type, ResponseHandler handler) {
+        handlers.put(type, handler);
     }
-    
+
+    private void initializeHandlers() {
+        handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler(guestUI));
+        handlers.put(ActionType.UPDATE_RESERVATION, new UpdateReservationHandler(guestUI));
+        handlers.put(ActionType.LOGIN, new LoginHandler());
+        handlers.put(ActionType.ADD_USER, new RegisterHandler());
+        handlers.put(ActionType.ADD_RESERVATION, new AddReservationHandler());
+        handlers.put(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesHandler());
+        handlers.put(ActionType.GET_NEAREST_TIMES, new GetNearestAvailableTimesHandler());
+        handlers.put(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsHandler());
+        handlers.put(ActionType.CANCEL_RESERVATION, new CancelReservationHandler());
+        handlers.put(ActionType.PAY, new PaymentHandler( null, null));
+    }
+
     private void sendRequest(Message msg) {
         try {
             sendToServer(msg);
@@ -120,71 +121,80 @@ public class ClientHandler extends AbstractClient {
             e.printStackTrace();
         }
     }
-    
-    
-    // ==== SEND REQUESTS ====
 
     public void register(RegisterRequest req) {
+        connect();
         sendRequest(new Message(ActionType.ADD_USER, req));
     }
-    
+
     public void login(int userID, int membershipCode) {
-    	setCurrentUserId(userID);
+        connect();
+        setCurrentUserId(userID);
         sendRequest(new Message(ActionType.LOGIN, new LoginRequest(userID, membershipCode)));
     }
-    
+
     public void getAllReservations() {
+        connect();
         sendRequest(new Message(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsRequest()));
     }
 
     public void addReservation(Reservation reservation) {
+        connect();
         awaitResponse = true;
         sendRequest(new Message(ActionType.ADD_RESERVATION, new AddReservationRequest(reservation)));
     }
-    
+
     public void getUserReservations(int userId) {
+        connect();
         sendRequest(new Message(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsRequest(userId)));
     }
-    
+
     public void cancelReservation(int reservationId) {
+        connect();
         sendRequest(new Message(ActionType.CANCEL_RESERVATION, new CancelReservationRequest(reservationId)));
     }
 
-    public void updateReservation(int id, LocalDate date,LocalTime time , int guests, ReservationStatus status) {
-    	sendRequest(new Message(ActionType.UPDATE_RESERVATION, new UpdateReservationRequest(id, date, time, guests, status)));
+    public void updateReservation(int id, LocalDate date, LocalTime time, int guests, ReservationStatus status) {
+        connect();
+        sendRequest(new Message(ActionType.UPDATE_RESERVATION,
+                new UpdateReservationRequest(id, date, time, guests, status)));
     }
-    
+
     public void getAvailableTimes(LocalDate date, int guests) {
-        sendRequest(new Message(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesRequest(date, guests)));
+        connect();
+        sendRequest(new Message(ActionType.GET_AVAILABLE_TIMES,
+                new GetAvailableTimesRequest(date, guests)));
     }
-    
+
     public void getNearestAvailableTimes(LocalDate date, int guests) {
-        sendRequest(new Message(ActionType.GET_NEAREST_TIMES, new GetNearestAvailableTimesRequest(date, guests)));
+        connect();
+        sendRequest(new Message(ActionType.GET_NEAREST_TIMES,
+                new GetNearestAvailableTimesRequest(date, guests)));
+    }
+    
+    public void Pay(PaymentRequest req) {
+        connect();
+        sendRequest(new Message(ActionType.PAY, req));
     }
 
-    
-
-    // ==== RECEIVE RESPONSE ====
     @Override
     protected void handleMessageFromServer(Object msg) {
-    		// Validate the message format
         if (msg instanceof Message) {
             Message m = (Message) msg;
+
+            // 
+            System.out.println("Received message from server:");
+            System.out.println("Action: " + m.getAction());
+            System.out.println("Data: " + m.getData());
+
             ActionType type = m.getAction();
-
-            // Look up the correct Handler in the HashMap
             if (handlers.containsKey(type)) {
-                // FOUND IT: Execute the specific handler code
                 handlers.get(type).handle(m.getData());
-            } else {
-                // NOT FOUND: We don't know how to handle this action
-                System.out.println(">> Error: Received unknown action type: " + type);
             }
-
-            // Release the Lock
             awaitResponse = false;
+        } else {
+            System.out.println("Received unknown object from server: " + msg);
         }
     }
 
 }
-

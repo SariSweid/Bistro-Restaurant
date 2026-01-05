@@ -37,7 +37,8 @@ public class CancelReservationController {
     @FXML
     public void initialize() {
     	
-        ClientHandler.getClient().setActiveCancelController(this);
+    	ClientHandler client = ClientHandler.getClient();
+    	client.setActiveCancelController(this);
         
         // Request this user's active reservations
        // ClientHandler.getClient().getUserReservations(currentUserId);
@@ -50,8 +51,9 @@ public class CancelReservationController {
         
         reservationsTable.setItems(reservations);
 
-        // Load user reservations
-        refreshReservations();
+        if (client.getCurrentUserId() != 0) {
+            refreshReservations();
+        }
     }
     
     // Load reservations into table
@@ -67,7 +69,9 @@ public class CancelReservationController {
     // Refresh from server
     public void refreshReservations() {
         int currentUserId = ClientHandler.getClient().getCurrentUserId();
-        ClientHandler.getClient().getUserReservations(currentUserId);
+        if (currentUserId != 0) {
+            ClientHandler.getClient().getUserReservations(currentUserId);
+        }
     }
 
     // Called by GetUserReservationsHandler
