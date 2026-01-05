@@ -425,7 +425,68 @@ public class DBController {
 		}
 		
 		
-		
+		/**
+	     * Inserts a new guest into the database.
+	     *
+	     * @param g the guest to insert
+	     * @return guest id if the insertion succeeded, -1 otherwise
+	     */
+		public int insertGuestAndReturnId(Guest g) {
+
+		    try (Connection con = getConnection();
+		         PreparedStatement pst =
+		             con.prepareStatement(
+		                 "INSERT INTO `user` (Phone, Email, Role) VALUES (?, ?, ?)",
+		                 PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+		        pst.setString(1, g.getPhone());
+		        pst.setString(2, g.getEmail());
+		        pst.setString(3, g.getRole().name());
+
+		        pst.executeUpdate();
+
+		        ResultSet keys = pst.getGeneratedKeys();
+		        keys.next();
+		        return keys.getInt(1); // ← auto-generated UserId
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		        return -1;
+		    }
+		}
+
+		// get Guest by phone number
+		public User getUserByPhone(String phone) {
+		    try (Connection con = getConnection();
+		         PreparedStatement pst =
+		             con.prepareStatement("SELECT * FROM `user` WHERE Phone = ?")) {
+
+		        pst.setString(1, phone);
+		        ResultSet rs = pst.executeQuery();
+		        if (rs.next()) return UserFactory.createUser(rs);
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+		    return null;
+		}
+
+		// get Guest by email
+		public User getUserByEmail(String email) {
+		    try (Connection con = getConnection();
+		         PreparedStatement pst =
+		             con.prepareStatement("SELECT * FROM `user` WHERE Email = ?")) {
+
+		        pst.setString(1, email);
+		        ResultSet rs = pst.executeQuery();
+		        if (rs.next()) return UserFactory.createUser(rs);
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+		    return null;
+		}
+
 		
 		
 		
