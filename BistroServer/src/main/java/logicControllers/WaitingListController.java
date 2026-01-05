@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Random;
 
 import Entities.WaitingList;
+import Entities.WaitingListEntry;
 
 public class WaitingListController {
 	private WaitingList waitingList; //today waiting list
@@ -25,9 +26,11 @@ public class WaitingListController {
 	}
 	
 	/**
-	 * 
+	 * adding new entry to the waiting list
 	 */
-	public void addToWaitingList() {
-		
+	public void addToWaitingList(Integer userID, String contactInfo, int numOfGuests) {
+		int confirmationCode = generateConfirmationCode();
+		WaitingListEntry entry = new WaitingListEntry(userID, contactInfo, numOfGuests, confirmationCode);
+		this.waitingList.addEntryToWaitingList(entry);
 	}
 }
