@@ -23,15 +23,15 @@ public class PaymentHandler implements ResponseHandler {
             if (response.isSuccess()) {
                 Bill bill = (Bill) response.getData();
 
-                // מציג את ההודעה כוללת סכום מקורי והסכום לאחר הנחה
+                
                 statusLabel.setText(response.getMessage());
                 statusLabel.setStyle("-fx-text-fill: green;");
 
-                // מציג את הסכום הסופי
+              
                 amountLabel.setText("Final Amount: " + bill.getTotalAmount());
             } else {
                 statusLabel.setText(response.getMessage());
-                statusLabel.setStyle("-fx-text-fill: red;");
+                statusLabel.setStyle("-fx-text-fill: red;");//
             }
         });
     }
