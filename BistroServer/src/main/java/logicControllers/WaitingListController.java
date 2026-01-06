@@ -107,6 +107,7 @@ public class WaitingListController {
 	 */
 	private boolean exitFromWaitingList(int confirmationCode, ExitReason exitReason) {		
 		//Optional is a wrapper generic object that can hold T object or be null, prevents NullPointerException
+		//filter the active waiting list to find the confirmation code in the list
 		Optional<WaitingListEntry> entryOpt = this.waitingList.getCurrentWaitingList().stream().filter(e -> e.getConfirmationCode() == confirmationCode).findFirst();
 		if(entryOpt.isPresent()) {
 			WaitingListEntry entry = entryOpt.get();
