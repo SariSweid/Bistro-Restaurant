@@ -71,6 +71,7 @@ public class WaitingListController {
 	 * @return list of active waiting list
 	 */
 	public List<WaitingListEntry> getActiveWaitingList(){
+		
 		return this.waitingList.getCurrentWaitingList();
 	}
 	
