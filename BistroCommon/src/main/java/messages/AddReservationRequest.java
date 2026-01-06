@@ -2,6 +2,7 @@ package messages;
 
 import java.io.Serializable;
 
+
 import Entities.Reservation;
 
 public class AddReservationRequest implements Serializable {

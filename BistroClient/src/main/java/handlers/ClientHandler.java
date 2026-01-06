@@ -1,6 +1,7 @@
 package handlers;
 
 import java.io.IOException;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -8,7 +9,9 @@ import java.util.HashMap;
 import Controllers.BaseReservationController;
 import Controllers.CancelReservationController;
 import Controllers.MainMenuController;
+import Controllers.RestaurantSettingsController;
 import Entities.Reservation;
+import Entities.SpecialDates;
 import client.GuestUpdateReservationUI;
 import common.Message;
 import enums.ActionType;
@@ -29,6 +32,10 @@ public class ClientHandler extends AbstractClient {
     private CancelReservationController activeCancelController;
     private MainMenuController mainMenuController;
 
+    private RestaurantSettingsController activeRestaurantSettingsController;
+    
+    
+    
     private int currentUserId;
     private boolean connected = false;
 
@@ -112,6 +119,13 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsHandler());
         handlers.put(ActionType.CANCEL_RESERVATION, new CancelReservationHandler());
         handlers.put(ActionType.PAY, new PaymentHandler( null, null));
+        handlers.put(ActionType.GET_RESTAURANT_SETTINGS, new GetRestaurantSettingsHandler());
+        handlers.put(ActionType.ADD_SPECIAL_DATE, new AddSpecialDateHandler());
+        handlers.put(ActionType.UPDATE_SPECIAL_DATE, new UpdateSpecialDateHandler());
+        handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler(guestUI));
+        handlers.put(ActionType.UPDATE_RESERVATION, new UpdateReservationHandler(guestUI));
+
+
     }
 
     private void sendRequest(Message msg) {
@@ -196,5 +210,60 @@ public class ClientHandler extends AbstractClient {
             System.out.println("Received unknown object from server: " + msg);
         }
     }
+    
+    //restaurant settings:
+    public RestaurantSettingsController getActiveRestaurantSettingsController(){
+    	return activeRestaurantSettingsController;
+    }
+    
+    public void setActiveRestaurantSettingsController(RestaurantSettingsController controller){
+    	this.activeRestaurantSettingsController=controller;
+    }
+    
+    public void getRestaurantSettings() {
+    	connect();
+    	sendRequest(new Message(ActionType.GET_RESTAURANT_SETTINGS, new GetRestaurantSettingsRequest()));
+    }
+    
+    public void addSpecialDate(SpecialDates specialDate) {
+    	connect();
+    	sendRequest(new Message(ActionType.ADD_SPECIAL_DATE, new AddSpecialDateRequest(specialDate)));
+    }
+    
+    public void updateSpecialDate(UpdateSpecialDateRequest req) {
+        connect();
+        sendRequest(new Message(ActionType.UPDATE_SPECIAL_DATE, req));
+    }
 
+    public void updateRegularOpeningTime(LocalTime openingTime) {
+        connect();
+        sendRequest(new Message(ActionType.UPDATE_OPENING_TIME,
+                new updateRegularOpeningTimeRequest(openingTime)));
+    }
+
+    public void updateRegularClosingTime(LocalTime closingTime) {
+        connect();
+        sendRequest(new Message(ActionType.UPDATE_CLOSING_TIME,
+                new updateRegularClosingTimeRequest(closingTime)));
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
