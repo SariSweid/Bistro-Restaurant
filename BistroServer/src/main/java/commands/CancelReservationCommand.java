@@ -4,6 +4,7 @@ import Entities.User;
 import common.Message;
 import common.ServerResponse;
 import enums.ActionType;
+import enums.UserRole;
 import logicControllers.ReservationController;
 import messages.CancelReservationRequest;
 import server.Command;
@@ -18,16 +19,19 @@ public class CancelReservationCommand implements Command {
         try {
             CancelReservationRequest req = (CancelReservationRequest) data;
 
-            // Grab User object from client session
+            // Subscriber user object from session
             User currentUser = (User) client.getInfo("user");
 
-            boolean success = controller.cancelReservation(
-                    currentUser,
-                    req.getReservationId(),
-                    req.getConfirmationCode(),
-                    req.getGuestId()
-                );
-            
+            boolean success = false;
+
+            if (currentUser != null && currentUser.getRole() == UserRole.SUBSCRIBER) {
+                // Subscriber cancels by reservationId
+                success = controller.cancelReservation(currentUser, req.getReservationId(), null, null);
+            } else if (req.getConfirmationCode() != null) {
+                // Guest cancels by confirmationCode only
+                success = controller.cancelReservation(null, null, req.getConfirmationCode(), null);
+            }
+
             client.sendToClient(
                 new Message(
                     ActionType.CANCEL_RESERVATION,
@@ -44,3 +48,4 @@ public class CancelReservationCommand implements Command {
         }
     }
 }
+

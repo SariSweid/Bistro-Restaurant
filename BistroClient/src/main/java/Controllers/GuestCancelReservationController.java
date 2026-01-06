@@ -13,6 +13,8 @@ public class GuestCancelReservationController {
 
     @FXML
     private TextField confirmationCodeField;
+    
+    
 
     // guestId of this guest
     private int guestId;
@@ -38,7 +40,7 @@ public class GuestCancelReservationController {
         }
 
         // SEND CANCEL REQUEST TO SERVER
-        ClientHandler.getClient().cancelReservation(null, code, guestId);
+        ClientHandler.getClient().cancelReservation( null, code, guestId);
 
         // response will be handled in CancelReservationHandler
         showMessage("Processing cancellation, please wait...");

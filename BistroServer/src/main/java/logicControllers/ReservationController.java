@@ -213,21 +213,42 @@ public class ReservationController {
        if (user != null && user.getRole() == UserRole.SUBSCRIBER) {
            // Subscribers cancel by reservationID
            r = db.GetReservation(reservationId);
-           if (r == null || r.getCustomerId() != user.getUserId()) return false;
+           if (r == null || r.getCustomerId() != user.getUserId()) {
+        	   System.out.println("confirmationCode1 = " + confirmationCode);
+        	   System.out.println("guestId1 = " + guestId);
+        	   System.out.println("user1 = " + user);
+        	   return false;
+           }
 
        } else if (guestId != null) {
            // Guests cancel by confirmationCode + guestId
            r = getReservationByCode(confirmationCode);
-           if (r == null || r.getCustomerId() != guestId) return false;
+           if (r == null || r.getCustomerId() != guestId) {
+        	   System.out.println("confirmationCodew2 = " + confirmationCode);
+        	   System.out.println("guestId2 = " + guestId);
+        	   System.out.println("user2 = " + user);
+        	   return false;
+           }
 
-       } else {
-           // Other roles cannot cancel
-           return false;
-       }
+       } else if (confirmationCode != null) {  
+    	    // Guests cancel by confirmationCode only
+    	    r = getReservationByCode(confirmationCode);
+    	    if (r == null) return false;
+
+    	} else {
+    	    // Other roles cannot cancel
+    	    return false;
+    	}
+       
+	   System.out.println("confirmationCodew2 = " + confirmationCode);
+	   System.out.println("guestId2 = " + guestId);
+	   System.out.println("user2 = " + user);
 
        // Actually cancel the reservation
        r.setStatus(enums.ReservationStatus.CANCELLED);
-       return db.updateReservation(r);
+       boolean updated = db.updateReservation(r);
+       System.out.println("DB update result = " + updated);
+       return updated;
    }
 
    // Method to find by confirmation code

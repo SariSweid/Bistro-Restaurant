@@ -1,6 +1,7 @@
 package logicControllers;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -72,7 +73,9 @@ public class WaitingListController {
 	 */
 	public List<WaitingListEntry> getActiveWaitingList(){
 		
-		return this.waitingList.getCurrentWaitingList();
+		//return this.waitingList.getCurrentWaitingList();
+	    List<WaitingListEntry> waitingList = Arrays.asList(new WaitingListEntry(1, "0521231231", 5, 3333), new WaitingListEntry(2, "0523213213", 3, 2222));
+		return waitingList;
 	}
 	
 	/**
