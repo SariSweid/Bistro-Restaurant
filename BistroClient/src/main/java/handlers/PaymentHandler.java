@@ -12,7 +12,6 @@ public class PaymentHandler implements ResponseHandler {
 
     public PaymentHandler(Label statusLabel, Label amountLabel) {
         this.statusLabel = statusLabel;
-
         this.amountLabel = amountLabel;
     }
 
@@ -23,10 +22,13 @@ public class PaymentHandler implements ResponseHandler {
         Platform.runLater(() -> {
             if (response.isSuccess()) {
                 Bill bill = (Bill) response.getData();
-                amountLabel.setText("Amount: " + bill.getTotalAmount());
 
-                statusLabel.setText("Payment successful");
+                // מציג את ההודעה כוללת סכום מקורי והסכום לאחר הנחה
+                statusLabel.setText(response.getMessage());
                 statusLabel.setStyle("-fx-text-fill: green;");
+
+                // מציג את הסכום הסופי
+                amountLabel.setText("Final Amount: " + bill.getTotalAmount());
             } else {
                 statusLabel.setText(response.getMessage());
                 statusLabel.setStyle("-fx-text-fill: red;");

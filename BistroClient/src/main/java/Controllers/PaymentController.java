@@ -42,15 +42,20 @@ public class PaymentController  {
             try {
                 int confirmationCode = Integer.parseInt(result.get());
                 PaymentRequest request = new PaymentRequest(confirmationCode);
+
+                statusLabel.setText("Processing payment...");
+                statusLabel.setStyle("-fx-text-fill: black;");
+
+                
                 ClientHandler.getClient().Pay(request);
-                statusLabel.setText("Payment request sent");
-                statusLabel.setStyle("-fx-text-fill: green;");
+
             } catch (NumberFormatException e) {
                 statusLabel.setText("Error: Please enter a valid number");
                 statusLabel.setStyle("-fx-text-fill: red;");
             }
         }
     }
+
 
     public void handlePaymentResponse(ServerResponse response) {
         Platform.runLater(() -> {

@@ -13,6 +13,7 @@ import logicControllers.ReservationController;
 import messages.PaymentRequest;
 import server.Command;
 import src.ocsf.server.ConnectionToClient;
+import util.PaymentResult;
 
 public class PayCommand implements Command {
 
@@ -25,35 +26,28 @@ public class PayCommand implements Command {
 
         int confirmationCode = req.getConfirmationCode();
         Reservation reservation = reservationController.getReservationByCode(confirmationCode);
-        System.out.println("rsrsrs" + reservation );
         if (reservation == null) {
-            try {
-				client.sendToClient(new Message(ActionType.PAY,
-				    new ServerResponse(false, null, "Reservation not found")));
-				return;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+            sendToClient(client, false, null, "Reservation not found");
             return;
         }
 
-        Bill bill = new Bill(0, reservation.getReservationID(), generateRandomAmount(),LocalDateTime.now(),true);
-        boolean success = paymentController.addPayment(bill);
+        double amount = generateRandomAmount();
+        Bill bill = new Bill(0, reservation.getReservationID(), amount, LocalDateTime.now(), true);
+        PaymentResult result = paymentController.addPayment(bill);
 
-        ServerResponse response = success
-            ? new ServerResponse(true, bill, "Payment processed successfully")
-            : new ServerResponse(false, null, "Payment failed");
-        try {
-			client.sendToClient(new Message(ActionType.PAY, response));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        sendToClient(client, result.isSuccess(), result.getBill(), result.getMessage());
     }
-    
+
+    private void sendToClient(ConnectionToClient client, boolean success, Bill bill, String message) {
+        try {
+            client.sendToClient(new Message(ActionType.PAY, new ServerResponse(success, bill, message)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private double generateRandomAmount() {
-        double amount = 100 + Math.random() * 900; 
-        return Math.round(amount * 100.0) / 100.0; 
+        double amount = 100 + Math.random() * 900;
+        return Math.round(amount * 100.0) / 100.0;
     }
 }

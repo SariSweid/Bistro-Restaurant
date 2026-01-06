@@ -49,6 +49,10 @@ public class Bill implements Serializable {
 		return this.billID;
 	}
 	
+	public void setTotalAmount(double totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+
 	public int getReservationID() {
 		return this.reservationID;
 	}
@@ -71,4 +75,10 @@ public class Bill implements Serializable {
 	public void markAsPaid() {
 		this.paid = true;
 	}
+
+	public void setBillID(int billID) {
+		this.billID = billID;
+	}
+
+
 }

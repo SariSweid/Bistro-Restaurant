@@ -2,39 +2,49 @@ package logicControllers;
 
 import DB.DBController;
 import Entities.Bill;
-import common.ServerResponse;
+import util.PaymentResult;
 
 public class PaymentController {
-	
-	
-	
-    
+
     private final DBController db;
-    
-    // Constructor
+
     public PaymentController() {
-        this.db = new DBController(); // assumed DBController has a method to save bills
+        this.db = new DBController();
     }
-    
-    // Method to add a payment
-    public Boolean addPayment(Bill bill) {
 
-        Bill existingBill = db.getBillById(bill.getBillID());
-        System.out.println("BILL" + existingBill);
-
+    public PaymentResult addPayment(Bill bill) {
+    	
+        Bill existingBill = db.getBillByReservationId(bill.getReservationID());
         if (existingBill != null && existingBill.isPaid()) {
-            return false;
+            return new PaymentResult(false, "Payment cancelled: this reservation has already been paid.", null);
+        }
+
+        double originalAmount = bill.getTotalAmount();
+        double finalAmount = originalAmount;
+        System.out.println("resid = " + bill.getReservationID());
+        boolean isSubscriber = db.isSubscriberByReservationId(bill.getReservationID());
+
+        if (isSubscriber) {
+        	System.out.println("is SUBBBB");
+            finalAmount = originalAmount * 0.9;
+            System.out.println("fin" + finalAmount + " ori" +originalAmount );
+            bill.setTotalAmount(finalAmount);
         }
 
         try {
-            db.AddBill(bill);
-            return true;
+            boolean added = db.AddBill(bill);
+            if (added) {
+                String msg = "Payment processed successfully.";
+                if (isSubscriber) {
+                    msg += " Original amount: " + originalAmount + ", after 10% discount: " + finalAmount;
+                }
+                return new PaymentResult(true, msg, bill);
+            } else {
+                return new PaymentResult(false, "Payment failed", null);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return new PaymentResult(false, "Payment failed due to an internal error.", null);
         }
     }
 }
-    
-    
-   

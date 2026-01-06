@@ -262,6 +262,30 @@ public class DBController {
 		   
 		    return list;
 		}
+		
+		public Bill getBillByReservationId(int reservationId) {
+		    Connection con = getConnection();
+		    Bill b = null;
+
+		    try (PreparedStatement pst = con.prepareStatement(
+		            "SELECT * FROM bill WHERE reservationID = ? ORDER BY BillId DESC LIMIT 1")) {
+		        pst.setInt(1, reservationId);
+		        ResultSet rs = pst.executeQuery();
+
+		        if (rs.next()) {
+		            int id = rs.getInt("BillId");
+		            double amount = rs.getDouble("Amount");
+		            LocalDateTime issuedAt = rs.getTimestamp("issuedAt").toLocalDateTime();
+		            boolean paid = rs.getBoolean("paid");
+
+		            b = new Bill(id, reservationId, amount, issuedAt, paid);
+		        }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+
+		    return b;
+		}
 
 		
 	    /**
@@ -319,6 +343,23 @@ public class DBController {
 	    	
 			return reservations;    	
 	    }
+	    
+	    public boolean isSubscriberByReservationId(int reservationID) {
+	    	Connection con = getConnection();
+	        boolean result = false;
+
+	        try (PreparedStatement pst = con.prepareStatement("SELECT u.Role FROM user u JOIN reservation r ON u.UserId = r.CustomerId WHERE r.ReservationId = ?")) {
+	            pst.setInt(1, reservationID);
+	            ResultSet rs = pst.executeQuery();
+	            if (rs.next()) {
+	            	return "SUBSCRIBER".equals(rs.getString("Role"));
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return result;
+	    }
+
 	    	    
   
 	    
@@ -1048,28 +1089,79 @@ public class DBController {
 	     * @return true if the insertion succeeded, false otherwise
 	     */
 		public Boolean AddBill(Bill b) {
-			
-			Connection con = getConnection(); //connect to DB
-			
-			try (PreparedStatement pst = con.prepareStatement("INSERT INTO `bill` (BillId, reservationID, Amount, issuedAt , paid) VALUES (?,?,?,?,?)")){
-				
-	            pst.setInt(1, b.getBillID()); 
-	            pst.setInt(2, b.getReservationID()); 
-	            pst.setDouble(3, b.getTotalAmount()); 
-	            pst.setTimestamp(4, java.sql.Timestamp.valueOf(b.getIssuedAt()));
-	            pst.setBoolean(5, b.isPaid());
-	            
-	            
-	            
-	            int update_status = pst.executeUpdate();
-	            return update_status > 0;
-	
-		        } catch (SQLException e) {
-		        	e.printStackTrace();
-		        	return false;
+
+		    Connection con = getConnection();
+
+		    try {
+		        PreparedStatement checkPaid = con.prepareStatement(
+		                "SELECT paid FROM bill WHERE reservationID = ? ORDER BY BillId DESC LIMIT 1");
+		        checkPaid.setInt(1, b.getReservationID());
+
+		        try (ResultSet rs = checkPaid.executeQuery()) {
+		            if (rs.next()) {
+		                boolean alreadyPaid = rs.getBoolean("paid");
+		                if (alreadyPaid) {
+		                    return false;
+		                }
+		            }
 		        }
-				
-			}
+
+		        try (PreparedStatement pst = con.prepareStatement(
+		                "INSERT INTO bill (reservationID, Amount, issuedAt, paid) VALUES (?,?,?,?)")) {
+
+		            pst.setInt(1, b.getReservationID());
+		            pst.setDouble(2, b.getTotalAmount());
+		            pst.setTimestamp(3, java.sql.Timestamp.valueOf(b.getIssuedAt()));
+		            pst.setBoolean(4, b.isPaid());
+
+		            int updateStatus = pst.executeUpdate();
+
+		            if (updateStatus > 0) {
+		                try (PreparedStatement pst2 = con.prepareStatement(
+		                        "SELECT BillId FROM bill WHERE reservationID = ? ORDER BY BillId DESC LIMIT 1")) {
+		                    pst2.setInt(1, b.getReservationID());
+
+		                    try (ResultSet rs2 = pst2.executeQuery()) {
+		                        if (rs2.next()) {
+		                            int newBillId = rs2.getInt("BillId");
+		                            b.setBillID(newBillId);
+		                            return updateReservationBillId(b.getReservationID(), newBillId);
+		                        }
+		                    }
+		                }
+		            }
+
+		        }
+
+		        return false;
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		        return false;
+		    }
+		}
+
+
+		
+		public boolean updateReservationBillId(int reservationId, int billId) {
+
+		    Connection con = getConnection();
+
+		    try (PreparedStatement pst = con.prepareStatement(
+		            "UPDATE reservation SET billID = ? WHERE reservationID = ?")) {
+
+		        pst.setInt(1, billId);
+		        pst.setInt(2, reservationId);
+
+		        int updateStatus = pst.executeUpdate();
+		        return updateStatus > 0;
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		        return false;
+		    }
+		}
+
 
 		
 	    /**
