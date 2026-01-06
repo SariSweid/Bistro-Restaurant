@@ -89,7 +89,7 @@ public class ClientHandler extends AbstractClient {
         this.activeCancelController = controller;
     }
 
-    public CancelReservationController getActiveCancelController() {
+    public Object getActiveCancelController() {
         return activeCancelController;
     }
 
@@ -149,9 +149,9 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsRequest(userId)));
     }
 
-    public void cancelReservation(int reservationId) {
+    public void cancelReservation(Integer reservationId, Integer confirmationCode, Integer guestId) {
         connect();
-        sendRequest(new Message(ActionType.CANCEL_RESERVATION, new CancelReservationRequest(reservationId)));
+        sendRequest(new Message(ActionType.CANCEL_RESERVATION, new CancelReservationRequest(reservationId, confirmationCode, guestId)));
     }
 
     public void updateReservation(int id, LocalDate date, LocalTime time, int guests, ReservationStatus status) {

@@ -17,12 +17,12 @@ public class GuestMakeReservationController extends BaseReservationController {
     @FXML
     private TextField NumberOfDiners, emailOrPhone;
 
-    private int customerId;
+    private int currentGuestId;
 
     @FXML
     public void initialize() {
         this.numberOfDinersField = NumberOfDiners;
-        this.customerId = 0;
+        this.currentGuestId = 0;
         setupDatePickerLimits();
         ClientHandler.getClient().setActiveReservationController(this);
     }
@@ -68,9 +68,7 @@ public class GuestMakeReservationController extends BaseReservationController {
     }
 
     private int generateUniqueGuestId() {
-    	int id;
- 
-        return id = generateGuestId();
+        return generateGuestId();
     }
 
     private int createGuestUser(String email, String phone) {
@@ -91,8 +89,8 @@ public class GuestMakeReservationController extends BaseReservationController {
     }
 
     private void submitGuestReservation(String email, String phone) {
-        int guestId = createGuestUser(email, phone);
-        if (guestId == -1) return;
+        currentGuestId = createGuestUser(email, phone);
+        if (currentGuestId == -1) return;
 
         LocalTime selectedTime = timeComboBox.getValue();
         if (selectedTime == null) {
@@ -105,7 +103,7 @@ public class GuestMakeReservationController extends BaseReservationController {
 
         Reservation r = new Reservation(
             0,
-            guestId,
+            currentGuestId,
             diners,
             0,
             resDate,

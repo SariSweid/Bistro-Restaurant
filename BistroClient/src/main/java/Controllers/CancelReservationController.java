@@ -37,9 +37,9 @@ public class CancelReservationController {
     @FXML
     public void initialize() {
     	
-    	ClientHandler client = ClientHandler.getClient();
-    	client.setActiveCancelController(this);
-        
+	    	ClientHandler client = ClientHandler.getClient();
+	    	client.setActiveCancelController(this);
+	        
         // Request this user's active reservations
        // ClientHandler.getClient().getUserReservations(currentUserId);
 
@@ -94,7 +94,7 @@ public class CancelReservationController {
         confirm.showAndWait();
 
         if (confirm.getResult() == ButtonType.YES) {
-            ClientHandler.getClient().cancelReservation(selected.getReservationID());
+            ClientHandler.getClient().cancelReservation(selected.getReservationID(), null, null);
         }
     }
 

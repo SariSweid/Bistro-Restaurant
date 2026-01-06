@@ -1,6 +1,7 @@
 package handlers;
 
 import Controllers.CancelReservationController;
+import Controllers.GuestCancelReservationController;
 import common.ServerResponse;
 import javafx.application.Platform;
 import util.SceneManager;
@@ -12,17 +13,29 @@ public class CancelReservationHandler implements ResponseHandler {
         ServerResponse res = (ServerResponse) data;
 
         Platform.runLater(() -> {
-            CancelReservationController controller = 
-                (CancelReservationController) ClientHandler.getClient().getActiveCancelController();
-
+            Object controller = ClientHandler.getClient().getActiveCancelController();
             if (controller == null) return;
 
-            if (res.isSuccess()) {
-                SceneManager.showInfo("Reservation cancelled successfully.");
-                // Refresh table
-                controller.refreshReservations();
+            if (controller instanceof CancelReservationController subController) {
+                // Subscriber logic
+                if (res.isSuccess()) {
+                    subController.refreshReservations();
+                    util.SceneManager.showInfo("Reservation cancelled successfully.");
+                } else {
+                    util.SceneManager.showError("Failed to cancel reservation: " + res.getMessage());
+                }
+
+            } else if (controller instanceof GuestCancelReservationController guestController) {
+                // Guest logic
+                if (res.isSuccess()) {
+                    guestController.onClose(); // close popup
+                    guestController.showMessage("Reservation cancelled successfully.");
+                } else {
+                    guestController.showError("Failed to cancel reservation: " + res.getMessage());
+                }
+
             } else {
-                SceneManager.showError("Failed to cancel reservation: " + res.getMessage());
+                System.out.println("Unknown cancel controller type.");
             }
         });
     }

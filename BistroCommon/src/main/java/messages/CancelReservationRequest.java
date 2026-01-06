@@ -3,13 +3,17 @@ package messages;
 import java.io.Serializable;
 
 public class CancelReservationRequest implements Serializable {
-    private int reservationId;
+	private Integer reservationId;       // For Subscriber
+    private Integer confirmationCode;    // For Guest
+    private Integer guestId; // for guests
 
-    public CancelReservationRequest(int reservationId) {
+    public CancelReservationRequest(Integer reservationId, Integer confirmationCode, Integer guestId) {
         this.reservationId = reservationId;
+        this.confirmationCode = confirmationCode;
+        this.guestId = guestId;
     }
 
-    public int getReservationId() {
-        return reservationId;
-    }
+    public Integer getReservationId() { return reservationId; }
+    public Integer getConfirmationCode() { return confirmationCode; }
+    public Integer getGuestId() { return guestId; }
 }

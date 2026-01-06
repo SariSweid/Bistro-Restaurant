@@ -1,5 +1,6 @@
 package commands;
 
+import Entities.User;
 import common.Message;
 import common.ServerResponse;
 import enums.ActionType;
@@ -17,15 +18,23 @@ public class CancelReservationCommand implements Command {
         try {
             CancelReservationRequest req = (CancelReservationRequest) data;
 
-            boolean success = controller.cancelReservation(req.getReservationId());
+            // Grab User object from client session
+            User currentUser = (User) client.getInfo("user");
 
+            boolean success = controller.cancelReservation(
+                    currentUser,
+                    req.getReservationId(),
+                    req.getConfirmationCode(),
+                    req.getGuestId()
+                );
+            
             client.sendToClient(
                 new Message(
                     ActionType.CANCEL_RESERVATION,
                     new ServerResponse(
                         success,
                         null,
-                        success ? "Reservation cancelled" : "Cancel failed"
+                        success ? "Reservation cancelled successfully" : "Failed to cancel reservation"
                     )
                 )
             );

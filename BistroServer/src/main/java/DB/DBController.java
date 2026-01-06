@@ -464,7 +464,7 @@ public class DBController {
 	     * @param g the guest to insert
 	     * @return guest id if the insertion succeeded, -1 otherwise
 	     */
-		public int insertGuestAndReturnId(Guest g) {
+		public int insertGuestAndReturnId(User g) {
 
 		    try (Connection con = getConnection();
 		         PreparedStatement pst =

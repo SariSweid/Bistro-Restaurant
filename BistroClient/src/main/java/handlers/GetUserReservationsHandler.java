@@ -1,32 +1,31 @@
 package handlers;
 
 import java.util.List;
-
 import Controllers.CancelReservationController;
 import Entities.Reservation;
-import common.ServerResponse;
 import javafx.application.Platform;
-import util.SceneManager;
+
 
 public class GetUserReservationsHandler implements ResponseHandler {
 
-	@Override
-	public void handle(Object data) {
-	    if (data instanceof List<?> list) {
+		@SuppressWarnings("unchecked")
+		@Override
+	    public void handle(Object data) {
+	        if (!(data instanceof List<?> list)) return;
+
 	        System.out.println("[GetUserReservationsHandler] received " + list.size() + " reservations");
-//	        for (Object obj : list) {
-//	            if (obj instanceof Reservation r) {
-//	                System.out.println("Reservation ID: " + r.getReservationID() +
-//	                                   ", Date: " + r.getReservationDate() +
-//	                                   ", Time: " + r.getReservationTime() +
-//	                                   ", Guests: " + r.getNumOfGuests());
-//	            }
-//	        }
-	        if (ClientHandler.getClient().getActiveCancelController() != null) {
-	            ClientHandler.getClient().getActiveCancelController().showUserReservations(
-	                (List<Reservation>) list
-	            );
-	        }
+
+	        Object controller = ClientHandler.getClient().getActiveCancelController();
+	        if (controller == null) return;
+
+	        Platform.runLater(() -> {
+	            if (controller instanceof CancelReservationController subController) {
+	                // Subscriber: show in table
+	                subController.showUserReservations((List<Reservation>) list);
+	                
+	            } else {
+	                System.out.println("Unknown cancel controller type for GetUserReservationsHandler.");
+	            }
+	        });
 	    }
-	}
 }

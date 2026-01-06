@@ -46,15 +46,19 @@ public class LoginCommand implements Command {
                         return;
                     }
                     response = new ServerResponse(true, sub, "Subscriber login successful");
+                    client.setInfo("user", sub);  // store in session
                 }
                 case SUPERVISOR -> {
                     response = new ServerResponse(true, user, "Supervisor login successful");
+                    client.setInfo("user", user);  // store in session
                 }
                 case MANAGER -> {
                     response = new ServerResponse(true, user, "Manager login successful");
+                    client.setInfo("user", user);  // store in session
                 }
                 case GUEST -> {
                     response = new ServerResponse(true, user, "Guest login successful");
+                    client.setInfo("user", user); // store in session
                 }
                 default -> {
                     response = new ServerResponse(false, null, "Unknown role");

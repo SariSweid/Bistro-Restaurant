@@ -2,6 +2,8 @@ package logicControllers;
 
 import Entities.Reservation;
 import Entities.Table;
+import Entities.User;
+import enums.UserRole;
 import messages.AvailableDateTimes;
 import messages.UpdateReservationRequest;
 import DB.DBController;
@@ -26,15 +28,6 @@ public class ReservationController {
         this.db = new DBController(); // implement DBController to connect to your DB
     }
     
-    public Reservation getReservationByCode(int code) {
-        List<Reservation> all = db.readAllReservations();
-        for (Reservation r : all) {
-            if (r.getConfirmationCode() == code) return r;
-        }
-        return null;
-    }
-    
-
 
     // ======================
     // return all available times
@@ -209,18 +202,42 @@ public class ReservationController {
    }
    
    
-    /**
-    * Cancel reservation. Returns true on success.
+   /**
+    * Cancel a reservation based on user role.
+    * Subscriber: by reservationID
+    * Guest: by confirmationCode, must match customerID
     */
-   public boolean cancelReservation(int reservationId) {
+   public boolean cancelReservation(User user, Integer reservationId, Integer confirmationCode, Integer guestId) {
+       Reservation r = null;
 
-	    Reservation r = db.GetReservation(reservationId);
-	    if (r == null) return false;
+       if (user != null && user.getRole() == UserRole.SUBSCRIBER) {
+           // Subscribers cancel by reservationID
+           r = db.GetReservation(reservationId);
+           if (r == null || r.getCustomerId() != user.getUserId()) return false;
 
-	    r.setStatus(enums.ReservationStatus.CANCELLED);
+       } else if (guestId != null) {
+           // Guests cancel by confirmationCode + guestId
+           r = getReservationByCode(confirmationCode);
+           if (r == null || r.getCustomerId() != guestId) return false;
 
-	    return db.updateReservation(r);
-	}
+       } else {
+           // Other roles cannot cancel
+           return false;
+       }
+
+       // Actually cancel the reservation
+       r.setStatus(enums.ReservationStatus.CANCELLED);
+       return db.updateReservation(r);
+   }
+
+   // Method to find by confirmation code
+   public Reservation getReservationByCode(int code) {
+       List<Reservation> all = db.readAllReservations();
+       for (Reservation r : all) {
+           if (r.getConfirmationCode() == code) return r;
+       }
+       return null;
+   }
    
    
    public List<Reservation> getReservationsByCustomer(int customerId) {
