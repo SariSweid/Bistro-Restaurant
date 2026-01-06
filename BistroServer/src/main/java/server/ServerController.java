@@ -25,7 +25,7 @@ public class ServerController extends AbstractServer {
 	/** Default port number the server listens on */
     public static final int DEFAULT_PORT = 5555;
     
-    private ReservationController reservationController;
+    //private ReservationController reservationController;
     
     private ServerUIController ui;
     
@@ -41,7 +41,7 @@ public class ServerController extends AbstractServer {
     public ServerController(int port) {
         super(port);  // Initialize the AbstractServer with the given port
         System.out.println("Server started on port " + port);
-        reservationController = new ReservationController();
+        //reservationController = new ReservationController();
         
         // Setup the commands
         commands = new HashMap<>();
@@ -81,7 +81,7 @@ public class ServerController extends AbstractServer {
         commands.put(ActionType.UPDATE_RESERVATION, new UpdateReservationCommand());
         
         // Command #2: Add Reservation
-       commands.put(ActionType.ADD_RESERVATION, new AddReservationCommand());
+        commands.put(ActionType.ADD_RESERVATION, new AddReservationCommand());
 
         // Command #3: Get All Reservations
         commands.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsCommand());
