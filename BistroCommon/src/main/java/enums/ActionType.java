@@ -19,6 +19,13 @@ public enum ActionType {
     UPDATE_USER,
     CHECKUSERIDEXISTS,
     
+    //Restaurant settings
+    GET_RESTAURANT_SETTINGS,
+    ADD_SPECIAL_DATE,
+    UPDATE_SPECIAL_DATE,
+    UPDATE_OPENING_TIME,
+    UPDATE_CLOSING_TIME,
+    
     
     // Payment
     PAY,

@@ -17,10 +17,8 @@
     <children>
         <VBox spacing="12" style="-fx-background-color: #f5f5dc;" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10">
 
-            
             <Label alignment="CENTER" maxWidth="Infinity" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Restaurant Settings" />
 
-            
             <Label style="-fx-font-weight: bold;" text="Opening Hours" />
 
             <GridPane hgap="10" vgap="8">
@@ -48,20 +46,22 @@
                 <Button onAction="#updateClosingHours" style="-fx-background-radius: 15;" text="Update Closing Hours" />
             </HBox>
 
-           
             <Label style="-fx-font-weight: bold;" text="Special Dates" />
 
             <TableView fx:id="specialDatesTable" prefHeight="160">
                 <columns>
-                    <TableColumn fx:id="dateColumn" prefWidth="240" text="Date" />
-                    <TableColumn fx:id="noteColumn" prefWidth="240" text="Note" />
+                    <TableColumn fx:id="dateColumn" prefWidth="120" text="Date" />
+                    <TableColumn fx:id="openColumn" prefWidth="80" text="Open" />
+                    <TableColumn fx:id="closeColumn" prefWidth="80" text="Close" />
+                    <TableColumn fx:id="noteColumn" prefWidth="200" text="Note" />
                 </columns>
             </TableView>
 
             <GridPane hgap="10" vgap="8">
                 <columnConstraints>
-                    <ColumnConstraints prefWidth="140" />
-                    <ColumnConstraints prefWidth="220" />
+                    <ColumnConstraints prefWidth="110" />
+                    <ColumnConstraints prefWidth="90" />
+                    <ColumnConstraints prefWidth="90" />
                     <ColumnConstraints prefWidth="200" />
                 </columnConstraints>
 
@@ -71,9 +71,22 @@
 
                 <children>
                     <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <TextField fx:id="specialDateField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <TextField fx:id="specialDateField" promptText="yyyy-MM-dd" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                    <TextField fx:id="specialNoteField" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                    <TextField fx:id="specialOpenField" promptText="09:00" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                    <TextField fx:id="specialCloseField" promptText="23:00" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                </children>
+            </GridPane>
+
+            <GridPane hgap="10" vgap="8">
+                <columnConstraints>
+                    <ColumnConstraints prefWidth="110" />
+                    <ColumnConstraints prefWidth="380" />
+                </columnConstraints>
+
+                <children>
+                    <Label text="Note:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <TextField fx:id="specialNoteField" promptText="i.e Hannuka" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                 </children>
             </GridPane>
 
@@ -82,7 +95,6 @@
                 <Button onAction="#updateSpecialDates" style="-fx-background-radius: 15;" text="Update Special Date" />
             </HBox>
 
-            
             <HBox alignment="CENTER_LEFT">
                 <Button onAction="#previousPage" text="Previous page" />
             </HBox>
