@@ -12,21 +12,13 @@ import handlers.ClientHandler;
 public class SubscriberReservationController extends BaseReservationController {
 
     @FXML
-    private TextField numberOfDinersField;
-
-    @FXML
-    private DatePicker datePicker;
-
-    @FXML
-    private ComboBox<LocalTime> timeComboBox;
-
-    @FXML
-    private Button confirmButton;
+    private TextField numberOfDiners;
 
     @FXML
     public void initialize() {
-        super.initialize();
-        ClientHandler.getClient().setActiveReservationController(this);
+    		super.initialize();
+    		this.numberOfDinersField = numberOfDiners;
+        setupDatePickerLimits();
     }
 
     @FXML

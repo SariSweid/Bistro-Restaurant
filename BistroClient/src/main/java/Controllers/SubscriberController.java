@@ -39,6 +39,7 @@ public class SubscriberController extends BaseReservationController {
 
     @FXML
     private void onLogOut() {
+    		ClientHandler.getClient().logout(); // send logout request to server
         SceneManager.switchTo("MainMenuUI.fxml");
     }
 

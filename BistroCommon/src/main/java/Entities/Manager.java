@@ -6,9 +6,10 @@ import enums.UserRole;
 /**
  * RestaurantManager represents the restaurant manager
  */
-public class RestaurantManager extends User implements Serializable {
+public class Manager extends User implements Serializable {
 	private String name;
 	private String userName;
+	private int membershipCode;
 	
 	/**
 	 * constructor for new Restaurant Manager
@@ -17,11 +18,13 @@ public class RestaurantManager extends User implements Serializable {
 	 * @param email
 	 * @param phone
 	 * @param userName
+	 * @param membershipCode
 	 */
-	public RestaurantManager(int userID, String name, String email, String phone, String userName) {
+	public Manager(int userID, String name, String email, String phone, String userName, int membershipCode) {
 		super(userID, email, phone, UserRole.MANAGER);
 		this.name = name;
 		this.userName = userName;
+		this.membershipCode = membershipCode;
 	}
 	
 	//getters
@@ -33,6 +36,11 @@ public class RestaurantManager extends User implements Serializable {
 	public String getUserName() {
 		return this.userName;
 	}
+	
+	public int getMembershipCode() {
+		return this.membershipCode;
+	}
+	
 	
 	//setters
 	

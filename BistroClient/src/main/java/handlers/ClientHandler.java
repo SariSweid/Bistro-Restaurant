@@ -26,7 +26,7 @@ public class ClientHandler extends AbstractClient {
     private GuestUpdateReservationUI guestUI;
 
     private BaseReservationController activeReservationController;
-    private CancelReservationController activeCancelController;
+    private Object activeCancelController;
     private MainMenuController mainMenuController;
 
     private int currentUserId;
@@ -85,7 +85,7 @@ public class ClientHandler extends AbstractClient {
         return activeReservationController;
     }
 
-    public void setActiveCancelController(CancelReservationController controller) {
+    public void setActiveCancelController(Object controller) {
         this.activeCancelController = controller;
     }
 
@@ -112,6 +112,7 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsHandler());
         handlers.put(ActionType.CANCEL_RESERVATION, new CancelReservationHandler());
         handlers.put(ActionType.PAY, new PaymentHandler( null, null));
+        handlers.put(ActionType.LOGOUT, new LogoutHandler());
     }
 
     private void sendRequest(Message msg) {
@@ -132,6 +133,11 @@ public class ClientHandler extends AbstractClient {
         setCurrentUserId(userID);
         sendRequest(new Message(ActionType.LOGIN, new LoginRequest(userID, membershipCode)));
     }
+    
+    public void logout() {
+        sendRequest(new Message(ActionType.LOGOUT, new LogoutRequest()));
+    }
+
 
     public void getAllReservations() {
         connect();

@@ -17,7 +17,7 @@ public class GuestCancelReservationController {
     
 
     // guestId of this guest
-    private int guestId;
+    private int guestId = -1;
 
     public void setGuestId(int guestId) {
         this.guestId = guestId;
@@ -40,10 +40,8 @@ public class GuestCancelReservationController {
         }
 
         // SEND CANCEL REQUEST TO SERVER
+        guestId = ClientHandler.getClient().getCurrentUserId();
         ClientHandler.getClient().cancelReservation( null, code, guestId);
-
-        // response will be handled in CancelReservationHandler
-        showMessage("Processing cancellation, please wait...");
     }
 
     @FXML

@@ -1,5 +1,6 @@
 package Controllers;
 
+import handlers.ClientHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -31,6 +32,8 @@ public class GuestReservationController {
     	        // Pass guestId to the popup controller
             GuestCancelReservationController controller = loader.getController();
             controller.setGuestId(currentGuestId);
+            
+            ClientHandler.getClient().setActiveCancelController(controller);
 
     	        Stage stage = new Stage();
     	        stage.setScene(new Scene(root));

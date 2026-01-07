@@ -12,6 +12,7 @@ public enum ActionType {
     
     // User
     LOGIN,
+    LOGOUT,
     GET_USER,
     GET_ALL_USERS,
     ADD_USER,
@@ -20,5 +21,5 @@ public enum ActionType {
     
     
     // Payment
-    PAY
+    PAY,
 }

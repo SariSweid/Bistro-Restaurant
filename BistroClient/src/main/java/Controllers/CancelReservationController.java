@@ -15,7 +15,7 @@ import util.SceneManager;
 
 import java.util.List;
 
-public class CancelReservationController {
+public class CancelReservationController {   //(Not guest)
 
     @FXML
     private TableView<Reservation> reservationsTable;
@@ -100,6 +100,6 @@ public class CancelReservationController {
 
     @FXML
     private void onPreviousPage() {
-        SceneManager.switchTo("MainMenuUI.fxml"); // use correct main menu depending on user type
+        SceneManager.switchTo("SubscriberUI.fxml"); // use correct main menu depending on user type
     }
 }

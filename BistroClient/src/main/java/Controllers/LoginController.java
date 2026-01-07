@@ -43,11 +43,11 @@ public class LoginController implements Initializable {
         SceneManager.switchTo("MainMenuUI.fxml");
     }
 	
-	//onward to the subscriber window
+	//onward to the next window
 	@FXML
 	private void onEnter() {
 		if (userID.getText().isBlank() || membershipCode.getText().isBlank()) {
-	        System.out.println("Login fields empty!");
+	        SceneManager.showError("please fill all fields!");
 	        return;
 	    }
 
@@ -56,15 +56,11 @@ public class LoginController implements Initializable {
 	        id = Integer.parseInt(userID.getText());
 	        code = Integer.parseInt(membershipCode.getText());
 	    } catch (NumberFormatException e) {
-	        System.out.println("Login input not valid numbers");
+	    		SceneManager.showError("Login input not valid numbers");
 	        return;
 	    }
 
 	    // Send using existing login() method
 	    ClientHandler.getClient().login(id, code);
-		/*if (userID.getText().isBlank() || membershipCode.getText().isBlank()) {
-	        errorLabel.setText("Enter username and password");
-	        return;*/
-		//SceneManager.switchTo("SupervisorUI.fxml");
-	}/*should add request to server (search for the subscriber)*/
+	}
 }

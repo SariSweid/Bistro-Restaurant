@@ -24,12 +24,15 @@ public class LoginHandler implements ResponseHandler {
                     case SUBSCRIBER -> SceneManager.switchTo("SubscriberUI.fxml");
                     case SUPERVISOR -> SceneManager.switchTo("SupervisorUI.fxml");
                     case MANAGER -> SceneManager.switchTo("ManagerUI.fxml");
+                    default -> throw new IllegalArgumentException("Unexpected value: " + user.getRole());
                 }
             });
 
         } else {
-            System.out.println("Login failed: " + response.getMessage());
-            // Optionally show error to the user in UI
+            Platform.runLater(() -> {
+                SceneManager.showError(response.getMessage());
+            });
         }
+
     }
 }

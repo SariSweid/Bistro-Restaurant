@@ -20,18 +20,18 @@ public class CancelReservationHandler implements ResponseHandler {
                 // Subscriber logic
                 if (res.isSuccess()) {
                     subController.refreshReservations();
-                    util.SceneManager.showInfo("Reservation cancelled successfully.");
+                    util.SceneManager.showInfo(res.getMessage());
                 } else {
-                    util.SceneManager.showError("Failed to cancel reservation: " + res.getMessage());
+                    util.SceneManager.showError(res.getMessage());
                 }
 
             } else if (controller instanceof GuestCancelReservationController guestController) {
                 // Guest logic
                 if (res.isSuccess()) {
                     guestController.onClose(); // close popup
-                    guestController.showMessage("Reservation cancelled successfully.");
+                    guestController.showMessage(res.getMessage());
                 } else {
-                    guestController.showError("Failed to cancel reservation: " + res.getMessage());
+                    guestController.showError(res.getMessage() + "\nThere is no reservation with that confirmatin code.");
                 }
 
             } else {

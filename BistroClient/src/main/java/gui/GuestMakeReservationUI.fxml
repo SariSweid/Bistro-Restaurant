@@ -32,7 +32,7 @@
 
         <children>
             <Label text="Number of Diners:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <TextField fx:id="NumberOfDiners" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <TextField fx:id="numberOfDiners" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
             <Label text="Email / Phone:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
             <TextField fx:id="emailOrPhone" GridPane.columnIndex="1" GridPane.rowIndex="1" />

@@ -23,7 +23,6 @@ public class AddReservationHandler implements ResponseHandler {
                 if (res.isSuccess()) {
                     controller.showConfirmation("Reservation added successfully!\nConfirmation code: " +
                             ((res.getData() instanceof Entities.Reservation r) ? r.getConfirmationCode() : "N/A"));
-                    SceneManager.switchTo("MainMenuUI.fxml");
                 } else {
                     controller.showError("Failed to add reservation: " + res.getMessage());
                 }

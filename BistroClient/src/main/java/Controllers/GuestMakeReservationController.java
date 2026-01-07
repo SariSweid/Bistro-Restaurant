@@ -15,16 +15,16 @@ import util.SceneManager;
 public class GuestMakeReservationController extends BaseReservationController {
 
     @FXML
-    private TextField NumberOfDiners, emailOrPhone;
+    private TextField numberOfDiners, emailOrPhone;
 
     private int currentGuestId;
 
     @FXML
     public void initialize() {
-        this.numberOfDinersField = NumberOfDiners;
+    		super.initialize();
+        this.numberOfDinersField = numberOfDiners;
         this.currentGuestId = 0;
         setupDatePickerLimits();
-        ClientHandler.getClient().setActiveReservationController(this);
     }
 
     @FXML
@@ -32,6 +32,11 @@ public class GuestMakeReservationController extends BaseReservationController {
         if (emailOrPhone.getText().isBlank()) {
             showError("Please enter your email or phone");
             return;
+        }
+        String input = emailOrPhone.getText().trim();
+        if (!isEmail(input) && !isPhone(input)) {
+        		showError("Please enter a valid email or phone number.");
+        		return;
         }
         checkAvailability();
     }
@@ -44,6 +49,10 @@ public class GuestMakeReservationController extends BaseReservationController {
 
         if (isEmail(input)) guestEmail = input;
         else if (isPhone(input)) guestPhone = input;
+        else {
+        		showError("Please enter a valid email or phone number.");
+        		return;
+        }
         
         System.out.println("num or mail is" + guestEmail + guestPhone);
 
@@ -90,6 +99,7 @@ public class GuestMakeReservationController extends BaseReservationController {
 
     private void submitGuestReservation(String email, String phone) {
         currentGuestId = createGuestUser(email, phone);
+        ClientHandler.getClient().setCurrentUserId(currentGuestId);
         if (currentGuestId == -1) return;
 
         LocalTime selectedTime = timeComboBox.getValue();
@@ -112,5 +122,7 @@ public class GuestMakeReservationController extends BaseReservationController {
         );
 
         ClientHandler.getClient().addReservation(r);
+        
+        resetForm();
     }
 }

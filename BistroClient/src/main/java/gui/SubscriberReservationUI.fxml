@@ -32,13 +32,10 @@
 
         <children>
         	<Label text="Number of Diners:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <TextField fx:id="numberOfDinersField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <TextField fx:id="numberOfDiners" GridPane.columnIndex="1" GridPane.rowIndex="0" />
             
          <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
           	<DatePicker fx:id="datePicker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            
-         <Label text="Time:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <ComboBox fx:id="timeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             
         </children>
       <rowConstraints>
@@ -47,8 +44,13 @@
          <RowConstraints />
       </rowConstraints>
     </GridPane>
+    
     <Button onAction="#onCheckAvailability" prefWidth="160.0" style="-fx-background-radius: 15;" text="Check Availability" />
-	<Button fx:id="confirmButton" onAction="#onSubmitOrder" prefWidth="160.0" style="-fx-background-radius: 15;" text="Submit Order" />
-    <Button onAction="#onPreviousPage" prefWidth="100.0" style="-fx-background-radius: 15;" text="Previous page" />
+    <Button onAction="#onPreviousPage" prefWidth="100.0" style="-fx-background-radius: 15;" text="Previous Page" />
+
+    <!-- Hidden by default: Available times & Confirm button -->
+    <Label fx:id="timesLabel" managed="false" text="Available Times:" visible="false" />
+    <ComboBox fx:id="timeComboBox" managed="false" visible="false" />
+    <Button fx:id="confirmButton" managed="false" onAction="#onSubmitOrder" text="Confirm Reservation" visible="false" />
 
 </VBox>
