@@ -28,6 +28,7 @@
     <Button onAction="#onEditTables" prefWidth="260" style="-fx-background-radius: 15;" text="Edit Tables" />
     <Button onAction="#onEditOpeningHours" prefWidth="260" style="-fx-background-radius: 15;" text="Edit Opening Hours" />
     <Button onAction="#onGetAllUsers" prefWidth="260" style="-fx-background-radius: 15;" text="Get All Users" />
+   <Button onAction="#onsuboptions" prefWidth="260" style="-fx-background-radius: 15;" text="Subscriber Screen" />
     <Button onAction="#onLogOut" prefWidth="100" text="Log Out" />
 
 </VBox>

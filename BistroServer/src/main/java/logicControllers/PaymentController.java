@@ -7,7 +7,11 @@ import util.PaymentResult;
 public class PaymentController {
 
     private final DBController db;
+<<<<<<< HEAD
     private final PaymentController paymentController = new PaymentController();
+=======
+    //private final PaymentController paymentController = new PaymentController();
+>>>>>>> branch 'main' of https://github.com/yarin8294/Project.git
 
     public PaymentController() {
         this.db = new DBController();
