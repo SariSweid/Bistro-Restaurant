@@ -11,6 +11,6 @@ public class GetRestaurantSettingsHandler implements ResponseHandler {
         RestaurantSettingsController controller = ClientHandler.getClient().getActiveRestaurantSettingsController();
         if (controller != null) 
         	controller.loadRestaurantSettings(settings);
-    }
+    }//
 }
 

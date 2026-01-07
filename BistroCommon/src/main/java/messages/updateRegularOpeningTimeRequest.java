@@ -9,5 +9,5 @@ public class updateRegularOpeningTimeRequest {
     	}
     public LocalTime getOpeningTime() {
     	return openingTime; 
-    	}
+    	}//
 }

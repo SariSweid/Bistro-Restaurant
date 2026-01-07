@@ -18,7 +18,7 @@ public enum ActionType {
     UPDATE_USER,
     CHECKUSERIDEXISTS,
     
-    //restaurant settings
+    //Restaurant settings
     GET_RESTAURANT_SETTINGS,
     ADD_SPECIAL_DATE,
     UPDATE_SPECIAL_DATE,

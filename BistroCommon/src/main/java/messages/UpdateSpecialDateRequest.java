@@ -35,5 +35,5 @@ public class UpdateSpecialDateRequest implements Serializable{
     
     public String getDescription() {
 		return description;
-	}
+	}//
 }

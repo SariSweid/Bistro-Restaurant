@@ -13,5 +13,5 @@ public class updateRegularClosingTimeRequest implements Serializable {
 
     public LocalTime getClosingTime() {
         return closingTime;
-    }
+    }//
 }

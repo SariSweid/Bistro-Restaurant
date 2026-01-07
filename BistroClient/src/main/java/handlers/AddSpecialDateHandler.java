@@ -10,5 +10,5 @@ public class AddSpecialDateHandler implements ResponseHandler {
         RestaurantSettingsController controller = ClientHandler.getClient().getActiveRestaurantSettingsController();
 
         controller.loadRestaurantSettings((RestaurantSettings) data);
-    }
+    }//
 }

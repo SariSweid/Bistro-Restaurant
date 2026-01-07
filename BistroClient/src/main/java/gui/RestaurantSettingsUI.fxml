@@ -86,7 +86,7 @@
 
                 <children>
                     <Label text="Note:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <TextField fx:id="specialNoteField" promptText="i.e. Hannuka" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <TextField fx:id="specialNoteField" promptText="i.e Hannuka" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                 </children>
             </GridPane>
 

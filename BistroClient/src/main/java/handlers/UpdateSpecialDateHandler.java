@@ -11,5 +11,5 @@ public class UpdateSpecialDateHandler implements ResponseHandler{
     public void handle(Object data) {
         RestaurantSettingsController controller = ClientHandler.getClient().getActiveRestaurantSettingsController();
         controller.loadRestaurantSettings((RestaurantSettings) data);
-    }
+    }//msd
 }
