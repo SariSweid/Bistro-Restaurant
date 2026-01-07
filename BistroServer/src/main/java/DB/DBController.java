@@ -65,7 +65,9 @@ public class DBController {
 	    	
 	    	
 	            if (conn == null || conn.isClosed()) {	                
-	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","root1234");
+//	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","root1234"); // sari -DB
+
+	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
 	                System.out.println("SQL connection initialized");	               	                	                
 	            }
 	            lastUsed = System.currentTimeMillis();
@@ -990,19 +992,17 @@ public class DBController {
 	    /**
 	     * Updates the MaxTable an existing restaurantsettings in the database.
 	     *
-	     * @param r the SpecialDates object containing updated data
-	     * @param d the Day we want to change
+	     * @param r the RestaurantSettings object containing updated data
 	     * @return true if the update succeeded, false otherwise
 	     */
-		public Boolean updateMaxTable(RestaurantSettings r , Day d) {
+		public Boolean updateMaxTable(RestaurantSettings r) {
 			
 			Connection con = getConnection(); //connect to DB
-			try (PreparedStatement pst = con.prepareStatement("UPDATE `restaurantsettings` SET MaxTables = ? WHERE Day = ? ")){
+			try (PreparedStatement pst = con.prepareStatement("UPDATE `restaurantsettings` SET MaxTables = ? ")){
 				
 				
 				
 				pst.setInt(1, r.getMaxTables()); 
-				pst.setString(2, d.name()); 
 				
 	            int rows = pst.executeUpdate();
 
@@ -1134,6 +1134,24 @@ public class DBController {
 		        }
 
 		        return false;
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		        return false;
+		    }
+		}
+		
+		
+		public boolean updateTableIsFree(int reservationId) {
+			Connection con = getConnection();
+		    try (PreparedStatement pst = con.prepareStatement("UPDATE reservation SET TableId = ? WHERE reservationID = ?")) {
+		    	
+		    	pst.setNull(1, java.sql.Types.INTEGER);
+		        pst.setInt(2, reservationId);
+		    	
+		    	
+		        int updateStatus = pst.executeUpdate();
+		        return updateStatus > 0;
 
 		    } catch (SQLException e) {
 		        e.printStackTrace();

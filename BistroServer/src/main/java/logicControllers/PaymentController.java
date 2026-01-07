@@ -34,6 +34,11 @@ public class PaymentController {
         try {
             boolean added = db.AddBill(bill);
             if (added) {
+            	try {
+            		db.updateTableIsFree(bill.getReservationID());
+            	} catch (Exception e) {
+            		e.printStackTrace();
+            	}
                 String msg = "Payment processed successfully.";
                 if (isSubscriber) {
                     msg += " Original amount: " + originalAmount + ", after 10% discount: " + finalAmount;
