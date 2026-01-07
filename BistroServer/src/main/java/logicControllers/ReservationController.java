@@ -12,7 +12,10 @@ import DB.DBController;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Server-side logic controller for reservations.
@@ -36,14 +39,25 @@ public class ReservationController {
         List<LocalTime> available = new ArrayList<>();
         List<Table> tables = db.GetAllTables();
 
-        // total restaurant capacity = sum of all table capacities
+        // 1) Find largest table capacity
+        int maxTableCapacity = tables.stream()
+                                     .mapToInt(Table::getCapacity)
+                                     .max()
+                                     .orElse(0);
+
+        // If group is too large → no times available
+        if (guests > maxTableCapacity) {
+            return Collections.emptyList();
+        }
+
+        // 2) Total restaurant capacity
         int totalCapacity = tables.stream()
                                   .mapToInt(Table::getCapacity)
                                   .sum();
 
         LocalTime time = OPEN_TIME;
 
-        // If reservation is for TODAY → start from now + 1 hour
+        // 3) If reservation is for TODAY → start from now + 1 hour
         if (date.equals(LocalDate.now())) {
             LocalTime oneHourFromNow = LocalTime.now().plusHours(1).withSecond(0).withNano(0);
 
@@ -60,6 +74,7 @@ public class ReservationController {
             }
         }
 
+        // 4) Check each 30-minute slot
         while (!time.isAfter(CLOSE_TIME.minusHours(RESERVATION_DURATION))) {
 
             if (hasCapacity(date, time, guests, totalCapacity)) {
@@ -71,6 +86,7 @@ public class ReservationController {
 
         return available;
     }
+
 
     private boolean hasCapacity(LocalDate date, LocalTime time, int guests, int totalCapacity) {
 
@@ -121,45 +137,6 @@ public class ReservationController {
 
 
     
-    // ======================
-    // Find a table for given time
-    // ======================
-    private Integer findAvailableTable(LocalDate date, LocalTime time, int guests, List<Table> tables) {
-    	
-        // Get all reservations at that specific date
-    		List<Reservation> reservationsAtTime =db.getReservationsAt(date, time);
-
-    		for (Table table : tables) {
-
-    	        if (table.getCapacity() < guests) continue;
-
-    	        boolean taken = false;
-
-    	        for (Reservation r : reservationsAtTime) {
-    	        		if (r.getTableID() != null && r.getTableID().equals(table.getTableID())) {
-    	                // Check overlap
-    	                LocalTime rStart = r.getReservationTime();
-    	                LocalTime rEnd = rStart.plusHours(RESERVATION_DURATION); // End time of existing reservation
-    	                LocalTime newEnd = time.plusHours(RESERVATION_DURATION); // End time of the new reservation
-
-    	                // If the new reservation starts before existing ends AND
-    	                // ends after existing starts, then it overlaps
-    	                if (!(time.isAfter(rEnd) || newEnd.isBefore(rStart))) {
-    	                    taken = true;
-    	                    break;
-    	                }
-    	        		}
-    	        }
-
-    	        if (!taken) {
-    	            return table.getTableID(); // FOUND A TABLE
-    	        }
-    	    }
-
-    	    return null; // NO TABLE AVAILABLE
-    	}
-
-    
     /**
      * Return all reservations from DB.
      */
@@ -195,17 +172,29 @@ public class ReservationController {
      */
     public boolean addReservation(Reservation r) {
 
-        // Validation
-        if (r == null || r.getNumOfGuests() <= 0 || r.getReservationDate() == null
-                || r.getReservationTime() == null) return false;
+        if (r == null || r.getNumOfGuests() <= 0 ||
+            r.getReservationDate() == null || r.getReservationTime() == null)
+            return false;
 
-        // Get total restaurant capacity
         List<Table> tables = db.GetAllTables();
+
+        // Largest table capacity
+        int maxTableCapacity = tables.stream()
+                                     .mapToInt(Table::getCapacity)
+                                     .max()
+                                     .orElse(0);
+
+        // Reject if group too large
+        if (r.getNumOfGuests() > maxTableCapacity) {
+            return false;
+        }
+
+        // Total capacity
         int totalCapacity = tables.stream()
                                   .mapToInt(Table::getCapacity)
                                   .sum();
 
-        // Check capacity)
+        // Check capacity
         boolean hasCapacity = hasCapacity(
                 r.getReservationDate(),
                 r.getReservationTime(),
@@ -213,19 +202,18 @@ public class ReservationController {
                 totalCapacity
         );
 
-        if (!hasCapacity) {
-            return false; // no capacity available
-        }
+        if (!hasCapacity) return false;
 
-        // DO NOT ASSIGN TABLE HERE
+        // No table assignment here
         r.setTableID(null);
 
-        // generate confirmation code
+        // Confirmation code
         r.setConfirmationCode(generateConfirmationCode());
-        r.setStatus(enums.ReservationStatus.CONFIRMED);
+        r.setStatus(ReservationStatus.CONFIRMED);
 
         return db.insertReservation(r);
     }
+
 
    
    private int generateConfirmationCode() {
@@ -325,20 +313,45 @@ public class ReservationController {
        return false;
    }
    
+
    
-   private boolean isTableFree(int tableId) {
+   private Table findFreeTable(int groupSize) {
+
+	    List<Table> tables = db.GetAllTables();
 	    List<Reservation> all = db.readAllReservations();
 
-	    for (Reservation r : all) {
-	        if (r.getTableID() != null &&
-	            r.getTableID() == tableId &&
-	            r.getStatus() == ReservationStatus.SEATED) {
-	            return false; // table is occupied
+	    // Filter tables that can fit the group
+	    List<Table> suitableTables = tables.stream()
+	            .filter(t -> t.getCapacity() >= groupSize)
+	            .collect(Collectors.toList());
+
+	    // Sort by capacity ASCENDING (smallest table first)
+	    suitableTables.sort(Comparator.comparingInt(Table::getCapacity));
+
+	    for (Table t : suitableTables) {
+
+	        boolean taken = false;
+
+	        for (Reservation r : all) {
+	            if (r.getTableID() != null &&
+	                r.getTableID() == t.getTableID() &&
+	                r.getStatus() == ReservationStatus.SEATED) {
+
+	                taken = true;
+	                break;
+	            }
+	        }
+
+	        if (!taken) {
+	            return t; // best-fit free table found
 	        }
 	    }
 
-	    return true; // table is free
+	    return null; // no suitable table available
 	}
+
+
+
 
    
    public ServerResponse seatCustomerByCode(int confirmationCode, int userId) {
@@ -348,43 +361,49 @@ public class ReservationController {
 	        return new ServerResponse(false, null, "Confirmation code is incorrect.");
 	    }
 
+	    /*
 	    if (r.getCustomerId() != userId) {
 	        return new ServerResponse(false, null, "This confirmation code does not belong to your account.");
 	    }
-	    
-	    // Block cancelled reservations
+*/
 	    if (r.getStatus() == ReservationStatus.CANCELLED) {
 	        return new ServerResponse(false, null, "This reservation has been cancelled.");
 	    }
 
-
 	    if (r.getStatus() == ReservationStatus.SEATED) {
-	        return new ServerResponse(true, r.getTableID(), "You are already seated.");
+	        return new ServerResponse(true, r.getTableID(),
+	                "You are already seated at");
 	    }
 
 	    LocalDate today = LocalDate.now();
-	    LocalTime now = LocalTime.now();
 
 	    if (r.getReservationDate().isAfter(today)) {
 	        return new ServerResponse(false, null, "Your reservation time has not arrived yet.");
 	    }
 
-	    // Check table availability using our helper(isTableFree)
-	    if (isTableFree(r.getTableID())) {
+	    // Find a free table now
+	    Table freeTable = findFreeTable(r.getNumOfGuests());
 
+	    if (freeTable != null) {
+
+	        r.setTableID(freeTable.getTableID());
 	        r.setStatus(ReservationStatus.SEATED);
 	        db.updateReservation(r);
 
-	        return new ServerResponse(true, r.getTableID(), "Your table is ready!");
+	        return new ServerResponse(
+	                true,
+	                freeTable.getTableID(),
+	                "Your table is ready! Please proceed to"
+	        );
 	    }
 
-	    // Table not free → waiting list
-	    //User u = db.getUserById(r.getCustomerId());
-	   // waitingListController.addToWaitingList(r.getCustomerId(), u.getEmailOrPhone(), r.getNumOfGuests());
-
-	    return new ServerResponse(false, null, "No table available. You were added to the waiting list.");
+	    // No table available → wait
+	    return new ServerResponse(
+	            false,
+	            null,
+	            "All tables are currently occupied. Please wait nearby — we will notify you as soon as a table becomes available."
+	    );
 	}
-
 
 
 

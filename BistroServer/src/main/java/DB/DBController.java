@@ -65,9 +65,9 @@ public class DBController {
 	    	
 	    	
 	            if (conn == null || conn.isClosed()) {	                
-	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020"); // sari -DB
+//	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020"); // sari -DB
 
-//	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
+	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
 	                System.out.println("SQL connection initialized");	               	                	                
 	            }
 	            lastUsed = System.currentTimeMillis();
@@ -89,31 +89,37 @@ public class DBController {
 	     * @param newNumGuests the updated number of guests
 	     * @return true if the update succeeded, false otherwise
 	     */
-	    
 	    public boolean updateReservation(Reservation reservation) {
 	        Connection con = getConnection();
-;
 
-	        try (PreparedStatement pst = con.prepareStatement("UPDATE `reservation` SET reservationDate = ?, reservationTime = ?, numOfGuests = ?,  status = ?  WHERE reservationID = ?")) {
+	        try (PreparedStatement pst = con.prepareStatement(
+	                "UPDATE `reservation` SET reservationDate = ?, reservationTime = ?, numOfGuests = ?, status = ?, tableID = ? WHERE reservationID = ?"
+	        )) {
 
-
-	        	pst.setDate(1, Date.valueOf(reservation.getReservationDate()));
-	        	pst.setTime(2, Time.valueOf(reservation.getReservationTime()));  
+	            pst.setDate(1, Date.valueOf(reservation.getReservationDate()));
+	            pst.setTime(2, Time.valueOf(reservation.getReservationTime()));
 	            pst.setInt(3, reservation.getNumOfGuests());
-	            pst.setString(4, reservation.getStatus().name());  
+	            pst.setString(4, reservation.getStatus().name());
 
-	            pst.setInt(5, reservation.getReservationID());
+	            // NEW: update tableID
+	            if (reservation.getTableID() == null) {
+	                pst.setNull(5, java.sql.Types.INTEGER);
+	            } else {
+	                pst.setInt(5, reservation.getTableID());
+	            }
+
+	            pst.setInt(6, reservation.getReservationID());
 
 	            int rows = pst.executeUpdate();
-
-	            return rows > 0; 
+	            return rows > 0;
 
 	        } catch (SQLException e) {
 	            System.err.println("SQL Exception during update: " + e.getMessage());
 	            e.printStackTrace();
-	            return false; 
+	            return false;
 	        }
 	    }
+
 	    
 	    
 		/**
