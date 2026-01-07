@@ -109,6 +109,13 @@ public class ServerController extends AbstractServer {
         
         // Command: Add payment
         commands.put(ActionType.PAY, new PayCommand());
+        
+        // Command: Forgot Code
+        commands.put(ActionType.FORGOT_CODE, new ForgotCodeCommand());
+        
+        // Command: Seat customer
+        commands.put(ActionType.SEAT_CUSTOMER, new SeatCustomerCommand());
+        
     }
     
     /**

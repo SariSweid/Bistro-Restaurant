@@ -3,6 +3,8 @@ package logicControllers;
 import Entities.Reservation;
 import Entities.Table;
 import Entities.User;
+import common.ServerResponse;
+import enums.ReservationStatus;
 import enums.UserRole;
 import messages.AvailableDateTimes;
 import messages.UpdateReservationRequest;
@@ -267,6 +269,91 @@ public class ReservationController {
    public List<Reservation> getReservationsByCustomer(int customerId) {
 	    return db.getReservationsByCustomer(customerId);
 	}
+
+   
+
+   /**
+    * Checks if the user has a CONFIRMED reservation.
+    *
+    * @param userId
+    * @return true if user has a confirmed reservation
+    */
+   public boolean hasConfirmedReservation(int userId) {
+
+       List<Reservation> all = db.readAllReservations();
+
+       for (Reservation r : all) {
+           if (r.getCustomerId() == userId &&
+               r.getStatus() == enums.ReservationStatus.CONFIRMED) {
+               return true;
+           }
+       }
+
+       return false;
+   }
+   
+   
+   private boolean isTableFree(int tableId) {
+	    List<Reservation> all = db.readAllReservations();
+
+	    for (Reservation r : all) {
+	        if (r.getTableID() != null &&
+	            r.getTableID() == tableId &&
+	            r.getStatus() == ReservationStatus.SEATED) {
+	            return false; // table is occupied
+	        }
+	    }
+
+	    return true; // table is free
+	}
+
+   
+   public ServerResponse seatCustomerByCode(int confirmationCode, int userId) {
+
+	    Reservation r = getReservationByCode(confirmationCode);
+	    if (r == null) {
+	        return new ServerResponse(false, null, "Confirmation code is incorrect.");
+	    }
+
+	    if (r.getCustomerId() != userId) {
+	        return new ServerResponse(false, null, "This confirmation code does not belong to your account.");
+	    }
+	    
+	    // Block cancelled reservations
+	    if (r.getStatus() == ReservationStatus.CANCELLED) {
+	        return new ServerResponse(false, null, "This reservation has been cancelled.");
+	    }
+
+
+	    if (r.getStatus() == ReservationStatus.SEATED) {
+	        return new ServerResponse(true, r.getTableID(), "You are already seated.");
+	    }
+
+	    LocalDate today = LocalDate.now();
+	    LocalTime now = LocalTime.now();
+
+	    if (r.getReservationDate().isAfter(today)) {
+	        return new ServerResponse(false, null, "Your reservation time has not arrived yet.");
+	    }
+
+	    // Check table availability using our helper(isTableFree)
+	    if (isTableFree(r.getTableID())) {
+
+	        r.setStatus(ReservationStatus.SEATED);
+	        db.updateReservation(r);
+
+	        return new ServerResponse(true, r.getTableID(), "Your table is ready!");
+	    }
+
+	    // Table not free → waiting list
+	    //User u = db.getUserById(r.getCustomerId());
+	   // waitingListController.addToWaitingList(r.getCustomerId(), u.getEmailOrPhone(), r.getNumOfGuests());
+
+	    return new ServerResponse(false, null, "No table available. You were added to the waiting list.");
+	}
+
+
+
 
    
 }
