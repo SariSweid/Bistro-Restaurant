@@ -65,7 +65,7 @@ public class DBController {
 	    	
 	    	
 	            if (conn == null || conn.isClosed()) {	                
-	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020");
+	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","root1234");
 	                System.out.println("SQL connection initialized");	               	                	                
 	            }
 	            lastUsed = System.currentTimeMillis();

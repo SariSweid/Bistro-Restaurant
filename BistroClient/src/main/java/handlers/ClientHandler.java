@@ -119,17 +119,12 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsHandler());
         handlers.put(ActionType.CANCEL_RESERVATION, new CancelReservationHandler());
         handlers.put(ActionType.PAY, new PaymentHandler( null, null));
-<<<<<<< HEAD
         handlers.put(ActionType.LOGOUT, new LogoutHandler());
-=======
         handlers.put(ActionType.GET_RESTAURANT_SETTINGS, new GetRestaurantSettingsHandler());
         handlers.put(ActionType.ADD_SPECIAL_DATE, new AddSpecialDateHandler());
         handlers.put(ActionType.UPDATE_SPECIAL_DATE, new UpdateSpecialDateHandler());
         handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler(guestUI));
         handlers.put(ActionType.UPDATE_RESERVATION, new UpdateReservationHandler(guestUI));
-
-
->>>>>>> branch 'main' of https://github.com/yarin8294/Project
     }
 
     private void sendRequest(Message msg) {
