@@ -2,7 +2,7 @@ package messages;
 import java.io.Serializable;
 import java.time.LocalTime;
 
-public class updateRegularOpeningTimeRequest {
+public class updateRegularOpeningTimeRequest implements Serializable {
 	private final LocalTime openingTime;
     public updateRegularOpeningTimeRequest(LocalTime openingTime) {
     	this.openingTime = openingTime;
