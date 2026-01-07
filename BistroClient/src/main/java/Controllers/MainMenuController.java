@@ -52,4 +52,10 @@ public class MainMenuController implements Initializable {
     private void onExit() {
         System.exit(0);
     }
+    
+    @FXML
+    private void onReciveTable() {
+    	SceneManager.switchTo("TableRecivingUI.fxml");
+    }
+
 }

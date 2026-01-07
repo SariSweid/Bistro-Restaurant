@@ -4,23 +4,30 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
 
-<VBox alignment="CENTER" prefHeight="450.0" prefWidth="600.0" spacing="14.0" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.CancelReservationController">
+<VBox alignment="TOP_CENTER" prefHeight="450.0" prefWidth="600.0" spacing="20.0" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.CancelReservationController">
     
     <padding>
         <Insets top="20" right="40" bottom="20" left="40"/>
     </padding>
 
-    <TableView fx:id="reservationsTable" prefHeight="300" prefWidth="600">
+
+    <TableView fx:id="reservationsTable" prefHeight="300" prefWidth="520">
         <columns>
-            <TableColumn fx:id="idCol" text="Reservation ID" prefWidth="100"/>
-            <TableColumn fx:id="dateCol" text="Date" prefWidth="150"/>
-            <TableColumn fx:id="timeCol" text="Time" prefWidth="150"/>
-            <TableColumn fx:id="guestsCol" text="Guests" prefWidth="100"/>
+            <TableColumn fx:id="idCol" text="Reservation ID" prefWidth="120"/>
+            <TableColumn fx:id="dateCol" text="Date" prefWidth="130"/>
+            <TableColumn fx:id="timeCol" text="Time" prefWidth="130"/>
+            <TableColumn fx:id="guestsCol" text="Guests" prefWidth="120"/>
         </columns>
     </TableView>
 
-    <Button fx:id="cancelButton" text="Cancel Selected Reservation" prefWidth="250" onAction="#onCancelSelected"/>
-    <Button text="Previous Page" prefWidth="150" onAction="#onPreviousPage"/>
+
+    <HBox spacing="20" alignment="CENTER">
+        <Button fx:id="cancelButton" text="Cancel Selected Reservation" prefWidth="220" onAction="#onCancelSelected"/>
+        <Button text="Previous Page" prefWidth="120" onAction="#onPreviousPage"/>
+    </HBox>
+    
 </VBox>

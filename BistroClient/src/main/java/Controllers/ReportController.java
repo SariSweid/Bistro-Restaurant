@@ -11,4 +11,6 @@ public class ReportController {
 	private void onPreviousPage() {
 		SceneManager.switchTo("ManagerUI.fxml");
 	}
+	
+	
 }

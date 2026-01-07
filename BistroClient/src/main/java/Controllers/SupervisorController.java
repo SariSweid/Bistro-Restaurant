@@ -26,7 +26,7 @@ public class SupervisorController {
     
     @FXML
     private void onGetAllUsers() {
-        SceneManager.switchTo("SubscribersInformationUI.fxml"); // not exist
+        SceneManager.switchTo("SubscribersInformationUI.fxml"); 
     }
     
   @FXML

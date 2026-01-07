@@ -6,12 +6,12 @@ import util.SceneManager;
 public class ManagerController {
 	@FXML
     private void onShowSubscribersReport() {
-        SceneManager.switchTo("ReportUI.fxml");
+        SceneManager.switchTo("SubscribersReportUI.fxml");
     }
 
     @FXML
     private void onShowTimesReport() {
-        SceneManager.switchTo("ReportUI.fxml");
+        SceneManager.switchTo("TimesReportUI.fxml");
     }
 
     @FXML
