@@ -51,6 +51,8 @@ public class DailyFunctionController extends TimerTask {
         for (Reservation r : reservations) {
             LocalDateTime reservationDateTime = LocalDateTime.of(r.getReservationDate(), r.getReservationTime());
 
+            
+            System.out.println("THE TIME IS:" + reservationDateTime);
             // 1. Cancel no-show reservations after 15 minutes
             if (r.getStatus() == ReservationStatus.CONFIRMED &&
                     now.isAfter(reservationDateTime.plusMinutes(15))) {
@@ -69,14 +71,13 @@ public class DailyFunctionController extends TimerTask {
                 db.updateReservation(r);
             }
 
+
+
             // 2. Generate bill 2 hours after seating
-            if (r.getStatus() == ReservationStatus.SEATED &&
-                    r.getBillID() == null &&
-                    r.getReservationTime() != null &&
-                    now.isAfter(reservationDateTime.plusHours(2))) {
+            if (r.getStatus() == ReservationStatus.CONFIRMED && r.getBillID() == 0 && r.getReservationTime() != null && now.isAfter(reservationDateTime.plusHours(2))) {
 
                 try {
-                   
+                   System.out.println("IM HERE");
                     Bill bill = new Bill(0, r.getReservationID(), generateRandomAmount());
 
                     

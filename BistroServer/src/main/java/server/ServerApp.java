@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import logicControllers.DailyFunctionController;
 
 public class ServerApp extends Application {
 
@@ -30,6 +31,9 @@ public class ServerApp extends Application {
             uiController.setStatus("Status: Failed to start server");
             e.printStackTrace();
         }
+        
+        //  Start the DailyFunctionController timer
+        DailyFunctionController.startDailyTimer();
 
         // 4. Show the window
         Scene scene = new Scene(root);
