@@ -1144,10 +1144,11 @@ public class DBController {
 		
 		public boolean updateTableIsFree(int reservationId) {
 			Connection con = getConnection();
-		    try (PreparedStatement pst = con.prepareStatement("UPDATE reservation SET TableId = ? WHERE reservationID = ?")) {
+		    try (PreparedStatement pst = con.prepareStatement("UPDATE reservation SET TableId = ? , status = ? WHERE reservationID = ?")) {
 		    	
 		    	pst.setNull(1, java.sql.Types.INTEGER);
-		        pst.setInt(2, reservationId);
+		    	pst.setString(2, "COMPLETED");
+		        pst.setInt(3, reservationId);
 		    	
 		    	
 		        int updateStatus = pst.executeUpdate();

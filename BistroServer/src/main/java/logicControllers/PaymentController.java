@@ -21,13 +21,11 @@ public class PaymentController {
 
         double originalAmount = bill.getTotalAmount();
         double finalAmount = originalAmount;
-        System.out.println("resid = " + bill.getReservationID());
         boolean isSubscriber = db.isSubscriberByReservationId(bill.getReservationID());
 
         if (isSubscriber) {
-        	System.out.println("is SUBBBB");
             finalAmount = originalAmount * 0.9;
-            System.out.println("fin" + finalAmount + " ori" +originalAmount );
+            finalAmount = Math.round(finalAmount * 100.0) / 100.0; 
             bill.setTotalAmount(finalAmount);
         }
 
@@ -36,6 +34,7 @@ public class PaymentController {
             if (added) {
             	try {
             		db.updateTableIsFree(bill.getReservationID());
+            		System.out.println("succes1");
             	} catch (Exception e) {
             		e.printStackTrace();
             	}
