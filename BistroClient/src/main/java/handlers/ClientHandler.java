@@ -125,6 +125,8 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.UPDATE_SPECIAL_DATE, new UpdateSpecialDateHandler());
         handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler(guestUI));
         handlers.put(ActionType.UPDATE_RESERVATION, new UpdateReservationHandler(guestUI));
+        handlers.put(ActionType.FORGOT_CODE, new ForgotCodeHandler());
+        handlers.put(ActionType.SEAT_CUSTOMER, new SeatCustomerHandler());
     }
 
     private void sendRequest(Message msg) {
@@ -193,6 +195,19 @@ public class ClientHandler extends AbstractClient {
     public void Pay(PaymentRequest req) {
         connect();
         sendRequest(new Message(ActionType.PAY, req));
+    }
+    
+    public void seatCustomer(int userId, int confirmationCode) {
+        connect();
+        sendRequest(new Message(
+            ActionType.SEAT_CUSTOMER,
+            new SeatCustomerRequest(userId, confirmationCode)
+        ));
+    }
+
+    public void forgotCode(int userId) {
+    		connect();
+        sendRequest(new Message(ActionType.FORGOT_CODE, new ForgotCodeRequest(userId)));
     }
 
     @Override

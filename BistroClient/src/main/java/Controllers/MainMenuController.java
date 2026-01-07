@@ -54,8 +54,8 @@ public class MainMenuController implements Initializable {
     }
     
     @FXML
-    private void onReciveTable() {
-    	SceneManager.switchTo("TableRecivingUI.fxml");
+    private void onReceiveTable() {
+    	SceneManager.switchTo("TableReceivingUI.fxml");
     }
 
 }

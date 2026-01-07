@@ -130,8 +130,6 @@ public abstract class BaseReservationController {
 
         // Submit immediately
         submitAlternativeReservation(chosenDate, chosenTime);
-
-        resetForm();
     }
 
     // --- Submit Reservation ---
