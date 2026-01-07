@@ -33,10 +33,16 @@ public class SupervisorController {
   private void onRegister() { // it can made only by Supervisor
       SceneManager.switchTo("RegistrationUI.fxml");
   }
+  
 
     @FXML
     private void onLogOut() {
         SceneManager.switchTo("MainMenuUI.fxml");
     }
+  
+  @FXML
+  private void onsuboptions() { // 
+      SceneManager.switchTo("SubscriberUI.fxml");
+  }
 
 }

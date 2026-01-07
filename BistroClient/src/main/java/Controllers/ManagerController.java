@@ -18,4 +18,15 @@ public class ManagerController {
     private void onLogOut() {
         SceneManager.switchTo("MainMenuUI.fxml");
     }
+    
+    @FXML
+    private void onsupervisorscreen() {
+        SceneManager.switchTo("SupervisorUI.fxml");
+    }
+    
+    @FXML
+    private void onsubscriberscreen() {
+        SceneManager.switchTo("SubscriberUI.fxml");
+    }
+    
 }
