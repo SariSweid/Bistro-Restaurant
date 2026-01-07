@@ -20,6 +20,8 @@
     
     <Button onAction="#onShowSubscribersReport" prefWidth="260" style="-fx-background-radius: 15;" text="Show Suscribers Report" />
     <Button onAction="#onShowTimesReport" prefWidth="260" style="-fx-background-radius: 15;" text="Show Times Report" />
+   <Button onAction="#onsupervisorscreen" prefWidth="260" style="-fx-background-radius: 15;" text="Supervisor Screen" />
+   <Button onAction="#onsubscriberscreen" prefWidth="260" style="-fx-background-radius: 15;" text="Subscriber Screen" />
     <Button onAction="#onLogOut" prefWidth="100" text="Log Out" />
 
 </VBox>

@@ -7,6 +7,7 @@ import util.PaymentResult;
 public class PaymentController {
 
     private final DBController db;
+    //private final PaymentController paymentController = new PaymentController();
 
     public PaymentController() {
         this.db = new DBController();

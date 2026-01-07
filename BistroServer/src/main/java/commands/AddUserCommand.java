@@ -16,7 +16,7 @@ public class AddUserCommand implements Command {
      * Command responsible for handling ADD_USER requests.
      */
 	@Override
-    public void execute(Object data, ConnectionToClient client) {
+	public void execute(Object data, ConnectionToClient client) {
 		// Cast the data object to AddUserRequest
         AddUserRequest req = (AddUserRequest) data;
         
