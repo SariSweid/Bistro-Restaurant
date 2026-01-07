@@ -76,10 +76,10 @@ public class DailyFunctionController extends TimerTask {
                     now.isAfter(reservationDateTime.plusHours(2))) {
 
                 try {
-                    // יצירת חשבונית עם סכום אקראי
+                   
                     Bill bill = new Bill(0, r.getReservationID(), generateRandomAmount());
 
-                    // שימוש ב-PaymentController שלך
+                    
                     PaymentResult result = paymentController.addPayment(bill);
 
                     if (result.isSuccess() && result.getBill() != null) {
