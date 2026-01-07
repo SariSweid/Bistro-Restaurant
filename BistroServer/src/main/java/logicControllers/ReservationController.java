@@ -31,14 +31,16 @@ public class ReservationController {
     }
     
 
-    // ======================
-    // return all available times
-    // ======================
     public List<LocalTime> getAvailableTimes(LocalDate date, int guests) {
-    	
-    		List<LocalTime> available = new ArrayList<>();
-    		List<Table> tables = db.GetAllTables();
-    		
+
+        List<LocalTime> available = new ArrayList<>();
+        List<Table> tables = db.GetAllTables();
+
+        // total restaurant capacity = sum of all table capacities
+        int totalCapacity = tables.stream()
+                                  .mapToInt(Table::getCapacity)
+                                  .sum();
+
         LocalTime time = OPEN_TIME;
 
         // If reservation is for TODAY → start from now + 1 hour
@@ -46,7 +48,6 @@ public class ReservationController {
             LocalTime oneHourFromNow = LocalTime.now().plusHours(1).withSecond(0).withNano(0);
 
             if (oneHourFromNow.isAfter(time)) {
-                // round up to next 30-minute slot
                 int minute = oneHourFromNow.getMinute();
                 if (minute > 0 && minute <= 30) {
                     oneHourFromNow = oneHourFromNow.withMinute(30);
@@ -55,23 +56,48 @@ public class ReservationController {
                 } else {
                     oneHourFromNow = oneHourFromNow.withMinute(0);
                 }
-
                 time = oneHourFromNow;
             }
         }
-        
+
         while (!time.isAfter(CLOSE_TIME.minusHours(RESERVATION_DURATION))) {
 
-	        	if (findAvailableTable(date, time, guests, tables) != null) {
-	                available.add(time);
-	            }
-	        	
-	        		time = time.plusMinutes(30);
+            if (hasCapacity(date, time, guests, totalCapacity)) {
+                available.add(time);
+            }
+
+            time = time.plusMinutes(30);
         }
 
         return available;
     }
-    
+
+    private boolean hasCapacity(LocalDate date, LocalTime time, int guests, int totalCapacity) {
+
+        // Get all reservations on that date, time
+        List<Reservation> reservations = db.getReservationsAt(date, time);
+
+        int usedSeats = 0;
+
+        for (Reservation r : reservations) {
+
+            if (!r.isReservationActive()) continue; // only count active ones
+
+            LocalTime rStart = r.getReservationTime();
+            LocalTime rEnd = rStart.plusHours(RESERVATION_DURATION);
+            LocalTime newEnd = time.plusHours(RESERVATION_DURATION);
+
+            boolean overlap = !(time.isAfter(rEnd) || newEnd.isBefore(rStart));
+
+            if (overlap) {
+                usedSeats += r.getNumOfGuests();
+            }
+        }
+
+        return (usedSeats + guests) <= totalCapacity;
+    }
+
+   
     
     // ======================
     // Return alternative available times
@@ -92,6 +118,7 @@ public class ReservationController {
         }
         return result;
     }
+
 
     
     // ======================
@@ -166,34 +193,40 @@ public class ReservationController {
     /**
      * Add a new reservation. Returns true on success.
      */
-   public boolean addReservation(Reservation r) {
-	   
-       // Validation
-       if (r == null || r.getNumOfGuests() <= 0 || r.getReservationDate() == null
-               || r.getReservationTime() == null) return false;
-       
-       List<Table> tables = db.GetAllTables();
-       
-       // check availability
-       Integer tableId = findAvailableTable(
-               r.getReservationDate(),
-               r.getReservationTime(),
-               r.getNumOfGuests(),
-               tables
-       );
-       
-       if (tableId == null) {
-           return false; // no table available
-       }
-       
-       r.setTableID(tableId);
-       // generate confirmation code
-       r.setConfirmationCode(generateConfirmationCode());
-       r.setStatus(enums.ReservationStatus.CONFIRMED);
-       
-       
-       return db.insertReservation(r);
-   }
+    public boolean addReservation(Reservation r) {
+
+        // Validation
+        if (r == null || r.getNumOfGuests() <= 0 || r.getReservationDate() == null
+                || r.getReservationTime() == null) return false;
+
+        // Get total restaurant capacity
+        List<Table> tables = db.GetAllTables();
+        int totalCapacity = tables.stream()
+                                  .mapToInt(Table::getCapacity)
+                                  .sum();
+
+        // Check capacity)
+        boolean hasCapacity = hasCapacity(
+                r.getReservationDate(),
+                r.getReservationTime(),
+                r.getNumOfGuests(),
+                totalCapacity
+        );
+
+        if (!hasCapacity) {
+            return false; // no capacity available
+        }
+
+        // DO NOT ASSIGN TABLE HERE
+        r.setTableID(null);
+
+        // generate confirmation code
+        r.setConfirmationCode(generateConfirmationCode());
+        r.setStatus(enums.ReservationStatus.CONFIRMED);
+
+        return db.insertReservation(r);
+    }
+
    
    private int generateConfirmationCode() {
        return 100000 + new java.util.Random().nextInt(900000);

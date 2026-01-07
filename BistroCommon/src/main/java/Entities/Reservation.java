@@ -175,7 +175,7 @@ public class Reservation implements Serializable {
 	 * @return True if the Reservation is Still Active, False else
 	 */
 	public boolean isReservationActive() {
-		return (this.status == ReservationStatus.CONFIRMED) || (this.status == ReservationStatus.PENDING);
+		return ((this.status == ReservationStatus.CONFIRMED) || (this.status == ReservationStatus.PENDING) || (this.status == ReservationStatus.SEATED));
 	}
 	
 	/**
