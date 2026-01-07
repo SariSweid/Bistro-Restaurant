@@ -4,9 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import Entities.Guest;
-import Entities.RestaurantManager;
-import Entities.RestaurantSupervisor;
+import Entities.Manager;
 import Entities.Subscriber;
+import Entities.Supervisor;
 import Entities.User;
 import enums.UserRole;
 
@@ -40,8 +40,8 @@ public class UserFactory {
 		return switch (role) {
 				case GUEST -> new Guest(userID, email, phone);
 				case SUBSCRIBER -> new Subscriber(userID, name, email, phone, userName, membershipCode);
-				case SUPERVISOR -> new RestaurantSupervisor(userID, name, email, phone, userName);
-				case MANAGER -> new RestaurantManager(userID, name, email, phone, userName);
+				case SUPERVISOR -> new Supervisor(userID, name, email, phone, userName, membershipCode);
+				case MANAGER -> new Manager(userID, name, email, phone, userName, membershipCode);
 		};
 	}
 }

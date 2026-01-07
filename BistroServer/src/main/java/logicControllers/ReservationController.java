@@ -17,8 +17,8 @@ import java.util.List;
  */
 public class ReservationController {
 	
-    private static final LocalTime OPEN_TIME = LocalTime.of(10, 0);  // From 10:00
-    private static final LocalTime CLOSE_TIME = LocalTime.of(22, 0);  // To 22:00
+    private static final LocalTime OPEN_TIME = LocalTime.of(10, 00);  // From 10:00
+    private static final LocalTime CLOSE_TIME = LocalTime.of(22, 00);  // To 22:00
     private static final int RESERVATION_DURATION = 2;  // Hours
     
     private final DBController db;
@@ -41,7 +41,7 @@ public class ReservationController {
 
         // If reservation is for TODAY → start from now + 1 hour
         if (date.equals(LocalDate.now())) {
-            LocalTime oneHourFromNow = LocalTime.now().plusHours(1);
+            LocalTime oneHourFromNow = LocalTime.now().plusHours(1).withSecond(0).withNano(0);
 
             if (oneHourFromNow.isAfter(time)) {
                 // round up to next 30-minute slot
@@ -85,13 +85,9 @@ public class ReservationController {
                 getAvailableTimes(dateToCheck, guests);
 
             if (!times.isEmpty()) {
-                result.add(
-                    new AvailableDateTimes(dateToCheck, times)
-                );
-                break;
+            		result.add(new AvailableDateTimes(dateToCheck, times)); 
             }
         }
-
         return result;
     }
 
@@ -211,6 +207,7 @@ public class ReservationController {
        Reservation r = null;
 
        if (user != null && user.getRole() == UserRole.SUBSCRIBER) {
+    	   		System.out.println(user);
            // Subscribers cancel by reservationID
            r = db.GetReservation(reservationId);
            if (r == null || r.getCustomerId() != user.getUserId()) {
@@ -224,7 +221,7 @@ public class ReservationController {
            // Guests cancel by confirmationCode + guestId
            r = getReservationByCode(confirmationCode);
            if (r == null || r.getCustomerId() != guestId) {
-        	   System.out.println("confirmationCodew2 = " + confirmationCode);
+        	   System.out.println("confirmationCode2 = " + confirmationCode);
         	   System.out.println("guestId2 = " + guestId);
         	   System.out.println("user2 = " + user);
         	   return false;
@@ -240,9 +237,15 @@ public class ReservationController {
     	    return false;
     	}
        
-	   System.out.println("confirmationCodew2 = " + confirmationCode);
+	   System.out.println("confirmationCode2 = " + confirmationCode);
 	   System.out.println("guestId2 = " + guestId);
 	   System.out.println("user2 = " + user);
+
+	   // NEW CHECK: prevent double cancellation
+	   if (r.getStatus() == enums.ReservationStatus.CANCELLED) {
+	       System.out.println("Reservation already cancelled.");
+	       return false;
+	   }
 
        // Actually cancel the reservation
        r.setStatus(enums.ReservationStatus.CANCELLED);

@@ -7,8 +7,9 @@ import common.*;
 import enums.ActionType;
 import enums.UserRole;
 import Entities.Subscriber;
+import Entities.Supervisor;
 import Entities.User;
-import Entities.RestaurantSupervisor; // Needed for mock
+import Entities.Manager;
 import src.ocsf.server.ConnectionToClient;
 
 public class LoginCommand implements Command {
@@ -24,7 +25,7 @@ public class LoginCommand implements Command {
         try {
             LoginRequest req = (LoginRequest) data;
             int userID = req.getUserID();
-            int membershipCode = req.getMembershipCode(); // only relevant for Subscriber
+            int membershipCode = req.getMembershipCode();
 
             User user = userController.getUserInformation(userID);
 
@@ -49,17 +50,25 @@ public class LoginCommand implements Command {
                     client.setInfo("user", sub);  // store in session
                 }
                 case SUPERVISOR -> {
-                    response = new ServerResponse(true, user, "Supervisor login successful");
-                    client.setInfo("user", user);  // store in session
+                		Supervisor sup = (Supervisor) user;
+                		if (sup.getMembershipCode() != membershipCode) {
+                            response = new ServerResponse(false, null, "Invalid membership code");
+                            client.sendToClient(new Message(ActionType.LOGIN, response));
+                            return;
+                    }
+                    response = new ServerResponse(true, sup, "Supervisor login successful");
+                    client.setInfo("user", sup);  // store in session
                 }
                 case MANAGER -> {
-                    response = new ServerResponse(true, user, "Manager login successful");
-                    client.setInfo("user", user);  // store in session
-                }
-                case GUEST -> {
-                    response = new ServerResponse(true, user, "Guest login successful");
-                    client.setInfo("user", user); // store in session
-                }
+	                	Manager mgr = (Manager) user;
+	            		if (mgr.getMembershipCode() != membershipCode) {
+	                        response = new ServerResponse(false, null, "Invalid membership code");
+	                        client.sendToClient(new Message(ActionType.LOGIN, response));
+	                        return;
+	                }
+	                response = new ServerResponse(true, mgr, "Supervisor login successful");
+	                client.setInfo("user", mgr);  // store in session
+	            }
                 default -> {
                     response = new ServerResponse(false, null, "Unknown role");
                     client.sendToClient(new Message(ActionType.LOGIN, response));

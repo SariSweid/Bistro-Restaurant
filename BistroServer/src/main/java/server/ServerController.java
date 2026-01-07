@@ -77,34 +77,37 @@ public class ServerController extends AbstractServer {
      * Registers all supported commands.
      */
     private void initializeCommands() {
-        // Command #1: Update Reservations
+        // Command: Update Reservations
         commands.put(ActionType.UPDATE_RESERVATION, new UpdateReservationCommand());
         
-        // Command #2: Add Reservation
+        // Command: Add Reservation
         commands.put(ActionType.ADD_RESERVATION, new AddReservationCommand());
 
-        // Command #3: Get All Reservations
+        // Command: Get All Reservations
         commands.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsCommand());
         
-        // Command #4: Login 
+        // Command: Login 
         commands.put(ActionType.LOGIN, new LoginCommand());
         
-        // Command #4: Register
+        // Command: Logout 
+        commands.put(ActionType.LOGOUT, new LogoutCommand());
+      
+        // Command: Register
         commands.put(ActionType.ADD_USER, new RegisterCommand());
         
-        // Command #5: Get all available times  // <- ADDED THIS
+        // Command: Get all available times  // <- ADDED THIS
         commands.put(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesCommand());
         
-        // Command #6: Get nearest available times (alternatives) <- ADDED THIS
+        // Command: Get nearest available times (alternatives) <- ADDED THIS
         commands.put(ActionType.GET_NEAREST_TIMES, new GetNearestAvailableTimesCommand());
         
-        // Command #7: Get all user reservations (active)
+        // Command: Get all user reservations (active)
         commands.put(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsCommand());
         
-        // Command #8: Cancel Reservation
+        // Command: Cancel Reservation
         commands.put(ActionType.CANCEL_RESERVATION, new CancelReservationCommand());
         
-        // Command #9: Add payment
+        // Command: Add payment
         commands.put(ActionType.PAY, new PayCommand());
     }
     

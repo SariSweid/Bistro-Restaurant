@@ -16,11 +16,10 @@ import java.util.List;
 
 import Entities.Bill;
 import Entities.Guest;
+import Entities.Manager;
 import Entities.Report;
 import Entities.Reservation;
-import Entities.RestaurantManager;
 import Entities.RestaurantSettings;
-import Entities.RestaurantSupervisor;
 import Entities.SpecialDates;
 import Entities.Table;
 import Entities.User;
@@ -29,6 +28,7 @@ import Entities.WeeklyOpeningHours;
 import enums.Day;
 import logicControllers.UserFactory;
 import Entities.Subscriber;
+import Entities.Supervisor;
 
 
 
@@ -65,7 +65,7 @@ public class DBController {
 	    	
 	    	
 	            if (conn == null || conn.isClosed()) {	                
-	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234");
+	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020");
 	                System.out.println("SQL connection initialized");	               	                	                
 	            }
 	            lastUsed = System.currentTimeMillis();
@@ -471,7 +471,7 @@ public class DBController {
 	                pst.setNull(6, java.sql.Types.INTEGER);              // membershipCode
 	                pst.setString(7, g.getRole().name()); // GUEST
 	            } 
-	            else if (u instanceof RestaurantManager m) {
+	            else if (u instanceof Manager m) {
 	                pst.setString(2, m.getName());
 	                pst.setString(3, m.getPhone());
 	                pst.setString(4, m.getEmail());
@@ -479,7 +479,7 @@ public class DBController {
 	                pst.setInt(6, 0);
 	                pst.setString(7, m.getRole().name());
 	            } 
-	            else if (u instanceof RestaurantSupervisor s) {
+	            else if (u instanceof Supervisor s) {
 	                pst.setString(2, s.getName());
 	                pst.setString(3, s.getPhone());
 	                pst.setString(4, s.getEmail());
@@ -587,11 +587,11 @@ public class DBController {
 	                pst.setString(4, s.getUserName());
 	            }
 	            	            
-	            else if (u instanceof RestaurantManager m) {
+	            else if (u instanceof Manager m) {
 	                pst.setString(1, m.getName());
 	                pst.setString(4, m.getUserName());
 	            }
-	            else if (u instanceof RestaurantSupervisor s) {
+	            else if (u instanceof Supervisor s) {
 	                pst.setString(1, s.getName());
 	                pst.setString(4, s.getUserName());
 	            }

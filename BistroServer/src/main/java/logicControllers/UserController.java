@@ -95,7 +95,6 @@ public class UserController {
 	 * Find existing guest by email or phone.
 	 * If not found, create a new guest user.
 	 * Returns userID.
-	 */
 	public int getOrCreateGuest(String contact) {
 
 	    if (contact == null || contact.isEmpty())
@@ -120,7 +119,7 @@ public class UserController {
 	        String email = contact.contains("@") ? contact : null;
 	        String phone = contact.contains("@") ? null : contact;
 
-	        User newGuest = new Guest(0, email, phone); 
+	        User newGuest = new Guest(0, email, phone, 0); 
 	        // userID = 0 means "DB will generate it"
 
 	        return db.insertGuestAndReturnId(newGuest);
@@ -130,8 +129,7 @@ public class UserController {
 	        return -1;
 	    }
 	}
-
-	
-
+	 NOT NEEDED FOR NOW....
+	 */
 	
 }

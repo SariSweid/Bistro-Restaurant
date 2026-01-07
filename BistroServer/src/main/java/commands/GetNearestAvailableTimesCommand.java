@@ -3,6 +3,7 @@ package commands;
 import java.util.List;
 
 import common.Message;
+import common.ServerResponse;
 import enums.ActionType;
 import logicControllers.ReservationController;
 import messages.AvailableDateTimes;
@@ -30,12 +31,21 @@ public class GetNearestAvailableTimesCommand implements Command {
             client.sendToClient(
                 new Message(
                     ActionType.GET_NEAREST_TIMES,
-                    result
+                    new ServerResponse(true, result, "Nearest available times")
                 )
             );
 
         } catch (Exception e) {
             e.printStackTrace();
+            try {
+                client.sendToClient(
+                    new Message(
+                        ActionType.GET_NEAREST_TIMES,
+                        new ServerResponse(false, null, "Server error")
+                    )
+                );
+            } catch (Exception ignored) {}
         }
     }
 }
+

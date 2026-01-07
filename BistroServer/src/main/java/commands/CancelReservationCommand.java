@@ -27,10 +27,12 @@ public class CancelReservationCommand implements Command {
             if (currentUser != null && currentUser.getRole() == UserRole.SUBSCRIBER) {
                 // Subscriber cancels by reservationId
                 success = controller.cancelReservation(currentUser, req.getReservationId(), null, null);
-            } else if (req.getConfirmationCode() != null) {
-                // Guest cancels by confirmationCode only
-                success = controller.cancelReservation(null, null, req.getConfirmationCode(), null);
-            }
+                
+            } else if (req.getGuestId() != null) {
+                // Guest cancels by confirmationCode + guestId
+                success = controller.cancelReservation(null, null, req.getConfirmationCode(), req.getGuestId());
+                
+            } else success = false;
 
             client.sendToClient(
                 new Message(
