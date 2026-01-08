@@ -19,50 +19,31 @@
 
             <Label alignment="CENTER" maxWidth="Infinity" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Manage Tables" />
 
-            <TableView fx:id="tablesTable" prefHeight="180">
-                <columns>
-                    <TableColumn fx:id="tableIdColumn" prefWidth="250" text="Table Number" />
-                    <TableColumn fx:id="seatsColumn" prefWidth="250" text="Number of Seats" />
-                    
-                </columns>
-            </TableView>
+		    <TableView fx:id="tablesTable" prefHeight="200">
+		        <columns>
+		            <TableColumn fx:id="tableIdColumn" text="Table ID" prefWidth="200"/>
+		            <TableColumn fx:id="seatsColumn" text="Seats" prefWidth="200"/>
+		        </columns>
+		    </TableView>
+		
+		    <GridPane hgap="10" vgap="10">
+		        <Label text="Table ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+		        <TextField fx:id="tableIdField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+		
+		        <Label text="Seats:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+		        <TextField fx:id="seatsField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+		    </GridPane>
+		
+		    <HBox spacing="10">
+		        <Button text="Insert" onAction="#onInsert" prefWidth="100"/>
+		        <Button text="Update" onAction="#onUpdate" prefWidth="100"/>
+		        <Button text="Delete" onAction="#onDelete" prefWidth="100"/>
+		    </HBox>
+		
+		    <Button text="Back" onAction="#onPreviousPage" prefWidth="100"/>
+		
+		</VBox>
 
-            
-            <GridPane hgap="10" vgap="8">
-                <columnConstraints>
-                    <ColumnConstraints prefWidth="140" />
-                    <ColumnConstraints prefWidth="240" />
-                </columnConstraints>
-
-                <rowConstraints>
-                    <RowConstraints />
-                    <RowConstraints />
-                </rowConstraints>
-
-                <children>
-                    <Label text="Table ID:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <TextField fx:id="tableIdField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-
-                    <Label text="Seats:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                    <TextField fx:id="seatsField" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                </children>
-            </GridPane>
-
-            <HBox spacing="10">
-                <Button onAction="#onLoadTable" style="-fx-background-radius: 15;" text="Load Table" />
-                <Button fx:id="editButton" disable="true" onAction="#onEdit" style="-fx-background-radius: 15;" text="Edit" />
-                <Button fx:id="saveButton" disable="true" onAction="#onSave" style="-fx-background-radius: 15;" text="Save" />
-                <Button fx:id="deleteButton" disable="true" onAction="#onDelete" style="-fx-background-radius: 15;" text="Delete" />
-                <Button onAction="#onInsert" style="-fx-background-radius: 15;" text="Insert New" />
-                
-                
-            </HBox>
-            
-             <HBox alignment="CENTER_LEFT">
-        		<Button onAction="#onPreviousPage" prefWidth="100" text="Previous page" />
-    		 </HBox>
-
-        </VBox>
     </children>
 
 </AnchorPane>

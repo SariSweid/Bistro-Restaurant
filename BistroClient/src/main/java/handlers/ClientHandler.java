@@ -7,9 +7,9 @@ import java.time.LocalTime;
 import java.util.HashMap;
 
 import Controllers.BaseReservationController;
-import Controllers.CancelReservationController;
 import Controllers.MainMenuController;
 import Controllers.RestaurantSettingsController;
+import Controllers.TablesController;
 import Entities.Reservation;
 import Entities.SpecialDates;
 import client.GuestUpdateReservationUI;
@@ -68,6 +68,7 @@ public class ClientHandler extends AbstractClient {
         }
     }
 
+
     public void setCurrentUserId(int id) {
         this.currentUserId = id;
     }
@@ -107,6 +108,17 @@ public class ClientHandler extends AbstractClient {
     public void setHandler(ActionType type, ResponseHandler handler) {
         handlers.put(type, handler);
     }
+    
+    private TablesController tablesController;
+
+    public void setTablesController(TablesController controller) {
+        this.tablesController = controller;
+    }
+
+    public TablesController getTablesController() {
+        return tablesController;
+    }
+
 
     private void initializeHandlers() {
         handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler(guestUI));
@@ -127,6 +139,11 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.UPDATE_RESERVATION, new UpdateReservationHandler(guestUI));
         handlers.put(ActionType.FORGOT_CODE, new ForgotCodeHandler());
         handlers.put(ActionType.SEAT_CUSTOMER, new SeatCustomerHandler());
+        handlers.put(ActionType.GET_ALL_TABLES, new GetAllTablesHandler());
+        handlers.put(ActionType.INSERT_TABLE, new InsertTableHandler());
+        handlers.put(ActionType.UPDATE_TABLE, new UpdateTableHandler());
+        handlers.put(ActionType.DELETE_TABLE, new DeleteTableHandler());
+
     }
 
     private void sendRequest(Message msg) {
@@ -210,6 +227,28 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.FORGOT_CODE, new ForgotCodeRequest(userId)));
     }
 
+    
+    public void getAllTables() {
+        sendRequest(new Message(ActionType.GET_ALL_TABLES, null));
+    }
+
+    public void insertTable(int tableId, int seats) {
+        InsertTableRequest req = new InsertTableRequest(tableId, seats);
+        sendRequest(new Message(ActionType.INSERT_TABLE, req));
+    }
+
+    public void updateTable(int tableId, int seats) {
+        UpdateTableRequest req = new UpdateTableRequest(tableId, seats);
+        sendRequest(new Message(ActionType.UPDATE_TABLE, req));
+    }
+
+    public void deleteTable(int tableId) {
+        DeleteTableRequest req = new DeleteTableRequest(tableId);
+        sendRequest(new Message(ActionType.DELETE_TABLE, req));
+    }
+
+    
+    
     @Override
     protected void handleMessageFromServer(Object msg) {
         if (msg instanceof Message) {

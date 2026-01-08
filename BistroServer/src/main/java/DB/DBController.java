@@ -65,9 +65,9 @@ public class DBController {
 	    	
 	    	
 	            if (conn == null || conn.isClosed()) {	                
-//	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020"); // sari -DB
+	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020"); // sari -DB
 
-	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
+//	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
 	                System.out.println("SQL connection initialized");	               	                	                
 	            }
 	            lastUsed = System.currentTimeMillis();
@@ -733,6 +733,63 @@ public class DBController {
 		}
 			
 
+		
+		
+		
+		
+		public boolean insertTable(int tableId, int seats) {
+		    Connection con = getConnection();
+
+		    try (PreparedStatement pst = con.prepareStatement(
+		            "INSERT INTO `table` (TableId, Capacity, IsAvailable) VALUES (?, ?, ?)")) {
+
+		        pst.setInt(1, tableId);
+		        pst.setInt(2, seats);
+		        pst.setBoolean(3, true);
+
+		        return pst.executeUpdate() > 0;
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		        return false;
+		    }
+		}
+
+		public boolean updateTable(int tableId, int seats) {
+		    Connection con = getConnection();
+
+		    try (PreparedStatement pst = con.prepareStatement(
+		            "UPDATE `table` SET Capacity = ? WHERE TableId = ?")) {
+
+		        pst.setInt(1, seats);
+		        pst.setInt(2, tableId);
+
+		        return pst.executeUpdate() > 0;
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		        return false;
+		    }
+		}
+		
+		
+		public boolean deleteTable(int tableId) {
+		    Connection con = getConnection();
+
+		    try (PreparedStatement pst = con.prepareStatement(
+		            "DELETE FROM `table` WHERE TableId = ?")) {
+
+		        pst.setInt(1, tableId);
+		        return pst.executeUpdate() > 0;
+
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		        return false;
+		    }
+		}
+
+		
+		
 		
 		
 		
