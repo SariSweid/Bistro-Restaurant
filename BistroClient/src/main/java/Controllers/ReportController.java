@@ -14,7 +14,8 @@ import util.SceneManager;
 public abstract class ReportController {
     @FXML protected LineChart<String, Number> lineChart;
     @FXML protected BarChart<String, Number> barChart;
-    @FXML protected Label reportTitle;
+    @FXML
+	public Label reportTitle;
 
     protected abstract ReportType getReportType();
 
@@ -44,6 +45,10 @@ public abstract class ReportController {
         lineChart.getData().clear();
         barChart.setVisible(false);
         barChart.getData().clear();
+    }
+    
+    public BarChart<String, Number> getBarChart() {
+        return barChart;
     }
 
     @FXML

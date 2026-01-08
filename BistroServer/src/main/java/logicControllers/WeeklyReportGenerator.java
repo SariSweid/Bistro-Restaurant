@@ -9,6 +9,7 @@ import java.util.List;
 import DB.DBController;
 
 public class WeeklyReportGenerator {
+
     private final DBController db = new DBController();
 
     public List<WeekData> generateReportData(ReportType type) {
@@ -22,19 +23,24 @@ public class WeeklyReportGenerator {
         int weekNum = 1;
 
         while (!weekStart.isAfter(monthEnd)) {
+
             LocalDate weekEnd = weekStart.plusDays(6);
-            if (weekEnd.isAfter(monthEnd)) weekEnd = monthEnd;
-
-            int reservationsCount = 0;
-            int subscribersCount = 0;
-
-            if (type == ReportType.SCHEDULE) {
-                reservationsCount = db.getReservationsCountBetween(weekStart, weekEnd);
-            } else if (type == ReportType.SUBSCRIBERS) {
-                subscribersCount = db.getSubscribersCountBetween(weekStart, weekEnd);
+            if (weekEnd.isAfter(monthEnd)) {
+                weekEnd = monthEnd;
             }
 
-            data.add(new WeekData("Week " + weekNum, subscribersCount, reservationsCount));
+            int value1 = 0;
+            int value2 = 0;
+
+            if (type == ReportType.SCHEDULE) {
+                value1 = db.getReservationsCountBetween(weekStart, weekEnd);
+            }
+            else if (type == ReportType.SUBSCRIBERS) {
+                value1 = db.getCompletedSubscriberReservationsBetween(weekStart, weekEnd);
+                value2 = db.getWaitlistSubscriberReservationsBetween(weekStart, weekEnd);
+            }
+
+            data.add(new WeekData("Week " + weekNum,value1,value2));
 
             weekStart = weekEnd.plusDays(1);
             weekNum++;

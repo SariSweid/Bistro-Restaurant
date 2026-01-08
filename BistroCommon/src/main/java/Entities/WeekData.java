@@ -6,24 +6,24 @@ public class WeekData implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String weekName;
-    private int subscribers;
-    private int reservations;
+    private int completed;   
+    private int waitlist;    
 
-    public WeekData(String weekName, int subscribers, int reservations) {
+    public WeekData(String weekName, int completed, int waitlist) {
         this.weekName = weekName;
-        this.subscribers = subscribers;
-        this.reservations = reservations;
+        this.completed = completed;
+        this.waitlist = waitlist;
     }
 
     public String getWeekName() {
         return weekName;
     }
 
-    public int getSubscribers() {
-        return subscribers;
+    public int getCompleted() {
+        return completed;
     }
 
-    public int getReservations() {
-        return reservations;
+    public int getWaitlist() {
+        return waitlist;
     }
 }

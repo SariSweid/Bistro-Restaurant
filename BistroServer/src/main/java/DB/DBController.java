@@ -380,6 +380,46 @@
 		        }
 		        return result;
 		    }
+		    
+		    public int getWaitlistSubscriberReservationsBetween(LocalDate start, LocalDate end) {
+		    	
+		    	Connection con = getConnection();
+
+		        try ( PreparedStatement pst = con.prepareStatement("SELECT COUNT(*) FROM reservation r JOIN user u ON r.customerID = u.UserId WHERE u.Role = 'SUBSCRIBER' AND r.status = 'WAITLIST' AND r.reservationDate BETWEEN ? AND ?")) {
+
+		            pst.setDate(1, java.sql.Date.valueOf(start));
+		            pst.setDate(2, java.sql.Date.valueOf(end));
+
+		            ResultSet rs = pst.executeQuery();
+		            if (rs.next()) {
+		                return rs.getInt(1);
+		            }
+
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		        }
+		        return 0;
+		    }
+		    
+		    public int getCompletedSubscriberReservationsBetween(LocalDate start, LocalDate end) {
+		        
+		        Connection con = getConnection();
+
+		        try (PreparedStatement pst = con.prepareStatement("SELECT COUNT(*) FROM reservation r JOIN user u ON r.customerID = u.UserId WHERE u.Role = 'SUBSCRIBER' AND r.status = 'COMPLETED' AND r.reservationDate BETWEEN ? AND ?")) {
+
+		            pst.setDate(1, java.sql.Date.valueOf(start));
+		            pst.setDate(2, java.sql.Date.valueOf(end));
+
+		            ResultSet rs = pst.executeQuery();
+		            if (rs.next()) {
+		                return rs.getInt(1);
+		            }
+
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		        }
+		        return 0;
+		    }
 	
 		    	    
 	  
