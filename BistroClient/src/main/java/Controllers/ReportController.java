@@ -12,10 +12,12 @@ import javafx.scene.control.Label;
 import util.SceneManager;
 
 public abstract class ReportController {
-    @FXML protected LineChart<String, Number> lineChart;
     @FXML protected BarChart<String, Number> barChart;
-    @FXML
-	public Label reportTitle;
+    @FXML public Label reportTitle;
+    @FXML private BarChart<String, Number> arrivalsChart;
+    @FXML private BarChart<String, Number> departuresChart;
+    @FXML private BarChart<String, Number> lateArrivalsChart;
+    @FXML private BarChart<String, Number> delaysChart;
 
     protected abstract ReportType getReportType();
 
@@ -29,11 +31,41 @@ public abstract class ReportController {
     public void showLineChart(XYChart.Series<String, Number> series, String title) {
         resetView();
         reportTitle.setText(title);
-        lineChart.setVisible(true);
-        Platform.runLater(() -> lineChart.getData().add(series));
     }
 
-    public void showBarChart(XYChart.Series<String, Number> series, String title) {
+    public BarChart<String, Number> getArrivalsChart() {
+		return arrivalsChart;
+	}
+
+	public void setArrivalsChart(BarChart<String, Number> arrivalsChart) {
+		this.arrivalsChart = arrivalsChart;
+	}
+
+	public BarChart<String, Number> getDeparturesChart() {
+		return departuresChart;
+	}
+
+	public void setDeparturesChart(BarChart<String, Number> departuresChart) {
+		this.departuresChart = departuresChart;
+	}
+
+	public BarChart<String, Number> getLateArrivalsChart() {
+		return lateArrivalsChart;
+	}
+
+	public void setLateArrivalsChart(BarChart<String, Number> lateArrivalsChart) {
+		this.lateArrivalsChart = lateArrivalsChart;
+	}
+
+	public BarChart<String, Number> getDelaysChart() {
+		return delaysChart;
+	}
+
+	public void setDelaysChart(BarChart<String, Number> delaysChart) {
+		this.delaysChart = delaysChart;
+	}
+
+	public void showBarChart(XYChart.Series<String, Number> series, String title) {
         resetView();
         reportTitle.setText(title);
         barChart.setVisible(true);
@@ -41,15 +73,14 @@ public abstract class ReportController {
     }
 
     private void resetView() {
-        lineChart.setVisible(false);
-        lineChart.getData().clear();
         barChart.setVisible(false);
         barChart.getData().clear();
     }
-    
+
     public BarChart<String, Number> getBarChart() {
         return barChart;
     }
+
 
     @FXML
     private void onPreviousPage() {

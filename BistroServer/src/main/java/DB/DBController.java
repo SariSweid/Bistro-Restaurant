@@ -22,11 +22,13 @@
 	import Entities.RestaurantSettings;
 	import Entities.SpecialDates;
 	import Entities.Table;
-	import Entities.User;
+import Entities.TimeData;
+import Entities.User;
 	import Entities.WaitingListEntry;
 	import Entities.WeeklyOpeningHours;
 	import enums.Day;
-	import logicControllers.UserFactory;
+import enums.ReservationStatus;
+import logicControllers.UserFactory;
 	import Entities.Subscriber;
 	import Entities.Supervisor;
 	
@@ -114,6 +116,37 @@
 		            return false; 
 		        }
 		    }
+		    
+		    
+		    public List<TimeData> getTimeDataBetween(LocalDate startDate, LocalDate endDate) {
+		        Connection con = getConnection();
+		        List<TimeData> list = new ArrayList<>();
+
+		        try (PreparedStatement pst = con.prepareStatement("SELECT r.reservationTime, b.issuedAt FROM reservation r LEFT JOIN bill b ON r.reservationID = b.reservationId  WHERE r.reservationDate BETWEEN ? AND ?")) {
+
+		            pst.setDate(1, Date.valueOf(startDate));
+		            pst.setDate(2, Date.valueOf(endDate));
+
+		            ResultSet rs = pst.executeQuery();
+
+		            while (rs.next()) {
+		                LocalTime arrival = rs.getTime("reservationTime").toLocalTime();
+
+		                Timestamp t = rs.getTimestamp("issuedAt");
+		                LocalTime departure = (t != null)
+		                        ? t.toLocalDateTime().toLocalTime()
+		                        : null;
+
+		                list.add(new TimeData(arrival, departure));
+		            }
+
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		        }
+
+		        return list;
+		    }
+
 		    
 		    
 		    public boolean cancelReservationInDB(int reservationID) {

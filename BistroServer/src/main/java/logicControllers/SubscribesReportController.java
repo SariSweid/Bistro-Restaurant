@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import DB.DBController;
 
-public class WeeklyReportGenerator {
+public class SubscribesReportController {
 
     private final DBController db = new DBController();
 

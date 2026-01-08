@@ -23,6 +23,7 @@ public class Reservation implements Serializable {
 	private LocalDate reservationPlacedDate; //the date the reservation was placed in the site
 	private LocalTime reservationPlacedTime; ///the time the reservation was placed in the site
 	private ReservationStatus status;
+	private LocalTime expectedDepartureTime;
 	
 	/**
 	 * Constructor for new Reservation
@@ -184,5 +185,13 @@ public class Reservation implements Serializable {
 	 */
 	public boolean isReservationCancelled() {
 		return this.status == ReservationStatus.CANCELLED;
+	}
+
+	public void setExpectedDepartureTime(LocalTime localTime) {
+	    this.expectedDepartureTime = localTime;
+	}
+	
+	public LocalTime getExpectedDepartureTime() {
+	    return this.expectedDepartureTime;
 	}
 }

@@ -12,30 +12,31 @@ public class Report implements Serializable {
     private ReportType reportType;
     private LocalDate startDate;
     private LocalDate endDate;
-    private LocalDateTime generatedAt;//
+    private LocalDateTime generatedAt;
     private String content;
-    private List<WeekData> weekData;  
 
-   
-    public Report(int reportID, ReportType reportType, LocalDate startDate, LocalDate endDate, List<WeekData> weekData, String content) {
+    private List<WeekData> weekData;  
+    private List<TimeData> timeData;   
+
+    private Report(int reportID, ReportType reportType, LocalDate startDate, LocalDate endDate, List<WeekData> weekData, List<TimeData> timeData, String content) {
         this.reportID = reportID;
         this.reportType = reportType;
         this.startDate = startDate;
         this.endDate = endDate;
         this.generatedAt = LocalDateTime.now();
         this.weekData = weekData;
+        this.timeData = timeData;
         this.content = content;
     }
 
-    
-    public Report(int reportID, ReportType reportType, LocalDate startDate, LocalDate endDate, LocalDateTime generatedAt, List<WeekData> weekData, String content) {
-        this.reportID = reportID;
-        this.reportType = reportType;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.generatedAt = generatedAt;
-        this.weekData = weekData;
-        this.content = content;
+    // SUBSCRIBERS
+    public static Report createSubscribersReport(int reportID, ReportType type, LocalDate start, LocalDate end, List<WeekData> weekData, String content) {
+        return new Report(reportID, type, start, end, weekData, null, content);
+    }
+
+    // TIME
+    public static Report createTimeReport(int reportID, ReportType type, LocalDate start, LocalDate end, List<TimeData> timeData, String content) {
+        return new Report(reportID, type, start, end, null, timeData, content);
     }
 
     public int getReportID() { return reportID; }
@@ -45,4 +46,5 @@ public class Report implements Serializable {
     public LocalDateTime getGeneratedAt() { return generatedAt; }
     public String getContent() { return content; }
     public List<WeekData> getWeekData() { return weekData; }  
+    public List<TimeData> getTimeData() { return timeData; } 
 }
