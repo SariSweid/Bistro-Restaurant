@@ -16,6 +16,7 @@ import client.GuestUpdateReservationUI;
 import common.Message;
 import enums.ActionType;
 import enums.ReservationStatus;
+import enums.UserRole;
 import messages.*;
 import src.ocsf.client.AbstractClient;
 
@@ -35,7 +36,7 @@ public class ClientHandler extends AbstractClient {
     private RestaurantSettingsController activeRestaurantSettingsController;
     
     
-    
+    private UserRole currentuserrole;
     private int currentUserId;
     private boolean connected = false;
 
@@ -70,6 +71,16 @@ public class ClientHandler extends AbstractClient {
 
     public void setCurrentUserId(int id) {
         this.currentUserId = id;
+    }
+    
+    public void setCurrentUserRole(UserRole role) {
+    	this.currentuserrole = role;
+    }
+    
+    
+    
+    public UserRole getCurrentUserRole() {
+    	return currentuserrole;
     }
 
     public int getCurrentUserId() {

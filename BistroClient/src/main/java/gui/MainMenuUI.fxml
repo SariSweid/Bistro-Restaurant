@@ -26,11 +26,12 @@
     </Label>
 
 <!-- <<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project -->
-    <Button onAction="#onLogin" prefWidth="260" style="-fx-background-radius: 12;" text="Login" />
+    <Button onAction="#onLogin" prefWidth="260" style="-fx-background-radius: 12;" text="Login" textFill="#06fc43" />
     <Button onAction="#onGuestReservation" prefWidth="260" style="-fx-background-radius: 15;" text="Guest Reservation" />
+   <Button onAction="#onwaitinglist" prefWidth="260" style="-fx-background-radius: 15;" text="Waiting List" />
    <Button onAction="#onReceiveTable" prefWidth="260" style="-fx-background-radius: 15;" text="Receive Table" />
     <Button onAction="#onPayment" prefWidth="260" style="-fx-background-radius: 15;" text="Payment" />
-    <Button onAction="#onExit" prefWidth="260" text="Exit" />
+    <Button onAction="#onExit" prefWidth="260" text="Exit" textFill="#e40909" />
 
 <!--     <Button text="Login" prefWidth="260" onAction="#onLogin"/> -->
 <!--     <Button text="Register" prefWidth="260" onAction="#onRegister"/> -->

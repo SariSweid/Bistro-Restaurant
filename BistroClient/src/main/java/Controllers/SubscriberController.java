@@ -35,6 +35,11 @@ public class SubscriberController extends BaseReservationController {
         SceneManager.switchTo("InformationUI.fxml");
     }
     
+    @FXML
+    private void onReceiveTable() {
+    	SceneManager.switchTo("TableReceivingUI.fxml");
+    }
+    
     
 
     @FXML
@@ -47,6 +52,11 @@ public class SubscriberController extends BaseReservationController {
     @FXML
     private void onCancelOrder() {
     		SceneManager.switchTo("CancelReservationUI.fxml");
+    }
+    
+    @FXML
+    private void onwaitinglist() {
+    	SceneManager.switchTo("SubscriberWaitingListUI.fxml");
     }
     
     
