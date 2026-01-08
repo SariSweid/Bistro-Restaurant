@@ -148,11 +148,18 @@ public class ClientHandler extends AbstractClient {
 
     private void sendRequest(Message msg) {
         try {
-            sendToServer(msg);
+            // auto-reconnect if the real socket is dead
+            if (!isConnected()) {
+                System.out.println("Reconnecting socket...");
+                openConnection();
+            }
+            sendToServer(msg);  // use the LIVE socket
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("Socket failed: " + e.getMessage());
         }
     }
+
 
     public void register(RegisterRequest req) {
         connect();
