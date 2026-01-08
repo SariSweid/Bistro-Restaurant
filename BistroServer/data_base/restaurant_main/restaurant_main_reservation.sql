@@ -34,12 +34,14 @@ CREATE TABLE `reservation` (
   `BillId` int DEFAULT NULL,
   `reservationPlacedDate` date DEFAULT NULL,
   `reservationPlacedTime` time DEFAULT NULL,
+  `actualarrivaltime` time DEFAULT NULL,
+  `departuretiime` time DEFAULT NULL,
   PRIMARY KEY (`reservationID`),
   KEY `customerID_idx` (`customerID`),
   KEY `TableId_idx` (`TableId`),
-  CONSTRAINT `fk_reservation_customer` FOREIGN KEY (`customerID`) REFERENCES `user` (`UserId`),
-  CONSTRAINT `fk_reservation_table` FOREIGN KEY (`TableId`) REFERENCES `table` (`TableId`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `fk_reservation_table` FOREIGN KEY (`TableId`) REFERENCES `table` (`TableId`),
+  CONSTRAINT `fk_reservation_user` FOREIGN KEY (`customerID`) REFERENCES `user` (`UserId`)
+) ENGINE=InnoDB AUTO_INCREMENT=132 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -51,4 +53,4 @@ CREATE TABLE `reservation` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-04 15:08:55
+-- Dump completed on 2026-01-09  0:00:09
