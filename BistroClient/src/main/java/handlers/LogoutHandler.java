@@ -6,8 +6,9 @@ public class LogoutHandler implements ResponseHandler {
     public void handle(Object data) {
 
         // Clear client-side session
-        ClientHandler.getClient().setCurrentUserId(-1);
-
+        ClientHandler client = ClientHandler.getClient();
+        client.setCurrentUserId(-1);
+        client.setCurrentUserRole(null);
         System.out.println("Client logged out successfully.");
     }
 }

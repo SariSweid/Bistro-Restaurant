@@ -54,6 +54,11 @@ public class MainMenuController implements Initializable {
     }
     
     @FXML
+    private void onwaitinglist() {
+    	SceneManager.switchTo("GuestWaitingListUI.fxml");
+    }
+    
+    @FXML
     private void onReceiveTable() {
     	SceneManager.switchTo("TableReceivingUI.fxml");
     }

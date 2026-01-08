@@ -10,12 +10,14 @@ public class LoginHandler implements ResponseHandler {
     @Override
     public void handle(Object data) {
         if (!(data instanceof ServerResponse response)) {
+        	
             System.out.println("LoginHandler: Invalid data received");
             return;
         }
 
         if (response.isSuccess()) {
             User user = (User) response.getData();
+            ClientHandler.getClient().setCurrentUserRole(user.getRole());
             System.out.println("Login successful for " + user.getRole());
             
             // store in client handler
