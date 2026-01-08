@@ -50,7 +50,7 @@ public class ReportHandler implements ResponseHandler {
             XYChart.Series<String, Number> waitlistSeries = new XYChart.Series<>();
             waitlistSeries.setName("Waitlist");
 
-            report.getWeekData().stream().limit(4).forEach((WeekData w) -> {
+            report.getWeekData().stream().limit(6).forEach((WeekData w) -> {
                 completedSeries.getData().add(new XYChart.Data<>(w.getWeekName(), w.getCompleted()));
                 waitlistSeries.getData().add(new XYChart.Data<>(w.getWeekName(), w.getWaitlist()));
             });
