@@ -4,13 +4,13 @@ import Controllers.ReportController;
 import Entities.Report;
 import enums.ReportType;
 import common.ServerResponse;
+import javafx.application.Platform;
 import javafx.scene.chart.XYChart;
 
 public class ReportHandler implements ResponseHandler {
 
     private ReportController controller;
 
-    
     public void setController(ReportController controller) {
         this.controller = controller;
     }
@@ -23,35 +23,32 @@ public class ReportHandler implements ResponseHandler {
     public void handle(Object data) {
         ServerResponse response = (ServerResponse) data;
 
-
         if (!response.isSuccess()) {
             controller.showError(response.getMessage());
             return;
         }
 
-        
         Report report = (Report) response.getData();
 
         if (report.getReportType() == ReportType.SCHEDULE) {
             XYChart.Series<String, Number> series = new XYChart.Series<>();
-            series.setName("Average Delay");
+            series.setName("Reservations");
 
-            
-            //report.getWeekData().forEach(w -> 
-                //series.getData().add(new XYChart.Data<>(w.getName(), w.getDelay()))
-          //  );
+            report.getWeekData().forEach(w ->
+                    series.getData().add(new XYChart.Data<>(w.getWeekName(), w.getReservations()))
+            );
 
-            controller.showLineChart(series, "Monthly Time Report");
+            Platform.runLater(() -> controller.showLineChart(series, "Monthly Time Report"));
 
         } else if (report.getReportType() == ReportType.SUBSCRIBERS) {
             XYChart.Series<String, Number> series = new XYChart.Series<>();
-            series.setName("Orders per Week");
+            series.setName("Subscribers");
 
-         //   report.getWeekData().forEach(w -> 
-         //       series.getData().add(new XYChart.Data<>(w.getName(), w.getOrders()))
-         //   );
+            report.getWeekData().forEach(w ->
+                    series.getData().add(new XYChart.Data<>(w.getWeekName(), w.getSubscribers()))
+            );
 
-            controller.showBarChart(series, "Monthly Subscribers Report");
+            Platform.runLater(() -> controller.showBarChart(series, "Monthly Subscribers Report"));
         }
     }
 }

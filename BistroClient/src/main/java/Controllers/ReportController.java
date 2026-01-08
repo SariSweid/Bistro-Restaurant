@@ -3,6 +3,7 @@ package Controllers;
 import Entities.Report;
 import enums.ReportType;
 import handlers.ClientHandler;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
@@ -20,7 +21,6 @@ public abstract class ReportController {
     @FXML
     public void initialize() {
         ReportType reportType = getReportType();
-        System.out.println("repo:" + reportType);
         if (reportType != null)
             ClientHandler.getClient().requestReport(reportType, this);
     }
@@ -28,27 +28,27 @@ public abstract class ReportController {
     public void showLineChart(XYChart.Series<String, Number> series, String title) {
         resetView();
         reportTitle.setText(title);
-        lineChart.getData().add(series);
         lineChart.setVisible(true);
+        Platform.runLater(() -> lineChart.getData().add(series));
     }
 
     public void showBarChart(XYChart.Series<String, Number> series, String title) {
         resetView();
         reportTitle.setText(title);
-        barChart.getData().add(series);
         barChart.setVisible(true);
+        Platform.runLater(() -> barChart.getData().add(series));
     }
 
     private void resetView() {
         lineChart.setVisible(false);
-        barChart.setVisible(false);
         lineChart.getData().clear();
+        barChart.setVisible(false);
         barChart.getData().clear();
     }
 
     @FXML
-    private void onPreviousPage() { 
-        SceneManager.switchTo("ManagerUI.fxml"); 
+    private void onPreviousPage() {
+        SceneManager.switchTo("ManagerUI.fxml");
     }
 
     public void showError(String msg) { }
