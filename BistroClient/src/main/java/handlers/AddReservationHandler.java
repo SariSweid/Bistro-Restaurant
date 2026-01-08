@@ -23,6 +23,12 @@ public class AddReservationHandler implements ResponseHandler {
                 if (res.isSuccess()) {
                     controller.showConfirmation("Reservation added successfully!\nConfirmation code: " +
                             ((res.getData() instanceof Entities.Reservation r) ? r.getConfirmationCode() : "N/A"));
+                    
+
+                    // Refresh OrderController table if it exists
+                    if (ClientHandler.getClient().getOrderController() != null) {
+                        ClientHandler.getClient().getOrderController().refreshReservations();
+                    }
                 } else {
                     controller.showError("Failed to add reservation: " + res.getMessage());
                 }

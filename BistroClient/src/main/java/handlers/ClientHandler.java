@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import Controllers.BaseReservationController;
 import Controllers.MainMenuController;
+import Controllers.OrderController;
 import Controllers.ReportController;
 import Controllers.RestaurantSettingsController;
 import Controllers.TablesController;
@@ -43,6 +44,16 @@ public class ClientHandler extends AbstractClient {
     private UserRole currentuserrole;
     private int currentUserId;
     private boolean connected = false;
+    
+    private OrderController orderController;
+
+    public void setOrderController(OrderController controller) {
+        this.orderController = controller;
+    }
+
+    public OrderController getOrderController() {
+        return orderController;
+    }
 
     private ClientHandler(String host, int port) throws IOException {
         super(host, port);

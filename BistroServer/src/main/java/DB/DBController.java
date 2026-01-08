@@ -116,6 +116,25 @@
 		    }
 		    
 		    
+		    public boolean cancelReservationInDB(int reservationID) {
+		        String sql = "UPDATE reservation SET status = ? WHERE reservationID = ?";
+
+		        try (Connection con = getConnection();
+		             PreparedStatement pst = con.prepareStatement(sql)) {
+
+		            pst.setString(1, enums.ReservationStatus.CANCELLED.name());
+		            pst.setInt(2, reservationID);
+
+		            int rows = pst.executeUpdate();
+		            return rows > 0;
+
+		        } catch (SQLException e) {
+		            System.err.println("SQL Exception during cancel: " + e.getMessage());
+		            e.printStackTrace();
+		            return false;
+		        }
+		    }
+		    
 			/**
 			 * Retrieves a reservation by its ID.
 			 *

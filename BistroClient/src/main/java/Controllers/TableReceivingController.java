@@ -17,15 +17,14 @@ public class TableReceivingController {
     private void onPreviousPage() {
         int userId = ClientHandler.getClient().getCurrentUserId();
 
-        // 
-        UserRole role = ClientHandler.getClient().getCurrentUserRole();
-        
-        if (role == null) {
-        	SceneManager.switchTo("MainMenuUI.fxml"); 
-        }
+        enums.UserRole role = ClientHandler.getClient().getCurrentUserRole();
 
-        else if ("SUBSCRIBER".equals(role.name())) {
-            SceneManager.switchTo("SubscriberUI.fxml");
+        if (role == enums.UserRole.SUBSCRIBER) {
+            // Subscriber goes back to Subscriber UI
+            util.SceneManager.switchTo("SubscriberUI.fxml");
+        } else {
+            // Guest goes back to MainMenu UI
+            util.SceneManager.switchTo("MainMenuUI.fxml");
         }
 
     }

@@ -272,7 +272,7 @@ public class ReservationController {
 
        // Actually cancel the reservation
        r.setStatus(enums.ReservationStatus.CANCELLED);
-       boolean updated = db.updateReservation(r);
+       boolean updated = db.cancelReservationInDB(r.getReservationID());
        System.out.println("DB update result = " + updated);
        return updated;
    }
