@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import Controllers.BaseReservationController;
 import Controllers.MainMenuController;
+import Controllers.ReportController;
 import Controllers.RestaurantSettingsController;
 import Controllers.TablesController;
 import Entities.Reservation;
@@ -15,6 +16,7 @@ import Entities.SpecialDates;
 import client.GuestUpdateReservationUI;
 import common.Message;
 import enums.ActionType;
+import enums.ReportType;
 import enums.ReservationStatus;
 import enums.UserRole;
 import messages.*;
@@ -29,6 +31,8 @@ public class ClientHandler extends AbstractClient {
 
     private GuestUpdateReservationUI guestUI;
 
+    
+    private ReportController reportController;
     private BaseReservationController activeReservationController;
     private Object activeCancelController;
     private MainMenuController mainMenuController;
@@ -76,6 +80,10 @@ public class ClientHandler extends AbstractClient {
     
     public void setCurrentUserRole(UserRole role) {
     	this.currentuserrole = role;
+    }
+    
+    public void setReportController(ReportController controller) {
+        this.reportController = controller;
     }
     
     
@@ -154,6 +162,8 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.INSERT_TABLE, new InsertTableHandler());
         handlers.put(ActionType.UPDATE_TABLE, new UpdateTableHandler());
         handlers.put(ActionType.DELETE_TABLE, new DeleteTableHandler());
+        handlers.put(ActionType.DELETE_TABLE, new DeleteTableHandler());
+        handlers.put(ActionType.GET_REPORT, new ReportHandler(null));
 
     }
 
@@ -264,6 +274,21 @@ public class ClientHandler extends AbstractClient {
         DeleteTableRequest req = new DeleteTableRequest(tableId);
         sendRequest(new Message(ActionType.DELETE_TABLE, req));
     }
+    
+    public void requestReport(ReportType reportType, ReportController controller) {
+        connect();
+
+      
+        ResponseHandler handler = handlers.get(ActionType.GET_REPORT);
+        if (handler instanceof ReportHandler) {
+            ((ReportHandler) handler).setController(controller);
+        }
+
+         
+        ReportRequest req = new ReportRequest(reportType);
+        sendRequest(new Message(ActionType.GET_REPORT, req));
+    }
+
 
     
     

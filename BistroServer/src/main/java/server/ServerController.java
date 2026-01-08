@@ -128,6 +128,8 @@ public class ServerController extends AbstractServer {
      // Command: Delete table
         commands.put(ActionType.DELETE_TABLE, new DeleteTableCommand());
         
+        commands.put(ActionType.GET_REPORT, new GetReportCommand());
+        
     }
     
     /**

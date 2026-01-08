@@ -36,5 +36,8 @@ public enum ActionType {
     
     
     // Payment
-    PAY
+    PAY,
+    
+    // Reports
+    GET_REPORT
 }
