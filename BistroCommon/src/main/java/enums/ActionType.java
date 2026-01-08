@@ -21,14 +21,20 @@ public enum ActionType {
     FORGOT_CODE,
     SEAT_CUSTOMER,
     
-    //Restaurant settings
+    // Restaurant settings
     GET_RESTAURANT_SETTINGS,
     ADD_SPECIAL_DATE,
     UPDATE_SPECIAL_DATE,
     UPDATE_OPENING_TIME,
     UPDATE_CLOSING_TIME,
     
+    // Tables
+    INSERT_TABLE,
+    UPDATE_TABLE,
+    DELETE_TABLE,
+    GET_ALL_TABLES,
+    
     
     // Payment
-    PAY,
+    PAY
 }

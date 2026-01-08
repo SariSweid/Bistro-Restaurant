@@ -116,6 +116,18 @@ public class ServerController extends AbstractServer {
         // Command: Seat customer
         commands.put(ActionType.SEAT_CUSTOMER, new SeatCustomerCommand());
         
+        // Command: Get all tables from db
+        commands.put(ActionType.GET_ALL_TABLES, new GetAllTablesCommand());
+        
+        // Command: Insert new table
+        commands.put(ActionType.INSERT_TABLE, new InsertTableCommand());
+        
+        // Command: Update table seats
+        commands.put(ActionType.UPDATE_TABLE, new UpdateTableCommand());
+        
+     // Command: Delete table
+        commands.put(ActionType.DELETE_TABLE, new DeleteTableCommand());
+        
     }
     
     /**
