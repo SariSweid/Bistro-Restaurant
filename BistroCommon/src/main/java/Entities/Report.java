@@ -12,7 +12,7 @@ public class Report implements Serializable {
     private ReportType reportType;
     private LocalDate startDate;
     private LocalDate endDate;
-    private LocalDateTime generatedAt;
+    private LocalDateTime generatedAt;//
     private String content;
     private List<WeekData> weekData;  
 
