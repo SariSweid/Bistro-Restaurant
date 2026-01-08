@@ -77,6 +77,17 @@ public class ClientHandler extends AbstractClient {
     public int getCurrentUserId() {
         return currentUserId;
     }
+    
+    private enums.UserRole currentUserRole;
+
+    public void setCurrentUserRole(enums.UserRole role) {
+        this.currentUserRole = role;
+    }
+
+    public enums.UserRole getCurrentUserRole() {
+        return currentUserRole;
+    }
+
 
     public void setMainMenuController(MainMenuController controller) {
         this.mainMenuController = controller;
@@ -186,6 +197,9 @@ public class ClientHandler extends AbstractClient {
     
     public void logout() {
         sendRequest(new Message(ActionType.LOGOUT, new LogoutRequest()));
+        // Clear current user info
+        currentUserId = -1;
+        currentUserRole = enums.UserRole.GUEST;
     }
 
 

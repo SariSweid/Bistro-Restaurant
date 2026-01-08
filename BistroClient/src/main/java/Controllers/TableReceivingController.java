@@ -5,6 +5,7 @@ import javafx.scene.control.TextField;
 import messages.ForgotCodeRequest;
 //import messages.SeatCustomerRequest;
 import util.SceneManager;
+import Entities.User;
 import handlers.ClientHandler;
 
 public class TableReceivingController {
@@ -14,8 +15,17 @@ public class TableReceivingController {
 
     @FXML
     private void onPreviousPage() {
-        SceneManager.switchTo("MainMenuUI.fxml");
+        enums.UserRole role = ClientHandler.getClient().getCurrentUserRole();
+
+        if (role == enums.UserRole.SUBSCRIBER) {
+            // Subscriber goes back to Subscriber UI
+            util.SceneManager.switchTo("SubscriberUI.fxml");
+        } else {
+            // Guest goes back to MainMenu UI
+            util.SceneManager.switchTo("MainMenuUI.fxml");
+        }
     }
+
 
     /**
      * User enters confirmation code and clicks ENTER
