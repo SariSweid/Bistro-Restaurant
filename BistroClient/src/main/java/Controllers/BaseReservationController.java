@@ -161,6 +161,11 @@ public abstract class BaseReservationController {
 
 	     // Reset UI after sending reservation
 	     resetForm();
+	     
+	     // Refresh OrderController table if it exists
+	     if (ClientHandler.getClient().getOrderController() != null) {
+	         ClientHandler.getClient().getOrderController().refreshReservations();
+	     }
     }
     
     // -- Submit alternative reservation --
@@ -180,6 +185,11 @@ public abstract class BaseReservationController {
 
         ClientHandler.getClient().addReservation(r);
         resetForm();
+        
+        // Refresh OrderController table if it exists
+        if (ClientHandler.getClient().getOrderController() != null) {
+            ClientHandler.getClient().getOrderController().refreshReservations();
+        }
     }
 
 

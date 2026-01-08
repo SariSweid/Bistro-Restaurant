@@ -8,32 +8,27 @@ import javafx.application.Platform;
 
 public class GetUserReservationsHandler implements ResponseHandler {
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public void handle(Object data) {
-        if (!(data instanceof List<?> list)) return;
+	@SuppressWarnings("unchecked")
+	@Override
+	public void handle(Object data) {
+	    if (!(data instanceof List<?> list)) return;
 
-        System.out.println("[GetUserReservationsHandler] received " + list.size() + " reservations");
+	    System.out.println("[GetUserReservationsHandler] received " + list.size() + " reservations");
 
-        Object active = ClientHandler.getClient().getActiveCancelController(); // may be order or cancel
-        if (active == null) {
-            active = ClientHandler.getClient().getOrderController(); // try order screen
-        }
-        if (active == null) return;
+	    Platform.runLater(() -> {
+	        // Always update CancelReservationController
+	        CancelReservationController cancelUI = (CancelReservationController) ClientHandler.getClient().getActiveCancelController();
+	        if (cancelUI != null) {
+	            cancelUI.showUserReservations((List<Reservation>) list);
+	        }
 
-        Object controller = active;
+	        // Always update OrderController
+	        OrderController orderUI = ClientHandler.getClient().getOrderController();
+	        if (orderUI != null) {
+	            orderUI.showUserReservations((List<Reservation>) list);
+	        }
+	    });
+	}
 
-        Platform.runLater(() -> {
-            if (controller instanceof OrderController orderUI) {
-                orderUI.showUserReservations((List<Reservation>) list);
-            }
-            else if (controller instanceof CancelReservationController cancelUI) {
-                cancelUI.showUserReservations((List<Reservation>) list);
-            }
-            else {
-                System.out.println("Unknown controller type for reservations handler.");
-            }
-        });
-    }
 }
 
