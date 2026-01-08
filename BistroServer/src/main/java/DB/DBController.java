@@ -65,9 +65,9 @@ public class DBController {
 	    	
 	    	
 	            if (conn == null || conn.isClosed()) {	                
-//	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020"); // sari -DB
+	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020"); // sari -DB
 
-	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
+//	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
 	                System.out.println("SQL connection initialized");	               	                	                
 	            }
 	            lastUsed = System.currentTimeMillis();
@@ -115,6 +115,26 @@ public class DBController {
 
 	        } catch (SQLException e) {
 	            System.err.println("SQL Exception during update: " + e.getMessage());
+	            e.printStackTrace();
+	            return false;
+	        }
+	    }
+
+	    
+	    public boolean cancelReservationInDB(int reservationID) {
+	        String sql = "UPDATE reservation SET status = ? WHERE reservationID = ?";
+
+	        try (Connection con = getConnection();
+	             PreparedStatement pst = con.prepareStatement(sql)) {
+
+	            pst.setString(1, enums.ReservationStatus.CANCELLED.name());
+	            pst.setInt(2, reservationID);
+
+	            int rows = pst.executeUpdate();
+	            return rows > 0;
+
+	        } catch (SQLException e) {
+	            System.err.println("SQL Exception during cancel: " + e.getMessage());
 	            e.printStackTrace();
 	            return false;
 	        }

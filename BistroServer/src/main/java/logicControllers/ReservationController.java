@@ -264,7 +264,7 @@ public class ReservationController {
 	   System.out.println("guestId2 = " + guestId);
 	   System.out.println("user2 = " + user);
 
-	   // NEW CHECK: prevent double cancellation
+	   // Prevent double cancellation
 	   if (r.getStatus() == enums.ReservationStatus.CANCELLED) {
 	       System.out.println("Reservation already cancelled.");
 	       return false;
@@ -272,7 +272,7 @@ public class ReservationController {
 
        // Actually cancel the reservation
        r.setStatus(enums.ReservationStatus.CANCELLED);
-       boolean updated = db.updateReservation(r);
+       boolean updated = db.cancelReservationInDB(r.getReservationID());
        System.out.println("DB update result = " + updated);
        return updated;
    }

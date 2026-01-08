@@ -21,8 +21,15 @@ public class AddReservationHandler implements ResponseHandler {
         Platform.runLater(() -> {
             if (data instanceof ServerResponse res) {
                 if (res.isSuccess()) {
+                    // Show confirmation popup
                     controller.showConfirmation("Reservation added successfully!\nConfirmation code: " +
                             ((res.getData() instanceof Entities.Reservation r) ? r.getConfirmationCode() : "N/A"));
+
+                    // Refresh OrderController table if it exists
+                    if (ClientHandler.getClient().getOrderController() != null) {
+                        ClientHandler.getClient().getOrderController().refreshReservations();
+                    }
+
                 } else {
                     controller.showError("Failed to add reservation: " + res.getMessage());
                 }
@@ -30,5 +37,6 @@ public class AddReservationHandler implements ResponseHandler {
                 controller.showError("Unexpected server response for Add Reservation.");
             }
         });
+
     }
 }

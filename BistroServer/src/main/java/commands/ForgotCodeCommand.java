@@ -23,7 +23,7 @@ public class ForgotCodeCommand implements Command {
                 : new ServerResponse(false, null, "Fail.");
 
         try {
-            // ⭐ FIX: wrap inside Message
+            // Wrap inside Message
             client.sendToClient(new Message(ActionType.FORGOT_CODE, response));
 
         } catch (Exception e) {

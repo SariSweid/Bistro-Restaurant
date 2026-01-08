@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import Controllers.BaseReservationController;
 import Controllers.MainMenuController;
+import Controllers.OrderController;
 import Controllers.RestaurantSettingsController;
 import Controllers.TablesController;
 import Entities.Reservation;
@@ -118,6 +119,17 @@ public class ClientHandler extends AbstractClient {
     public TablesController getTablesController() {
         return tablesController;
     }
+    
+    private OrderController orderController;
+
+    public void setOrderController(OrderController controller) {
+        this.orderController = controller;
+    }
+
+    public OrderController getOrderController() {
+        return orderController;
+    }
+
 
 
     private void initializeHandlers() {
