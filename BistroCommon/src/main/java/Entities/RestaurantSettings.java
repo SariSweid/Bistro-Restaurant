@@ -25,6 +25,14 @@ public class RestaurantSettings implements Serializable {
 		this.specialDates = new ArrayList<SpecialDates>();
 	}
 	
+	public void setWeeklyOpeningHours(List<WeeklyOpeningHours> weeklyOpeningHours) {
+		this.weeklyOpeningHours = weeklyOpeningHours;
+	}
+
+	public void setSpecialDates(List<SpecialDates> specialDates) {
+		this.specialDates = specialDates;
+	}
+
 	/**
 	 * getInstance returns new instance of RestaurantSettings if not created yet, if created returns the instance
 	 * @return the only instance of RestaurantSettings

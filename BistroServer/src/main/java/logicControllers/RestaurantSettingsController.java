@@ -21,6 +21,9 @@ public class RestaurantSettingsController {
 	public RestaurantSettingsController() {
 		this.restaurantSettings = RestaurantSettings.getInstance();
 		this.dbController = new DBController();
+	    this.restaurantSettings.setWeeklyOpeningHours(dbController.getAllWeeklyOpeningHours());
+
+	        this.restaurantSettings.setSpecialDates(dbController.getAllSpecialDates());
 	}
 	
 	/**
@@ -73,6 +76,7 @@ public class RestaurantSettingsController {
 	 * @return all weekly opening hours
 	 */
 	public List<WeeklyOpeningHours> getAllWeeklyOpeningHours(){
+		System.out.println("Get asdasd");
 		return this.restaurantSettings.getWeeklyOpeningHours();
 	}
 	

@@ -171,6 +171,58 @@ import logicControllers.UserFactory;
 		        return list;
 		    }
 
+		    
+		    
+		    public List<WeeklyOpeningHours> getAllWeeklyOpeningHours() {
+		    	Connection con = getConnection();
+		    	List<WeeklyOpeningHours> hoursList = new ArrayList<>();
+		    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM restaurantsettings")){
+		    		ResultSet rs = pst.executeQuery();
+		    	
+		            while (rs.next()) {
+		                Day day = Day.valueOf(rs.getString("Day"));
+		                LocalTime openingTime = LocalTime.parse(rs.getString("OpeningHours"));
+		                LocalTime closingTime = LocalTime.parse(rs.getString("ClosingHours"));
+		                
+		                WeeklyOpeningHours hours = new WeeklyOpeningHours(openingTime, closingTime , day);
+		                hoursList.add(hours);
+		    	}
+		            
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		        }
+
+		        return hoursList;
+		    }
+		    
+		    
+		    
+		    
+		    public List<SpecialDates> getAllSpecialDates() {
+		    	Connection con = getConnection();
+		    	List<SpecialDates> specialDatesList  = new ArrayList<>();
+		    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM specialdates")){
+		    		ResultSet rs = pst.executeQuery();
+		    	
+		            while (rs.next()) {
+		                LocalDate date = rs.getDate("special_date").toLocalDate();
+		                LocalTime openingTime = rs.getTime("OpeningHours").toLocalTime();
+		                LocalTime closingTime = rs.getTime("ClosingHours").toLocalTime();
+		                String description = rs.getString("description");
+		                
+		                SpecialDates hours = new SpecialDates(openingTime, closingTime  , date ,  description);
+		                specialDatesList .add(hours);
+		    	}
+		            
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		        }
+
+		        return specialDatesList ;
+		    }
+		    
+		    
+
 
 		    
 		    

@@ -130,6 +130,12 @@ public class ServerController extends AbstractServer {
         
         commands.put(ActionType.GET_REPORT, new GetReportCommand());
         
+        commands.put(ActionType.GET_RESTAURANT_SETTINGS, new GetRestaurantSettingsCommand());
+        commands.put(ActionType.UPDATE_OPENING_TIME, new UpdateOpeningTimeCommand());
+        commands.put(ActionType.UPDATE_CLOSING_TIME, new UpdateClosingTimeCommand());
+        commands.put(ActionType.ADD_SPECIAL_DATE, new AddSpecialDateCommand());
+        commands.put(ActionType.UPDATE_SPECIAL_DATE, new UpdateSpecialDateCommand());
+        
     }
     
     /**
