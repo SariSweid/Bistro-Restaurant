@@ -1,5 +1,6 @@
 package commands;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,37 +20,35 @@ import src.ocsf.server.ConnectionToClient;
 
 public class GetReportCommand implements Command {
 
-    @Override
-    public void execute(Object data, ConnectionToClient client) {
-        try {
-            if (!(data instanceof ReportRequest req)) return;
+	@Override
+	public void execute(Object data, ConnectionToClient client) {
+	    if (!(data instanceof ReportRequest req)) return;
 
-            ReportType type = req.getReportType();
-            SubscribesReportController subcontroller = new SubscribesReportController();
-            TimeReportController timecontroller = new  TimeReportController();
-            LocalDate start = LocalDate.now().minusWeeks(4);
-            LocalDate end = LocalDate.now();
-            Report report;
-            
-            if (type == ReportType.SCHEDULE) {
-                List<TimeData> timeData = timecontroller.generateReportData();
-                report = Report.createTimeReport(0, type, start, end, timeData, "Time Report");
-            } else {
-                List<WeekData> weekData = subcontroller.generateReportData(type);
-                report = Report.createSubscribersReport(0, type, start, end, weekData, "Monthly Subscribers Report");
-            }
+	    int month = req.getMonth();
+	    int year = req.getYear();
+	    ReportType type = req.getReportType();
 
-            ServerResponse res = new ServerResponse(true, report, "Report generated successfully");
-            client.sendToClient(new Message(ActionType.GET_REPORT, res));
+	    LocalDate start = LocalDate.of(year, month, 1);
+	    LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            try {
-                client.sendToClient(new Message(ActionType.GET_REPORT,
-                        new ServerResponse(false, null, "Server error")));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
+	    Report report;
+
+	    if (type == ReportType.SCHEDULE) {
+	        List<TimeData> timeData = new TimeReportController().generateReportData(start, end);
+	        report = Report.createTimeReport(0, type, start, end, timeData, "Time Report");
+	    } else {
+	        List<WeekData> weekData = new SubscribesReportController().generateReportData(start, end);
+	        report = Report.createSubscribersReport(0, type, start, end, weekData, "Subscribers Report");
+	    }
+
+
+	    try {
+			client.sendToClient(new Message(ActionType.GET_REPORT,
+			    new ServerResponse(true, report, "Report generated successfully")));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 }

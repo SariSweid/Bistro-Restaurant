@@ -18,22 +18,8 @@ public class TimeReportController {
      * Generates the list of TimeData for the previous month from DB.
      * @return list of TimeData
      */
-    public List<TimeData> generateReportData() {
-        YearMonth month = YearMonth.now().minusMonths(1);
-        LocalDate start = month.atDay(1);
-        LocalDate end = month.atEndOfMonth();
-
-        List<TimeData> list = db.getTimeDataBetween(start, end);
-
-        for (TimeData t : list) {
-            System.out.println(
-                "Reservation: " + t.getReservationTime() +
-                " | Actual Arrival: " + t.getActualArrivalTime() +
-                " | Departure: " + t.getDepartureTime()
-            );
-        }
-
-        return list;
+    public List<TimeData> generateReportData(LocalDate start, LocalDate end) {
+        return db.getTimeDataBetween(start, end);
     }
 
     /**

@@ -1,23 +1,13 @@
 package Controllers;
 
-import enums.ReportType;
 import javafx.fxml.FXML;
 import util.SceneManager;
 
 public class ManagerController {
 
-
     @FXML
-    private void onShowSubscribersReport() {
-        SceneManager.switchTo("SubscribersReportUI.fxml");
-    }
-
-    @FXML
-    private void onShowTimesReport() {
-        
-        SceneManager.switchTo("TimesReportUI.fxml");
-
-
+    private void onReports() {
+        SceneManager.switchTo("MonthYearSelector.fxml");
     }
 
     @FXML
@@ -34,5 +24,4 @@ public class ManagerController {
     private void onsubscriberscreen() {
         SceneManager.switchTo("SubscriberUI.fxml");
     }
-
 }

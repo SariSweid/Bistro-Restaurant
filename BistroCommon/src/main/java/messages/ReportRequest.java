@@ -4,17 +4,17 @@ import enums.ReportType;
 import java.io.Serializable;
 
 public class ReportRequest implements Serializable {
-    private ReportType reportType;
+    private final ReportType reportType;
+    private final int month;
+    private final int year;
 
-    public ReportRequest(ReportType reportType) {
+    public ReportRequest(ReportType reportType, int month, int year) {
         this.reportType = reportType;
+        this.month = month;
+        this.year = year;
     }
 
-    public ReportType getReportType() {
-        return reportType;
-    }
-
-    public void setReportType(ReportType reportType) {
-        this.reportType = reportType;
-    }
+    public ReportType getReportType() { return reportType; }
+    public int getMonth() { return month; }
+    public int getYear() { return year; }
 }

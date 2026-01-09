@@ -28,6 +28,7 @@ public class ClientHandler extends AbstractClient {
 
     public boolean awaitResponse = false;
     private HashMap<ActionType, ResponseHandler> handlers;
+    private HashMap<ReportType, ReportHandler> reportHandlers = new HashMap<>();
 
     public static ClientHandler instance;
 
@@ -281,17 +282,20 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.DELETE_TABLE, req));
     }
     
-    public void requestReport(ReportType reportType, ReportController controller) {
+    public void requestReport(ReportType reportType, int year, int month, ReportController controller) {
         connect();
 
-      
-        ResponseHandler handler = handlers.get(ActionType.GET_REPORT);
-        if (handler instanceof ReportHandler) {
-            ((ReportHandler) handler).setController(controller);
+        ReportHandler handler = reportHandlers.get(reportType);
+        if (handler == null) {
+            handler = new ReportHandler(controller);
+            reportHandlers.put(reportType, handler);
+            handlers.put(ActionType.GET_REPORT, handler);
+        } else {
+            handler.setController(controller);
+            handlers.put(ActionType.GET_REPORT, handler);
         }
 
-         
-        ReportRequest req = new ReportRequest(reportType);
+        ReportRequest req = new ReportRequest(reportType, month, year);
         sendRequest(new Message(ActionType.GET_REPORT, req));
     }
 
@@ -354,23 +358,13 @@ public class ClientHandler extends AbstractClient {
                 new updateRegularClosingTimeRequest(closingTime)));
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    //
-    
-    
-    
-    
-    
-    
+    /**
+     * Registers a ReportHandler for the given report type.
+     * @param type the type of report (SCHEDULE, SUBSCRIBERS, etc.)
+     * @param handler the ReportHandler instance
+     */
+    public void setHandler(ReportType type, ReportHandler handler) {
+        reportHandlers.put(type, handler);
+    }
+   
 }

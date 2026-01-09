@@ -1,12 +1,9 @@
 package Controllers;
 
-import Entities.Report;
 import enums.ReportType;
-import handlers.ClientHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import util.SceneManager;
@@ -23,9 +20,7 @@ public abstract class ReportController {
 
     @FXML
     public void initialize() {
-        ReportType reportType = getReportType();
-        if (reportType != null)
-            ClientHandler.getClient().requestReport(reportType, this);
+    	reportTitle.setText("");
     }
 
     public void showLineChart(XYChart.Series<String, Number> series, String title) {

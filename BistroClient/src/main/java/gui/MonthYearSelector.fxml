@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="20" style="-fx-background-color: #f5f5dc; -fx-padding: 40; -fx-border-radius: 10; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.MonthYearSelectorController">
+
+    <ComboBox fx:id="monthCombo" prefWidth="220" promptText="Select Month" style="-fx-font-size: 14px; -fx-background-radius: 5; -fx-border-radius: 5;" />
+    <ComboBox fx:id="yearCombo" prefWidth="220" promptText="Select Year" style="-fx-font-size: 14px; -fx-background-radius: 5; -fx-border-radius: 5;" />
+
+    <Button onAction="#onTimeReport" prefWidth="220" style="-fx-font-size: 15px; -fx-background-color: #4caf50; -fx-text-fill: white; -fx-background-radius: 8;" text="Generate Time Report" />
+    
+    <Button onAction="#onSubscribersReport" prefWidth="220" style="-fx-font-size: 15px; -fx-background-color: #2196f3; -fx-text-fill: white; -fx-background-radius: 8;" text="Generate Subscribers Report" />
+</VBox>

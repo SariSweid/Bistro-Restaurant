@@ -3,7 +3,6 @@ package logicControllers;
 import Entities.WeekData;
 import enums.ReportType;
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import DB.DBController;
@@ -12,35 +11,27 @@ public class SubscribesReportController {
 
     private final DBController db = new DBController();
 
-    public List<WeekData> generateReportData(ReportType type) {
+    /**
+     * Generates weekly report data for the given type between start and end dates.
+     * @param type Report type (SUBSCRIBERS or SCHEDULE)
+     * @param startDate first day of the month
+     * @param endDate last day of the month
+     * @return list of WeekData
+     */
+    public List<WeekData> generateReportData(LocalDate startDate, LocalDate endDate) {
         List<WeekData> data = new ArrayList<>();
 
-        YearMonth lastMonth = YearMonth.now().minusMonths(1);
-        LocalDate monthStart = lastMonth.atDay(1);
-        LocalDate monthEnd = lastMonth.atEndOfMonth();
-
-        LocalDate weekStart = monthStart;
+        LocalDate weekStart = startDate;
         int weekNum = 1;
 
-        while (!weekStart.isAfter(monthEnd)) {
-
+        while (!weekStart.isAfter(endDate)) {
             LocalDate weekEnd = weekStart.plusDays(6);
-            if (weekEnd.isAfter(monthEnd)) {
-                weekEnd = monthEnd;
-            }
+            if (weekEnd.isAfter(endDate)) weekEnd = endDate;
 
-            int value1 = 0;
-            int value2 = 0;
+            int completed = db.getCompletedSubscriberReservationsBetween(weekStart, weekEnd);
+            int waitlist = db.getWaitlistSubscriberReservationsBetween(weekStart, weekEnd);
 
-            if (type == ReportType.SCHEDULE) {
-                value1 = db.getReservationsCountBetween(weekStart, weekEnd);
-            }
-            else if (type == ReportType.SUBSCRIBERS) {
-                value1 = db.getCompletedSubscriberReservationsBetween(weekStart, weekEnd);
-                value2 = db.getWaitlistSubscriberReservationsBetween(weekStart, weekEnd);
-            }
-
-            data.add(new WeekData("Week " + weekNum,value1,value2));
+            data.add(new WeekData("Week " + weekNum, completed, waitlist));
 
             weekStart = weekEnd.plusDays(1);
             weekNum++;
