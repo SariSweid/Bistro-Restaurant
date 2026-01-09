@@ -37,6 +37,7 @@ public class PayCommand implements Command {
 
         if (result.isSuccess()) {
             reservation.setExpectedDepartureTime(req.getDepartureTime());
+            reservation.setStatus(enums.ReservationStatus.COMPLETED);
             reservationController.updateReservationFull(reservation); // now departureTime is saved
         }
 

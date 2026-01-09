@@ -96,34 +96,37 @@ import logicControllers.UserFactory;
 		        Connection con = getConnection();
 	;
 	
-		        try (PreparedStatement pst = con.prepareStatement("UPDATE `reservation` SET reservationDate = ?, reservationTime = ?, numOfGuests = ?,  status = ?, actualarrivaltime = ? , departuretiime = ? WHERE reservationID = ?")) {
-	
-		        		System.out.println(reservation.getStatus().name());
-		        		pst.setDate(1, Date.valueOf(reservation.getReservationDate()));
-		       		pst.setTime(2, Time.valueOf(reservation.getReservationTime()));  
-		            pst.setInt(3, reservation.getNumOfGuests());
-		            pst.setString(4, reservation.getStatus().name());  
-		            if (reservation.getActualArrivalTime() != null) {
-		                pst.setTime(5, Time.valueOf(reservation.getActualArrivalTime()));
-		            } else {
-		                pst.setNull(5, java.sql.Types.TIME);
-		            }
-		            if (reservation.getExpectedDepartureTime() != null) {
-		                pst.setTime(6, Time.valueOf(reservation.getExpectedDepartureTime()));
-		            } else {
-		                pst.setNull(6, java.sql.Types.TIME);
-		            }
-		            pst.setInt(7, reservation.getReservationID());
-	
-		            int rows = pst.executeUpdate();
-	
-		            return rows > 0; 
-	
-		        } catch (SQLException e) {
-		            System.err.println("SQL Exception during update: " + e.getMessage());
-		            e.printStackTrace();
-		            return false; 
-		        }
+				try (PreparedStatement pst = con.prepareStatement(
+					    "UPDATE reservation SET reservationDate = ?, reservationTime = ?, numOfGuests = ?, status = ?, actualarrivaltime = COALESCE(?, actualarrivaltime), departuretiime = ? WHERE reservationID = ?"
+					)) {
+					    pst.setDate(1, Date.valueOf(reservation.getReservationDate()));
+					    pst.setTime(2, Time.valueOf(reservation.getReservationTime()));
+					    pst.setInt(3, reservation.getNumOfGuests());
+					    pst.setString(4, reservation.getStatus().name());
+			
+					    // safely update actual arrival only if not null, else keep existing
+					    if (reservation.getActualArrivalTime() != null) {
+					        pst.setTime(5, Time.valueOf(reservation.getActualArrivalTime()));
+					    } else {
+					        pst.setNull(5, java.sql.Types.TIME); // COALESCE in SQL keeps existing
+					    }
+			
+					    // update departure time normally
+					    if (reservation.getExpectedDepartureTime() != null) {
+					        pst.setTime(6, Time.valueOf(reservation.getExpectedDepartureTime()));
+					    } else {
+					        pst.setNull(6, java.sql.Types.TIME);
+					    }
+			
+					    pst.setInt(7, reservation.getReservationID());
+			
+					    int rows = pst.executeUpdate();
+					    return rows > 0;
+					} catch (SQLException e) {
+					    e.printStackTrace();
+					    return false;
+					}
+
 		    }
 		    
 		    
