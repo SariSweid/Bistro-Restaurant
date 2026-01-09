@@ -35,6 +35,12 @@ public class PayCommand implements Command {
         Bill bill = new Bill(0, reservation.getReservationID(), amount, LocalDateTime.now(), true);
         PaymentResult result = paymentController.addPayment(bill);
 
+        if (result.isSuccess()) {
+            reservation.setExpectedDepartureTime(req.getDepartureTime());
+            reservationController.updateReservationFull(reservation); // now departureTime is saved
+        }
+
+        
         sendToClient(client, result.isSuccess(), result.getBill(), result.getMessage());
     }
 

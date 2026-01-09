@@ -6,6 +6,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import messages.PaymentRequest;
 import util.SceneManager;
+
+import java.time.LocalTime;
 import java.util.Optional;
 
 import handlers.ClientHandler;
@@ -41,7 +43,11 @@ public class PaymentController  {
         if (result.isPresent()) {
             try {
                 int confirmationCode = Integer.parseInt(result.get());
+                
+                LocalTime departureTime = LocalTime.now();
+                
                 PaymentRequest request = new PaymentRequest(confirmationCode);
+                request.setDepartureTime(departureTime);
 
                 statusLabel.setText("Processing payment...");
                 statusLabel.setStyle("-fx-text-fill: black;");

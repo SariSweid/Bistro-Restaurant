@@ -5,6 +5,9 @@ import javafx.scene.control.TextField;
 import messages.ForgotCodeRequest;
 //import messages.SeatCustomerRequest;
 import util.SceneManager;
+
+import java.time.LocalTime;
+
 import enums.UserRole;
 import handlers.ClientHandler;
 
@@ -46,7 +49,11 @@ public class TableReceivingController {
 
         try {
             int code = Integer.parseInt(text);
-            ClientHandler.getClient().seatCustomer(userId, code);
+            
+            // Send current time with seat request
+            LocalTime actualArrival = LocalTime.now();
+            
+            ClientHandler.getClient().seatCustomer(userId, code, actualArrival);
 
         } catch (NumberFormatException e) {
             SceneManager.showError("Confirmation code must be a number.");

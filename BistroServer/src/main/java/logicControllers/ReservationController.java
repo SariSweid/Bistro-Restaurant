@@ -166,6 +166,11 @@ public class ReservationController {
         return db.updateReservation(existing);
     }
 
+    public boolean updateReservationFull(Reservation reservation) {
+        if (reservation == null || reservation.getReservationID() <= 0) return false;
+        return db.updateReservation(reservation);
+    }
+
     
     /**
      * Add a new reservation. Returns true on success.
@@ -354,7 +359,7 @@ public class ReservationController {
 
 
    
-   public ServerResponse seatCustomerByCode(int confirmationCode, int userId) {
+   public ServerResponse seatCustomerByCode(int confirmationCode, int userId, LocalTime actualArrivalTime) {
 
 	    Reservation r = getReservationByCode(confirmationCode);
 	    if (r == null) {
@@ -388,6 +393,7 @@ public class ReservationController {
 
 	        r.setTableID(freeTable.getTableID());
 	        r.setStatus(ReservationStatus.SEATED);
+	        r.setActualArrivalTime(actualArrivalTime);
 	        db.updateReservation(r);
 
 	        return new ServerResponse(

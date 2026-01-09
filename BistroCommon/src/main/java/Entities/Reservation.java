@@ -24,6 +24,7 @@ public class Reservation implements Serializable {
 	private LocalTime reservationPlacedTime; ///the time the reservation was placed in the site
 	private ReservationStatus status;
 	private LocalTime expectedDepartureTime;
+	private LocalTime actualArrivalTime;
 	
 	/**
 	 * Constructor for new Reservation
@@ -193,5 +194,13 @@ public class Reservation implements Serializable {
 	
 	public LocalTime getExpectedDepartureTime() {
 	    return this.expectedDepartureTime;
+	}
+	
+	public void setActualArrivalTime(LocalTime t) { 
+		this.actualArrivalTime = t; 
+	}
+	
+	public LocalTime getActualArrivalTime() { 
+		return actualArrivalTime; 
 	}
 }

@@ -20,7 +20,8 @@ public class SeatCustomerCommand implements Command {
         ServerResponse response =
                 reservationController.seatCustomerByCode(
                         req.getConfirmationCode(),
-                        req.getUserId()
+                        req.getUserId(),
+                        req.getActualArrivalTime()
                 );
 
         try {

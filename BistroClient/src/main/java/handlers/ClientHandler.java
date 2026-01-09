@@ -253,13 +253,13 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.PAY, req));
     }
     
-    public void seatCustomer(int userId, int confirmationCode) {
+    public void seatCustomer(int userId, int confirmationCode, LocalTime actualArrival) {
         connect();
-        sendRequest(new Message(
-            ActionType.SEAT_CUSTOMER,
-            new SeatCustomerRequest(userId, confirmationCode)
-        ));
+        SeatCustomerRequest req = new SeatCustomerRequest(userId, confirmationCode);
+        req.setActualArrivalTime(actualArrival);  // set before sending
+        sendRequest(new Message(ActionType.SEAT_CUSTOMER, req));
     }
+
 
     public void forgotCode(int userId) {
     		connect();
