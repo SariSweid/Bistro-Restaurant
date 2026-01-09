@@ -46,7 +46,7 @@ public class RegisterCommand implements Command {
 
             ServerResponse response = success ?
                     new ServerResponse(true, user, req.getRole() + " registration successful") :
-                    new ServerResponse(false, null, "Registration failed");
+                    new ServerResponse(false, null, "Registration failed, userId already exists");
 
             client.sendToClient(new Message(ActionType.ADD_USER, response));
 

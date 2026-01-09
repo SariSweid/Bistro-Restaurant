@@ -1,20 +1,26 @@
 package Controllers;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
+import java.util.List;
 
 import Entities.Reservation;
 import enums.ReservationStatus;
 import handlers.ClientHandler;
 import util.SceneManager;
 
-public class GuestCancelReservationController {
+public class GuestCancelReservationController extends BaseDisplayController {
 
     @FXML
     private TextField confirmationCodeField;
     
-    
+    @FXML
+    private TableView<Reservation> reservationsTable;
+
 
     // guestId of this guest
     private int guestId = -1;
@@ -63,4 +69,10 @@ public class GuestCancelReservationController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+	@Override
+	public void showReservations(List<Reservation> list) {
+		reservationsTable.setItems(FXCollections.observableArrayList(list));
+		
+	}
 }

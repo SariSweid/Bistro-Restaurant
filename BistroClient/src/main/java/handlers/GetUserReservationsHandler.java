@@ -1,6 +1,8 @@
 package handlers;
 
 import java.util.List;
+
+import Controllers.BaseDisplayController;
 import Controllers.CancelReservationController;
 import Controllers.OrderController;
 import Entities.Reservation;
@@ -12,28 +14,15 @@ public class GetUserReservationsHandler implements ResponseHandler {
     @SuppressWarnings("unchecked")
     @Override
     public void handle(Object data) {
-        if (!(data instanceof List<?> list)) return;
+    		if (!(data instanceof List<?> list)) return;
 
         System.out.println("[GetUserReservationsHandler] received " + list.size() + " reservations");
 
-        Object active = ClientHandler.getClient().getActiveCancelController(); // may be order or cancel
-        if (active == null) {
-            active = ClientHandler.getClient().getOrderController(); // try order screen
-        }
-        if (active == null) return;
-
-        Object controller = active;
+        BaseDisplayController controller = ClientHandler.getClient().getActiveDisplayController();
+        if (controller == null) return;
 
         Platform.runLater(() -> {
-            if (controller instanceof OrderController orderUI) {
-                orderUI.showUserReservations((List<Reservation>) list);
-            }
-            else if (controller instanceof CancelReservationController cancelUI) {
-                cancelUI.showUserReservations((List<Reservation>) list);
-            }
-            else {
-                System.out.println("Unknown controller type for reservations handler.");
-            }
+            controller.showReservations((List<Reservation>) list);
         });
     }
 }

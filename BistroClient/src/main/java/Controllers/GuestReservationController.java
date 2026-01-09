@@ -33,7 +33,7 @@ public class GuestReservationController {
             GuestCancelReservationController controller = loader.getController();
             controller.setGuestId(currentGuestId);
             
-            ClientHandler.getClient().setActiveCancelController(controller);
+            ClientHandler.getClient().setActiveDisplayController(controller);
 
     	        Stage stage = new Stage();
     	        stage.setScene(new Scene(root));

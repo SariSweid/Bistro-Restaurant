@@ -1,7 +1,10 @@
 package handlers;
 
+import java.util.List;
+
 import Controllers.BaseReservationController;
 import Controllers.GuestMakeReservationController;
+import Entities.Reservation;
 import common.ServerResponse;
 import javafx.application.Platform;
 import util.SceneManager;
@@ -26,8 +29,9 @@ public class AddReservationHandler implements ResponseHandler {
                     
 
                     // Refresh OrderController table if it exists
-                    if (ClientHandler.getClient().getOrderController() != null) {
-                        ClientHandler.getClient().getOrderController().refreshReservations();
+                    var displayController = ClientHandler.getClient().getActiveDisplayController();
+                    if (displayController != null) {
+                        displayController.showReservations(List.of((Reservation) res.getData()));
                     }
                 } else {
                     controller.showError("Failed to add reservation: " + res.getMessage());

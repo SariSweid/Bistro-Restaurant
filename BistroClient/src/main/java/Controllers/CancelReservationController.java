@@ -15,68 +15,43 @@ import util.SceneManager;
 
 import java.util.List;
 
-public class CancelReservationController {   //(Not guest)
+public class CancelReservationController extends BaseDisplayController {
 
-    @FXML
-    private TableView<Reservation> reservationsTable;
+    @FXML private TableView<Reservation> reservationsTable;
+    @FXML private TableColumn<Reservation, Integer> idCol, guestsCol;
+    @FXML private TableColumn<Reservation, String> dateCol, timeCol;
 
-    @FXML
-    private TableColumn<Reservation, Integer> idCol, guestsCol;
-
-    @FXML
-    private TableColumn<Reservation, String> dateCol, timeCol;
-
-    @FXML
-    private Button cancelButton;
-    
-    @FXML
-    private Button previousButton;
-    
-    private ObservableList<Reservation> reservations = FXCollections.observableArrayList();
+    @FXML private Button cancelButton, previousButton;
 
     @FXML
     public void initialize() {
-    	
-	    	ClientHandler client = ClientHandler.getClient();
-	    	client.setActiveCancelController(this);
-	        
-        // Request this user's active reservations
-       // ClientHandler.getClient().getUserReservations(currentUserId);
+        // Register this controller in ClientHandler
+        ClientHandler.getClient().setActiveDisplayController(this);
 
         // Setup table columns
         idCol.setCellValueFactory(new PropertyValueFactory<>("reservationID"));
         dateCol.setCellValueFactory(new PropertyValueFactory<>("reservationDate"));
         timeCol.setCellValueFactory(new PropertyValueFactory<>("reservationTime"));
         guestsCol.setCellValueFactory(new PropertyValueFactory<>("numOfGuests"));
-        
-        reservationsTable.setItems(reservations);
 
-        if (client.getCurrentUserId() != 0) {
-            refreshReservations();
-        }
+        // Load reservations
+        refreshReservations();
     }
-    
-    // Load reservations into table
-    public void loadReservations(List<Reservation> list) {
-    		if (list == null || list.isEmpty()) {
-            reservations.clear();
-            SceneManager.showInfo("You have no active reservations.");
+
+    @Override
+    public void showReservations(List<Reservation> list) {
+        if (list == null || list.isEmpty()) {
+            reservationsTable.setItems(FXCollections.observableArrayList());
         } else {
-            reservations.setAll(list);
-        }
-    }
-    
-    // Refresh from server
-    public void refreshReservations() {
-        int currentUserId = ClientHandler.getClient().getCurrentUserId();
-        if (currentUserId != 0) {
-            ClientHandler.getClient().getUserReservations(currentUserId);
+            reservationsTable.setItems(FXCollections.observableArrayList(list));
         }
     }
 
-    // Called by GetUserReservationsHandler
-    public void showUserReservations(List<Reservation> reservations) {
-        reservationsTable.setItems(FXCollections.observableArrayList(reservations));
+    public void refreshReservations() {
+        int userId = ClientHandler.getClient().getCurrentUserId();
+        if (userId != 0) {
+            ClientHandler.getClient().getUserReservations(userId);
+        }
     }
 
     @FXML
@@ -87,10 +62,9 @@ public class CancelReservationController {   //(Not guest)
             return;
         }
 
-        // Confirm dialog
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, 
-            "Are you sure you want to cancel reservation #" + selected.getReservationID() + "?", 
-            ButtonType.YES, ButtonType.NO);
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Are you sure you want to cancel reservation #" + selected.getReservationID() + "?",
+                ButtonType.YES, ButtonType.NO);
         confirm.showAndWait();
 
         if (confirm.getResult() == ButtonType.YES) {
@@ -100,6 +74,6 @@ public class CancelReservationController {   //(Not guest)
 
     @FXML
     private void onPreviousPage() {
-        SceneManager.switchTo("SubscriberUI.fxml"); // use correct main menu depending on user type
+        SceneManager.switchTo("SubscriberUI.fxml");
     }
 }

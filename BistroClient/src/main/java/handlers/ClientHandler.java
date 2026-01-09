@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 
+import Controllers.BaseDisplayController;
 import Controllers.BaseReservationController;
 import Controllers.MainMenuController;
 import Controllers.OrderController;
@@ -35,7 +36,6 @@ public class ClientHandler extends AbstractClient {
     
     private ReportController reportController;
     private BaseReservationController activeReservationController;
-    private Object activeCancelController;
     private MainMenuController mainMenuController;
 
     private RestaurantSettingsController activeRestaurantSettingsController;
@@ -45,15 +45,7 @@ public class ClientHandler extends AbstractClient {
     private int currentUserId;
     private boolean connected = false;
     
-    private OrderController orderController;
 
-    public void setOrderController(OrderController controller) {
-        this.orderController = controller;
-    }
-
-    public OrderController getOrderController() {
-        return orderController;
-    }
 
     private ClientHandler(String host, int port) throws IOException {
         super(host, port);
@@ -122,14 +114,17 @@ public class ClientHandler extends AbstractClient {
     public BaseReservationController getActiveReservationController() {
         return activeReservationController;
     }
+    
+    private BaseDisplayController activeDisplayController;
 
-    public void setActiveCancelController(Object controller) {
-        this.activeCancelController = controller;
+    public void setActiveDisplayController(BaseDisplayController controller) {
+        this.activeDisplayController = controller;
     }
 
-    public Object getActiveCancelController() {
-        return activeCancelController;
+    public BaseDisplayController getActiveDisplayController() {
+        return activeDisplayController;
     }
+
 
     public void setGuestUI(GuestUpdateReservationUI guestUI) {
         this.guestUI = guestUI;

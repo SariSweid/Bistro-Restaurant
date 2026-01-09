@@ -1,5 +1,6 @@
 package handlers;
 
+import Controllers.BaseDisplayController;
 import Controllers.CancelReservationController;
 import Controllers.GuestCancelReservationController;
 import common.ServerResponse;
@@ -13,30 +14,25 @@ public class CancelReservationHandler implements ResponseHandler {
         ServerResponse res = (ServerResponse) data;
 
         Platform.runLater(() -> {
-            Object controller = ClientHandler.getClient().getActiveCancelController();
+            BaseDisplayController controller = ClientHandler.getClient().getActiveDisplayController();
             if (controller == null) return;
 
             if (controller instanceof CancelReservationController subController) {
-                // Subscriber logic
                 if (res.isSuccess()) {
                     subController.refreshReservations();
-                    util.SceneManager.showInfo(res.getMessage());
+                    SceneManager.showInfo(res.getMessage());
                 } else {
-                    util.SceneManager.showError(res.getMessage());
+                    SceneManager.showError(res.getMessage());
                 }
-
             } else if (controller instanceof GuestCancelReservationController guestController) {
-                // Guest logic
                 if (res.isSuccess()) {
-                    guestController.onClose(); // close popup
+                    guestController.onClose();
                     guestController.showMessage(res.getMessage());
                 } else {
-                    guestController.showError(res.getMessage() + "\nThere is no reservation with that confirmatin code.");
+                    guestController.showError(res.getMessage() + "\nThere is no reservation with that confirmation code.");
                 }
-
-            } else {
-                System.out.println("Unknown cancel controller type.");
             }
         });
+
     }
 }

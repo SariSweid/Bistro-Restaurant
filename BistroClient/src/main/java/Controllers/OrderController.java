@@ -10,9 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import util.SceneManager;
 
-public class OrderController {
-
-    
+public class OrderController extends BaseDisplayController {
 
     @FXML private TableView<Reservation> reservationsTable;
     @FXML private TableColumn<Reservation, Integer> idColumn;
@@ -28,25 +26,22 @@ public class OrderController {
         guestsColumn.setCellValueFactory(new PropertyValueFactory<>("numOfGuests"));
         confirmationCodeColumn.setCellValueFactory(new PropertyValueFactory<>("confirmationCode"));
 
-        ClientHandler.getClient().setOrderController(this);
+        // Register this controller in ClientHandler
+        ClientHandler.getClient().setActiveDisplayController(this);
 
-        // Load current user reservations automatically
-        int userId = ClientHandler.getClient().getCurrentUserId();
-        if (userId != 0) {
-            ClientHandler.getClient().getUserReservations(userId);
-        }
+        // Load reservations
+        refreshReservations();
     }
 
-    // This will be called by handler
-    public void showUserReservations(List<Reservation> list) {
+    @Override
+    public void showReservations(List<Reservation> list) {
         if (list == null || list.isEmpty()) {
             reservationsTable.setItems(FXCollections.observableArrayList());
-            SceneManager.showInfo("You have no active reservations.");
         } else {
             reservationsTable.setItems(FXCollections.observableArrayList(list));
         }
     }
-    
+
     public void refreshReservations() {
         int userId = ClientHandler.getClient().getCurrentUserId();
         if (userId != 0) {
@@ -54,11 +49,8 @@ public class OrderController {
         }
     }
 
-    
-    
     @FXML
     private void onPreviousPage() {
         SceneManager.switchTo("SubscriberUI.fxml");
     }
 }
-
