@@ -67,9 +67,9 @@ import logicControllers.UserFactory;
 		    	
 		    	
 		            if (conn == null || conn.isClosed()) {	                
-		                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020"); // sari -DB
+		   //             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020"); // sari -DB
 	
-	//	                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
+		                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
 		                System.out.println("SQL connection initialized");	               	                	                
 		            }
 		            lastUsed = System.currentTimeMillis();
@@ -94,40 +94,46 @@ import logicControllers.UserFactory;
 		    
 		    public boolean updateReservation(Reservation reservation) {
 		        Connection con = getConnection();
-	;
-	
-				try (PreparedStatement pst = con.prepareStatement(
-					    "UPDATE reservation SET reservationDate = ?, reservationTime = ?, numOfGuests = ?, status = ?, actualarrivaltime = COALESCE(?, actualarrivaltime), departuretiime = ? WHERE reservationID = ?"
-					)) {
-					    pst.setDate(1, Date.valueOf(reservation.getReservationDate()));
-					    pst.setTime(2, Time.valueOf(reservation.getReservationTime()));
-					    pst.setInt(3, reservation.getNumOfGuests());
-					    pst.setString(4, reservation.getStatus().name());
-			
-					    // safely update actual arrival only if not null, else keep existing
-					    if (reservation.getActualArrivalTime() != null) {
-					        pst.setTime(5, Time.valueOf(reservation.getActualArrivalTime()));
-					    } else {
-					        pst.setNull(5, java.sql.Types.TIME); // COALESCE in SQL keeps existing
-					    }
-			
-					    // update departure time normally
-					    if (reservation.getExpectedDepartureTime() != null) {
-					        pst.setTime(6, Time.valueOf(reservation.getExpectedDepartureTime()));
-					    } else {
-					        pst.setNull(6, java.sql.Types.TIME);
-					    }
-			
-					    pst.setInt(7, reservation.getReservationID());
-			
-					    int rows = pst.executeUpdate();
-					    return rows > 0;
-					} catch (SQLException e) {
-					    e.printStackTrace();
-					    return false;
-					}
 
+		        try (PreparedStatement pst = con.prepareStatement(
+		                "UPDATE reservation SET reservationDate = ?, reservationTime = ?, numOfGuests = ?, status = ?, tableID = ?, actualarrivaltime = COALESCE(?, actualarrivaltime), departuretiime = ? WHERE reservationID = ?"
+		            )) {
+		            pst.setDate(1, Date.valueOf(reservation.getReservationDate()));
+		            pst.setTime(2, Time.valueOf(reservation.getReservationTime()));
+		            pst.setInt(3, reservation.getNumOfGuests());
+		            pst.setString(4, reservation.getStatus().name());
+
+		            // update tableID safely
+		            if (reservation.getTableID() != null) {
+		                pst.setInt(5, reservation.getTableID());
+		            } else {
+		                pst.setNull(5, java.sql.Types.INTEGER);
+		            }
+
+		            // safely update actual arrival only if not null, else keep existing
+		            if (reservation.getActualArrivalTime() != null) {
+		                pst.setTime(6, Time.valueOf(reservation.getActualArrivalTime()));
+		            } else {
+		                pst.setNull(6, java.sql.Types.TIME); // COALESCE in SQL keeps existing
+		            }
+
+		            // update departure time normally
+		            if (reservation.getExpectedDepartureTime() != null) {
+		                pst.setTime(7, Time.valueOf(reservation.getExpectedDepartureTime()));
+		            } else {
+		                pst.setNull(7, java.sql.Types.TIME);
+		            }
+
+		            pst.setInt(8, reservation.getReservationID());
+
+		            int rows = pst.executeUpdate();
+		            return rows > 0;
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		            return false;
+		        }
 		    }
+
 		    
 		    
 		    public List<TimeData> getTimeDataBetween(LocalDate startDate, LocalDate endDate) {
@@ -157,6 +163,29 @@ import logicControllers.UserFactory;
 		        }
 
 		        return list;
+		    }
+		    
+		    
+		    /**
+		     * Updates the availability status of a table.
+		     *
+		     * @param tableId the ID of the table to update
+		     * @param isAvailable true if the table should be free, false if occupied
+		     * @return true if the update succeeded, false otherwise
+		     */
+		    public boolean updateTableIsAvailable(int tableId, boolean isAvailable) {
+		        Connection con = getConnection();
+		        try (PreparedStatement pst = con.prepareStatement(
+		                "UPDATE `table` SET IsAvailable = ? WHERE TableId = ?"
+		        )) {
+		            pst.setBoolean(1, isAvailable);
+		            pst.setInt(2, tableId);
+		            int rows = pst.executeUpdate();
+		            return rows > 0;
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		            return false;
+		        }
 		    }
 
 		    
@@ -1303,23 +1332,39 @@ import logicControllers.UserFactory;
 			}
 			
 			
+			/**
+			 * Frees the table assigned to a reservation and updates the reservation status to COMPLETED.
+			 *
+			 * @param reservationId the ID of the reservation whose table should be freed
+			 * @return true if the table and reservation were successfully updated, false otherwise
+			 */
 			public boolean updateTableIsFree(int reservationId) {
-				Connection con = getConnection();
-			    try (PreparedStatement pst = con.prepareStatement("UPDATE reservation SET TableId = ? , status = ? WHERE reservationID = ?")) {
-			    	
-			    	pst.setNull(1, java.sql.Types.INTEGER);
-			    	pst.setString(2, "COMPLETED");
-			        pst.setInt(3, reservationId);
-			    	
-			    	
-			        int updateStatus = pst.executeUpdate();
-			        return updateStatus > 0;
-	
+			    Connection con = getConnection();
+			    try {
+			        Reservation r = GetReservation(reservationId);
+			        if (r == null || r.getTableID() == null) return false;
+
+			        try (PreparedStatement pstTable = con.prepareStatement(
+			                "UPDATE `table` SET IsAvailable = 1 WHERE TableId = ?")) {
+			            pstTable.setInt(1, r.getTableID());
+			            pstTable.executeUpdate();
+			        }
+
+			        try (PreparedStatement pstReservation = con.prepareStatement(
+			                "UPDATE reservation SET TableId = ?, status = ? WHERE reservationID = ?")) {
+			            pstReservation.setNull(1, java.sql.Types.INTEGER);
+			            pstReservation.setString(2, "COMPLETED");
+			            pstReservation.setInt(3, reservationId);
+			            int updateStatus = pstReservation.executeUpdate();
+			            return updateStatus > 0;
+			        }
+
 			    } catch (SQLException e) {
 			        e.printStackTrace();
 			        return false;
 			    }
 			}
+
 	
 	
 			

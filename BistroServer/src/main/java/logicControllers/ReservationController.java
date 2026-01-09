@@ -366,11 +366,6 @@ public class ReservationController {
 	        return new ServerResponse(false, null, "Confirmation code is incorrect.");
 	    }
 
-	    /*
-	    if (r.getCustomerId() != userId) {
-	        return new ServerResponse(false, null, "This confirmation code does not belong to your account.");
-	    }
-*/
 	    if (r.getStatus() == ReservationStatus.CANCELLED) {
 	        return new ServerResponse(false, null, "This reservation has been cancelled.");
 	    }
@@ -392,6 +387,10 @@ public class ReservationController {
 	    if (freeTable != null) {
 
 	        r.setTableID(freeTable.getTableID());
+
+	        // Mark table as occupied
+	        db.updateTableIsAvailable(freeTable.getTableID(), false);
+
 	        r.setStatus(ReservationStatus.SEATED);
 	        r.setActualArrivalTime(actualArrivalTime);
 	        db.updateReservation(r);
