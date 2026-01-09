@@ -140,7 +140,8 @@ import logicControllers.UserFactory;
 		        Connection con = getConnection();
 		        List<TimeData> list = new ArrayList<>();
 
-		        try (PreparedStatement pst = con.prepareStatement("SELECT r.reservationTime, b.issuedAt FROM reservation r LEFT JOIN bill b ON r.reservationID = b.reservationId  WHERE r.reservationDate BETWEEN ? AND ?")) {
+		        try (PreparedStatement pst = con.prepareStatement(
+		                "SELECT r.reservationTime, r.actualarrivaltime, r.departuretiime FROM reservation r WHERE r.reservationDate BETWEEN ? AND ?")) {
 
 		            pst.setDate(1, Date.valueOf(startDate));
 		            pst.setDate(2, Date.valueOf(endDate));
@@ -148,14 +149,19 @@ import logicControllers.UserFactory;
 		            ResultSet rs = pst.executeQuery();
 
 		            while (rs.next()) {
-		                LocalTime arrival = rs.getTime("reservationTime").toLocalTime();
+		                LocalTime reservationTime = rs.getTime("reservationTime").toLocalTime();
 
-		                Timestamp t = rs.getTimestamp("issuedAt");
-		                LocalTime departure = (t != null)
-		                        ? t.toLocalDateTime().toLocalTime()
+		                Timestamp actualArrivalTs = rs.getTimestamp("actualarrivaltime");
+		                LocalTime actualArrival = (actualArrivalTs != null)
+		                        ? actualArrivalTs.toLocalDateTime().toLocalTime()
 		                        : null;
 
-		                list.add(new TimeData(arrival, departure));
+		                Timestamp departureTs = rs.getTimestamp("departuretiime");
+		                LocalTime departure = (departureTs != null)
+		                        ? departureTs.toLocalDateTime().toLocalTime()
+		                        : null;
+
+		                list.add(new TimeData(reservationTime, actualArrival, departure));
 		            }
 
 		        } catch (SQLException e) {
@@ -164,6 +170,8 @@ import logicControllers.UserFactory;
 
 		        return list;
 		    }
+
+
 		    
 		    
 		    /**
