@@ -21,5 +21,10 @@ public class UpdateOpeningTimeCommand implements Command {
 
         current.setOpeningTime(hours.getOpeningTime());
         controller.updateWeeklyOpeningHours(current);
+        
+        System.out.println("OPENING UPDATE: day=" + hours.getDay() + " open=" + hours.getOpeningTime());
+        boolean ok = controller.updateWeeklyOpeningHours(current);
+        System.out.println("OPENING UPDATE OK? " + ok);
+
     }
 }

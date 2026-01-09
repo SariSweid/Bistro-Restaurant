@@ -69,7 +69,8 @@ import logicControllers.UserFactory;
 		            if (conn == null || conn.isClosed()) {	                
 		   //             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020"); // sari -DB
 	
-		                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
+		               // conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
+		                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Vrek2logos@");
 		                System.out.println("SQL connection initialized");	               	                	                
 		            }
 		            lastUsed = System.currentTimeMillis();
@@ -1273,21 +1274,21 @@ import logicControllers.UserFactory;
 		     * @param d the SpecialDates object containing updated data
 		     * @return true if the update succeeded, false otherwise
 		     */
-			public Boolean updateSpecialDates(SpecialDates d) {
+			public Boolean updateSpecialDates(LocalDate oldDate, SpecialDates d) {
 				
 				Connection con = getConnection(); //connect to DB
 				
-				try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates` SET OpeningHours = ? , ClosingHours = ? , description = ?   WHERE special_date = ? ")){
+				try (PreparedStatement pst = con.prepareStatement("UPDATE `specialdates`"+" SET special_date = ? , OpeningHours=?, ClosingHours = ? , description = ?"+"   WHERE special_date = ? ")){
 					
-									
-					pst.setTime(1, java.sql.Time.valueOf(d.getOpeningTime()));
-					pst.setTime(2, java.sql.Time.valueOf(d.getClosingTime()));
-					pst.setString(3, d.getDescription());
-					pst.setDate(4, java.sql.Date.valueOf(d.getDate()));
+					pst.setDate(1, java.sql.Date.valueOf(d.getDate()));
+
+					pst.setTime(2, java.sql.Time.valueOf(d.getOpeningTime()));
+					pst.setTime(3, java.sql.Time.valueOf(d.getClosingTime()));
+					pst.setString(4, d.getDescription());
+					pst.setDate(5,java.sql.Date.valueOf(oldDate));
 					
 					
-					
-					
+				
 					
 		            int rows = pst.executeUpdate();
 	

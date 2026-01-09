@@ -13,14 +13,14 @@ public class ServerApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // 1. Load the FXML
+        //load the FXML
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/ServerUI.fxml"));
         Parent root = loader.load();
 
-        // 2. Get the controller created by JavaFX
+        // get the controller created by JavaFX
         ServerUIController uiController = loader.getController();
 
-        // 3. Create the server and connect it to the UI
+        // create the server and connect it to the UI
         ServerController server = new ServerController(ServerController.DEFAULT_PORT);
         server.setUi(uiController);
 

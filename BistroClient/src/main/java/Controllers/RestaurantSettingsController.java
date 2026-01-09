@@ -3,6 +3,8 @@ package Controllers;
 
 import Entities.RestaurantSettings;
 import Entities.SpecialDates;
+import Entities.WeeklyOpeningHours;
+import enums.Day;
 import handlers.ClientHandler;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,6 +33,10 @@ public class RestaurantSettingsController {
 	@FXML private TableColumn<SpecialDates, LocalTime> openColumn;
 	@FXML private TableColumn<SpecialDates, LocalTime> closeColumn;
 	
+	@FXML private TableView<WeeklyOpeningHours> weeklyHoursTable;
+	@FXML private TableColumn<WeeklyOpeningHours,Day> dayColumn;
+	@FXML private TableColumn<WeeklyOpeningHours,LocalTime> openingTimeColumn;
+	@FXML private TableColumn<WeeklyOpeningHours,LocalTime> closingTimeColumn;
 
 	@FXML private TextField specialDateField;
 	@FXML private TextField specialNoteField;
@@ -39,7 +45,7 @@ public class RestaurantSettingsController {
 
 	
     private ObservableList<SpecialDates> specialDatesList = FXCollections.observableArrayList();
-
+    private final ObservableList<WeeklyOpeningHours> weeklyHoursList = FXCollections.observableArrayList();
 	
 	@FXML
 	public void initialize() {
@@ -52,8 +58,33 @@ public class RestaurantSettingsController {
         closeColumn.setCellValueFactory(new PropertyValueFactory<>("closingTime"));
         specialDatesTable.setItems(specialDatesList);
         
+        
+        dayColumn.setCellValueFactory(new PropertyValueFactory<>("day"));
+        openingTimeColumn.setCellValueFactory(new PropertyValueFactory<>("openingTime"));
+        closingTimeColumn.setCellValueFactory(new PropertyValueFactory<>("closingTime"));
+
+        
+        for(enums.Day day : enums.Day.values()) {
+        	weeklyHoursList.add(new WeeklyOpeningHours(LocalTime.parse("10:00"),LocalTime.parse("22:00"),day));
+        }
+        
+        weeklyHoursTable.setItems(weeklyHoursList);
+        
+        //make table only show the selected day state.
+        weeklyHoursTable.getSelectionModel().selectedItemProperty().addListener((obs, oldRow, row) -> {
+            if (row == null) {
+                openingTimeField.clear();
+                closingTimeField.clear();
+                return;
+            }
+            openingTimeField.setText(row.getOpeningTime().toString());
+            closingTimeField.setText(row.getClosingTime().toString());
+        });
+
+        
         //ask server to send settings
         ClientHandler.getClient().getRestaurantSettings();
+        
         
 	}    
 
@@ -62,76 +93,101 @@ public class RestaurantSettingsController {
 	@FXML
 	public void updateOpeningHours() {
 	    try {
+	        WeeklyOpeningHours selected = weeklyHoursTable.getSelectionModel().getSelectedItem();
+	        if (selected == null) {
+	            SceneManager.showError("Select a day first");
+	            return;
+	        }
+
 	        String text = openingTimeField.getText();
 	        if (text == null || text.isBlank()) {
 	            SceneManager.showError("Please enter opening time (HH:MM).");
 	            return;
 	        }
 
-	        LocalTime openingTime = LocalTime.parse(text); //HH:MM
-	        System.out.println("Opening time is updated to: " +openingTime);
+	        LocalTime openingTime = LocalTime.parse(openingTimeField.getText().trim());
 
-	       
-	        ClientHandler.getClient().updateRegularOpeningTime(openingTime);
+	        selected.setOpeningTime(openingTime);
+	        weeklyHoursTable.refresh();
+
+	        ClientHandler.getClient().updateRegularOpeningTime(selected);
+	        
+	        openingTimeField.clear();
+
 
 	    } catch (Exception e) {
-	        SceneManager.showError("Invalid format ! Use HH:MM (09:00)");
+	        SceneManager.showError("Invalid format ! Use HH:MM (10:00)");
 	    }
 	}
 
-    @FXML
-    public void updateClosingHours() {
-    	try {
+
+	@FXML
+	public void updateClosingHours() {
+	    try {
+	        WeeklyOpeningHours selected = weeklyHoursTable.getSelectionModel().getSelectedItem();
+	        if (selected == null) {
+	            SceneManager.showError("Select a day first");
+	            return;
+	        }
+
 	        String text = closingTimeField.getText();
 	        if (text == null || text.isBlank()) {
 	            SceneManager.showError("Please enter closing time (HH:MM)");
 	            return;
 	        }
 
-	        LocalTime closingTime = LocalTime.parse(text); //HH:MM
-	        System.out.println("Closing time is updated to: " +closingTime);
+	        LocalTime closingTime = LocalTime.parse(closingTimeField.getText().trim());
 
-	        ClientHandler.getClient().updateRegularClosingTime(closingTime);
+	        selected.setClosingTime(closingTime);
+	        weeklyHoursTable.refresh();
+
+	        ClientHandler.getClient().updateRegularClosingTime(selected);
+
+	        closingTimeField.clear();
 
 	    } catch (Exception e) {
 	        SceneManager.showError("Invalid format ! Use HH:mm (23:00)");
-	    }    	
-    }
+	    }
+	}
 
-    @FXML
-    public void addSpecialDates() {
-    	
-        try {
-        	String dateText = specialDateField.getText();
-        	String noteText = specialDateField.getText();
-        	String openText = specialDateField.getText();
-        	String closeText = specialDateField.getText();
-        	
-        	if (dateText == null || dateText.isBlank() || noteText == null || noteText.isBlank() || openText == null || openText.isBlank() ||closeText == null || closeText.isBlank()) {        	
-        		System.out.println("Please fill all fields");
-        		return;
-        	}
-        	LocalDate date = LocalDate.parse(dateText.trim());
-        	LocalTime open = LocalTime.parse(openText.trim());
-        	LocalTime close = LocalTime.parse(closeText.trim());
 
-        	SpecialDates sDates = new SpecialDates(open,close,date,noteText.trim()); //new special date
-        	
-        	specialDatesList.add(sDates);
-        	
-        	ClientHandler.getClient().addSpecialDate(sDates);
-            //ready for next special date
-        	specialDateField.clear();
-        	specialOpenField.clear();
-        	specialCloseField.clear();
-        	specialNoteField.clear();
-        	
-        	SceneManager.showInfo("Special dates successfully added");      	
-        	
-        } catch (Exception e) {
-        	SceneManager.showError("Invalid input");
-        }
-    }
+	@FXML
+	public void addSpecialDates() {
+	    try {
+	        String dateText  = specialDateField.getText();
+	        String noteText  = specialNoteField.getText();
+	        String openText  = specialOpenField.getText();
+	        String closeText = specialCloseField.getText();
+
+	        if (dateText == null || dateText.isBlank() ||
+	            noteText == null || noteText.isBlank() ||
+	            openText == null || openText.isBlank() ||
+	            closeText == null || closeText.isBlank()) {
+	            SceneManager.showError("Please fill all fields");
+	            return;
+	        }
+
+	        LocalDate date = LocalDate.parse(dateText.trim());      
+	        LocalTime open = LocalTime.parse(openText.trim());      
+	        LocalTime close = LocalTime.parse(closeText.trim());    
+
+	        SpecialDates sDates = new SpecialDates(open, close, date, noteText.trim());
+
+	        specialDatesList.add(sDates);
+	        specialDatesTable.refresh();
+
+	        ClientHandler.getClient().addSpecialDate(sDates);
+
+	        specialDateField.clear();
+	        specialOpenField.clear();
+	        specialCloseField.clear();
+	        specialNoteField.clear();
+
+	    } catch (Exception e) {
+	        SceneManager.showError("Invalid input");
+	    }
+	}
+
 
     @FXML
     public void updateSpecialDates() {
@@ -155,6 +211,7 @@ public class RestaurantSettingsController {
             LocalDate newDate = LocalDate.parse(dateText.trim());     
             LocalTime newOpen = LocalTime.parse(openText.trim());     
             LocalTime newClose = LocalTime.parse(closeText.trim()); 
+    		LocalDate oldDate = selectedSpecialDate.getDate();
     		
             //update selected date
             selectedSpecialDate.setDate(newDate);
@@ -164,7 +221,7 @@ public class RestaurantSettingsController {
             
             //database update
             UpdateSpecialDateRequest req =
-                    new UpdateSpecialDateRequest(noteText.trim(), newDate, newOpen, newClose);
+                    new UpdateSpecialDateRequest(oldDate,noteText.trim(), newDate, newOpen, newClose);
             ClientHandler.getClient().updateSpecialDate(req);
             
             

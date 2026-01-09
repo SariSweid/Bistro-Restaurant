@@ -338,7 +338,7 @@ public class ClientHandler extends AbstractClient {
     
     public void addSpecialDate(SpecialDates specialDate) {
     	connect();
-    	sendRequest(new Message(ActionType.ADD_SPECIAL_DATE, new AddSpecialDateRequest(specialDate)));
+    	sendRequest(new Message(ActionType.ADD_SPECIAL_DATE, specialDate));
     }
     
     public void updateSpecialDate(UpdateSpecialDateRequest req) {
@@ -346,16 +346,14 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.UPDATE_SPECIAL_DATE, req));
     }
 
-    public void updateRegularOpeningTime(LocalTime openingTime) {
+    public void updateRegularOpeningTime(Entities.WeeklyOpeningHours hours) {
         connect();
-        sendRequest(new Message(ActionType.UPDATE_OPENING_TIME,
-                new updateRegularOpeningTimeRequest(openingTime)));
+        sendRequest(new Message(ActionType.UPDATE_OPENING_TIME,hours));
     }
 
-    public void updateRegularClosingTime(LocalTime closingTime) {
+    public void updateRegularClosingTime(Entities.WeeklyOpeningHours hours) {
         connect();
-        sendRequest(new Message(ActionType.UPDATE_CLOSING_TIME,
-                new updateRegularClosingTimeRequest(closingTime)));
+        sendRequest(new Message(ActionType.UPDATE_CLOSING_TIME, hours));
     }
 
     /**

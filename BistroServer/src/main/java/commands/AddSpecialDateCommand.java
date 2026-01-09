@@ -15,6 +15,9 @@ public class AddSpecialDateCommand implements Command {
         if (!(data instanceof SpecialDates)) return;
 
         controller.addSpecialDate((SpecialDates) data);
+        
+        System.out.println("ADD_SPECIAL_DATE data class: " + data.getClass());
+
     }
 }
 

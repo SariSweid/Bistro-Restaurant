@@ -1,5 +1,6 @@
 package logicControllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import DB.DBController;
@@ -103,7 +104,14 @@ public class RestaurantSettingsController {
 	 * @param specialDate
 	 * @return true if the special date was updated in the db
 	 */
-	public boolean updateSpecialDate(SpecialDates specialDate) {
-		return this.dbController.updateSpecialDates(specialDate);
+	public boolean updateSpecialDate(LocalDate oldDate, SpecialDates specialDate) {
+		boolean flag = this.dbController.updateSpecialDates(oldDate, specialDate);
+		if(flag) {
+			this.restaurantSettings.getSpecialDates().removeIf(s -> s.getDate().equals(oldDate));
+			this.restaurantSettings.addSpecialDate(specialDate);
+		}
+		
+		return flag;
+		
 	}
 }
