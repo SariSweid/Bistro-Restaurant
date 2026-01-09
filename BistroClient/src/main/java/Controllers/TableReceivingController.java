@@ -2,13 +2,10 @@ package Controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import messages.ForgotCodeRequest;
-//import messages.SeatCustomerRequest;
 import util.SceneManager;
 
 import java.time.LocalTime;
 
-import enums.UserRole;
 import handlers.ClientHandler;
 
 public class TableReceivingController {
@@ -18,18 +15,15 @@ public class TableReceivingController {
 
     @FXML
     private void onPreviousPage() {
-        int userId = ClientHandler.getClient().getCurrentUserId();
-
         enums.UserRole role = ClientHandler.getClient().getCurrentUserRole();
 
-        if (role == enums.UserRole.SUBSCRIBER) {
-            // Subscriber goes back to Subscriber UI
-            util.SceneManager.switchTo("SubscriberUI.fxml");
+        if (role != null && role != enums.UserRole.GUEST) {
+            // Non-guest users go back to Subscriber UI
+            SceneManager.switchTo("SubscriberUI.fxml");
         } else {
-            // Guest goes back to MainMenu UI
-            util.SceneManager.switchTo("MainMenuUI.fxml");
+            // Guest or unknown goes to Main Menu
+            SceneManager.switchTo("MainMenuUI.fxml");
         }
-
     }
 
     /**
@@ -73,3 +67,4 @@ public class TableReceivingController {
         ClientHandler.getClient().forgotCode(userId);
     }
 }
+

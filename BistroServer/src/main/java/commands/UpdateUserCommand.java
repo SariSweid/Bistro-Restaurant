@@ -1,5 +1,8 @@
 package commands;
 
+import common.Message;
+import common.ServerResponse;
+import enums.ActionType;
 import logicControllers.UserController;
 import messages.UpdateUserRequest;
 import server.Command;
@@ -18,22 +21,24 @@ public class UpdateUserCommand implements Command {
      */
 	@Override
 	public void execute(Object data, ConnectionToClient client) {
-		// Cast the incoming data
-        UpdateUserRequest req = (UpdateUserRequest) data;
-        
-        // Update the user using the controller
-        boolean success = userController.updateUser(req.getUser());
-		
-        // Send response back to client
-        try {
-            client.sendToClient(success ? "UPDATE_OK" : "UPDATE_FAIL");
-        } catch (Exception e) {
-            e.printStackTrace();
-            try {
-                client.sendToClient("ERROR");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
+	    if (!(data instanceof UpdateUserRequest req)) return;
+
+	    boolean success = userController.updateUser(req.getUser());
+
+	    try {
+	        client.sendToClient(
+	            new Message(
+	                ActionType.UPDATE_USER,
+	                new ServerResponse(
+	                    success,
+	                    null,
+	                    success ? "User updated successfully" : "User update failed"
+	                )
+	            )
+	        );
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
+
 }

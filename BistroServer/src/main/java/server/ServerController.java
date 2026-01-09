@@ -89,12 +89,18 @@ public class ServerController extends AbstractServer {
         // Command: Login 
         commands.put(ActionType.LOGIN, new LoginCommand());
         
+        // Command: Fetch user information after login
+        commands.put(ActionType.GET_USER_INFORMATION, new GetUserInformationCommand());
+        
         // Command: Logout 
         commands.put(ActionType.LOGOUT, new LogoutCommand());
-      
+        
         // Command: Register
         commands.put(ActionType.ADD_USER, new RegisterCommand());
         
+        // Command: Update user information
+        commands.put(ActionType.UPDATE_USER, new UpdateUserCommand());
+
         // Command: Get all available times  // <- ADDED THIS
         commands.put(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesCommand());
         
@@ -125,7 +131,7 @@ public class ServerController extends AbstractServer {
         // Command: Update table seats
         commands.put(ActionType.UPDATE_TABLE, new UpdateTableCommand());
         
-     // Command: Delete table
+        // Command: Delete table
         commands.put(ActionType.DELETE_TABLE, new DeleteTableCommand());
         
         commands.put(ActionType.GET_REPORT, new GetReportCommand());

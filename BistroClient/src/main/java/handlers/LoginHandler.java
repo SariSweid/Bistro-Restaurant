@@ -16,8 +16,9 @@ public class LoginHandler implements ResponseHandler {
         }
 
         if (response.isSuccess()) {
-            User user = (User) response.getData();
-            ClientHandler.getClient().setCurrentUserRole(user.getRole());
+	        	User user = (User) response.getData();
+	        	ClientHandler.getClient().setCurrentUser(user);
+
             System.out.println("Login successful for " + user.getRole());
 
             // Switch to UI on FX Application Thread

@@ -15,6 +15,7 @@ import Controllers.RestaurantSettingsController;
 import Controllers.TablesController;
 import Entities.Reservation;
 import Entities.SpecialDates;
+import Entities.User;
 import client.GuestUpdateReservationUI;
 import common.Message;
 import enums.ActionType;
@@ -38,6 +39,7 @@ public class ClientHandler extends AbstractClient {
     private ReportController reportController;
     private BaseReservationController activeReservationController;
     private MainMenuController mainMenuController;
+    private boolean cameFromHigherRole = false;   // toggle previous button for supervisor / manager
 
     private RestaurantSettingsController activeRestaurantSettingsController;
     
@@ -45,6 +47,7 @@ public class ClientHandler extends AbstractClient {
     private UserRole currentuserrole;
     private int currentUserId;
     private boolean connected = false;
+    private User currentUser;
     
 
 
@@ -78,6 +81,13 @@ public class ClientHandler extends AbstractClient {
     }
 
 
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+        this.currentUserId = user.getUserId();   // keep in sync
+        this.currentuserrole = user.getRole();
+    }
+
+    
     public void setCurrentUserId(int id) {
         this.currentUserId = id;
     }
@@ -91,6 +101,9 @@ public class ClientHandler extends AbstractClient {
     }
     
     
+    public User getCurrentUser() {
+        return currentUser;
+    }
     
     public UserRole getCurrentUserRole() {
     	return currentuserrole;
@@ -98,6 +111,14 @@ public class ClientHandler extends AbstractClient {
 
     public int getCurrentUserId() {
         return currentUserId;
+    }
+    
+    public void setCameFromHigherRole(boolean value) {
+        this.cameFromHigherRole = value;
+    }
+    
+    public boolean cameFromHigherRole() {
+        return cameFromHigherRole;
     }
 
     public void setMainMenuController(MainMenuController controller) {
@@ -150,7 +171,9 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler(guestUI));
         handlers.put(ActionType.UPDATE_RESERVATION, new UpdateReservationHandler(guestUI));
         handlers.put(ActionType.LOGIN, new LoginHandler());
+        handlers.put(ActionType.GET_USER_INFORMATION, new GetUserInformationHandler(this));
         handlers.put(ActionType.ADD_USER, new RegisterHandler());
+        handlers.put(ActionType.UPDATE_USER, new UpdateUserHandler());
         handlers.put(ActionType.ADD_RESERVATION, new AddReservationHandler());
         handlers.put(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesHandler());
         handlers.put(ActionType.GET_NEAREST_TIMES, new GetNearestAvailableTimesHandler());
@@ -199,6 +222,21 @@ public class ClientHandler extends AbstractClient {
         setCurrentUserId(userID);
         sendRequest(new Message(ActionType.LOGIN, new LoginRequest(userID, membershipCode)));
     }
+    
+    public void getUserInformation(int userId) {  // (fetch user after login)
+        connect();
+        sendRequest(new Message(ActionType.GET_USER_INFORMATION,
+                new GetUserInformationRequest(userId)));
+    }
+    
+    public void updateUser(User user) {
+        connect();
+        sendRequest(new Message(
+            ActionType.UPDATE_USER,
+            new UpdateUserRequest(user)
+        ));
+    }
+
     
     public void logout() {
         sendRequest(new Message(ActionType.LOGOUT, new LogoutRequest()));
@@ -338,7 +376,7 @@ public class ClientHandler extends AbstractClient {
     
     public void addSpecialDate(SpecialDates specialDate) {
     	connect();
-    	sendRequest(new Message(ActionType.ADD_SPECIAL_DATE, specialDate));
+    	sendRequest(new Message(ActionType.ADD_SPECIAL_DATE, new AddSpecialDateRequest(specialDate)));
     }
     
     public void updateSpecialDate(UpdateSpecialDateRequest req) {
@@ -346,14 +384,16 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.UPDATE_SPECIAL_DATE, req));
     }
 
-    public void updateRegularOpeningTime(Entities.WeeklyOpeningHours hours) {
+    public void updateRegularOpeningTime(LocalTime openingTime) {
         connect();
-        sendRequest(new Message(ActionType.UPDATE_OPENING_TIME,hours));
+        sendRequest(new Message(ActionType.UPDATE_OPENING_TIME,
+                new updateRegularOpeningTimeRequest(openingTime)));
     }
 
-    public void updateRegularClosingTime(Entities.WeeklyOpeningHours hours) {
+    public void updateRegularClosingTime(LocalTime closingTime) {
         connect();
-        sendRequest(new Message(ActionType.UPDATE_CLOSING_TIME, hours));
+        sendRequest(new Message(ActionType.UPDATE_CLOSING_TIME,
+                new updateRegularClosingTimeRequest(closingTime)));
     }
 
     /**

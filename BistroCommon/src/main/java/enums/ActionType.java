@@ -14,6 +14,7 @@ public enum ActionType {
     LOGIN,
     LOGOUT,
     GET_USER,
+    GET_USER_INFORMATION,
     GET_ALL_USERS,
     ADD_USER,
     UPDATE_USER,

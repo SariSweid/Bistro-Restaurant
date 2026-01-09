@@ -26,5 +26,7 @@
    <Button onAction="#onReceiveTable" prefWidth="260" style="-fx-background-radius: 15;" text="Recive Table" />
     <Button onAction="#onCancelOrder" prefWidth="260" style="-fx-background-radius: 15;" text="Cancel Order" />
     <Button onAction="#onLogOut" prefWidth="100" text="Log Out" />
+    <Button fx:id="prevButton" onAction="#onPrevious" prefWidth="100" text="Previous Page" visible="false" managed="false"/>
+    
 
 </VBox>

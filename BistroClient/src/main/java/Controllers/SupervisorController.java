@@ -1,9 +1,24 @@
 package Controllers;
 
+import handlers.ClientHandler;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import util.SceneManager;
 
 public class SupervisorController {
+	
+	@FXML
+    private Button prevButton;
+	
+	@FXML
+    public void initialize() {
+		// Show the back button only if came from higher role
+        boolean showBack = ClientHandler.getClient().cameFromHigherRole();
+        prevButton.setVisible(showBack);
+        prevButton.setManaged(showBack);
+    }
+	
 	@FXML
     private void onShowWaitingList() {
         SceneManager.switchTo("WaitingListUI.fxml");
@@ -35,14 +50,24 @@ public class SupervisorController {
   }
   
 
-    @FXML
-    private void onLogOut() {
-        SceneManager.switchTo("MainMenuUI.fxml");
-    }
-  
   @FXML
   private void onsuboptions() { // 
+	  // indicate that we are navigating from a higher role
+	  ClientHandler.getClient().setCameFromHigherRole(true);
       SceneManager.switchTo("SubscriberUI.fxml");
   }
-
+  
+  @FXML
+  private void onLogOut() {
+	  ClientHandler.getClient().setCameFromHigherRole(false);
+      SceneManager.switchTo("MainMenuUI.fxml");
+  }
+    
+  @FXML
+  private void onPrevious() {
+	  ClientHandler.getClient().setCameFromHigherRole(false);
+      SceneManager.switchTo("ManagerUI.fxml");
+  }
 }
+  
+
