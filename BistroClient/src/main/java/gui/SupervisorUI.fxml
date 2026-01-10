@@ -17,7 +17,7 @@
             <Font size="26.0" />
         </font>
     </Label>
-   <Button mnemonicParsing="false" onAction="#onRegister" prefWidth="260.0" style="-fx-background-radius: 15;" text="Register">
+   <Button mnemonicParsing="false" onAction="#onRegister" prefWidth="260.0" style="-fx-background-radius: 15;" text="Register new subscriber">
       <opaqueInsets>
          <Insets />
       </opaqueInsets>

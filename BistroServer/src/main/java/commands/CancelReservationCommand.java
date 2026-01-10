@@ -24,8 +24,10 @@ public class CancelReservationCommand implements Command {
 
             boolean success = false;
 
-            if (currentUser != null && currentUser.getRole() == UserRole.SUBSCRIBER) {
-                // Subscriber cancels by reservationId
+            if (currentUser != null && 
+            		(currentUser.getRole() == UserRole.SUBSCRIBER || 
+            		currentUser.getRole() == UserRole.SUPERVISOR ||
+            		currentUser.getRole() == UserRole.MANAGER)) {
                 success = controller.cancelReservation(currentUser, req.getReservationId(), null, null);
                 
             } else if (req.getGuestId() != null) {

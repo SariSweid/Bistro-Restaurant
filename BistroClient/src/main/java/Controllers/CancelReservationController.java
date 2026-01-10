@@ -75,5 +75,6 @@ public class CancelReservationController extends BaseDisplayController {
     @FXML
     private void onPreviousPage() {
         SceneManager.switchTo("SubscriberUI.fxml");
+        ClientHandler.getClient().getAllReservations();
     }
 }

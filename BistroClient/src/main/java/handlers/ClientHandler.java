@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.List;
 
 import Controllers.BaseDisplayController;
 import Controllers.BaseReservationController;
@@ -166,10 +167,21 @@ public class ClientHandler extends AbstractClient {
     public TablesController getTablesController() {
         return tablesController;
     }
+    
+    private List<Reservation> allReservations;
+
+    public List<Reservation> getAllReservationsList() {
+        return allReservations;
+    }
+
+    public void setAllReservationsList(List<Reservation> list) {
+        this.allReservations = list;
+    }
+
 
 
     private void initializeHandlers() {
-        handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler(guestUI));
+        handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler());
         handlers.put(ActionType.UPDATE_RESERVATION, new UpdateReservationHandler(guestUI));
         handlers.put(ActionType.LOGIN, new LoginHandler());
         handlers.put(ActionType.GET_USER_INFORMATION, new GetUserInformationHandler(this));
@@ -185,7 +197,6 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_RESTAURANT_SETTINGS, new GetRestaurantSettingsHandler());
         handlers.put(ActionType.ADD_SPECIAL_DATE, new AddSpecialDateHandler());
         handlers.put(ActionType.UPDATE_SPECIAL_DATE, new UpdateSpecialDateHandler());
-        handlers.put(ActionType.GET_ALL_RESERVATIONS, new GetAllReservationsHandler(guestUI));
         handlers.put(ActionType.UPDATE_RESERVATION, new UpdateReservationHandler(guestUI));
         handlers.put(ActionType.FORGOT_CODE, new ForgotCodeHandler());
         handlers.put(ActionType.SEAT_CUSTOMER, new SeatCustomerHandler());
