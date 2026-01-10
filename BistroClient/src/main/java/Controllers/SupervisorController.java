@@ -28,6 +28,11 @@ public class SupervisorController {
     private void onShowReservations() {
         SceneManager.switchTo("ReservationsUI.fxml");
     }
+    
+    @FXML
+    private void onShowDiners() {
+    		SceneManager.switchTo("CurrentDinersUI.fxml");
+    }
 
     @FXML
     private void onEditTables() {
