@@ -280,7 +280,8 @@ public class ClientHandler extends AbstractClient {
 
     public void cancelWaiting(int confirmationCode) {
         //connect();
-        CancelWaitingRequest req = new CancelWaitingRequest(confirmationCode);
+    		int userId = getCurrentUserId();
+        CancelWaitingRequest req = new CancelWaitingRequest(confirmationCode, userId);
         sendRequest(new Message(ActionType.CANCEL_WAITING, req));
     }
 

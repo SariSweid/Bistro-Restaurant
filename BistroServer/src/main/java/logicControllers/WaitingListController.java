@@ -56,8 +56,7 @@ public class WaitingListController {
      */
     public ServerResponse cancelWaiting(int confirmationCode, Integer currentUserId) {
 
-        WaitingListEntry entry =
-                waitingListDAO.getByConfirmationCode(confirmationCode);
+        WaitingListEntry entry = waitingListDAO.getByConfirmationCode(confirmationCode);
 
         if (entry == null) {
             return new ServerResponse(
@@ -75,10 +74,10 @@ public class WaitingListController {
             );
         }
 
-        // Ownership check (subscriber only)
+        // Ownership check
         if (entry.getUserID() != null &&
             !entry.getUserID().equals(currentUserId)) {
-
+        		System.out.println(currentUserId);
             return new ServerResponse(
                     false,
                     null,
@@ -100,15 +99,6 @@ public class WaitingListController {
                     : "Cancellation failed."
         );
     }
-
-
-    /**
-     * Exit from waiting list (cancel / seated)
-     */
-    private boolean exitFromWaitingList(int confirmationCode, ExitReason exitReason) {
-        return waitingListDAO.updateExitReason(confirmationCode, exitReason);
-    }
-
     
     
     public List<WaitingListEntry> getWaitingListBetweenDates(LocalDate startDate,LocalDate endDate) {
