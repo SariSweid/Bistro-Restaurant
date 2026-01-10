@@ -40,5 +40,10 @@ public enum ActionType {
     PAY,
     
     // Reports
-    GET_REPORT
+    GET_REPORT,
+    
+    //Waiting List
+    ADD_TO_WAITING_LIST,
+    CANCEL_WAITING,
+    GET_WAITING_LIST_BETWEEN_DATES
 }

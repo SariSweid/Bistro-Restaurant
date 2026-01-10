@@ -1,6 +1,7 @@
 package Entities;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import enums.ExitReason;
@@ -9,27 +10,36 @@ import enums.ExitReason;
  */
 public class WaitingListEntry implements Serializable {
 	private Integer userID; // null in case of guest
-	private String contactInfo; // email/phone
+	private String Email;// email/phone
+	private String phone;
 	private int numOfGuests;
 	private int confirmationCode;
-	private LocalTime entryTime; // when the customer entered the waiting list
-	private LocalTime exitTime; // when the customer left the waiting list
+	private LocalDate WaitDate;
+	private LocalTime WaitTime;
 	private ExitReason exitReason; // why the customer left the waiting list
 	
-	/**
-	 * constructor for a new entry in the waiting list
-	 * @param userID
-	 * @param contactInfo
-	 * @param numOfGuests
-	 * @param confirmationCode
-	 */
-	public WaitingListEntry(int userID, String contactInfo, int numOfGuests, int confirmationCode) {
+	
+	
+	
+	
+	public WaitingListEntry(Integer userID, String email, String phone, int numOfGuests, int confirmationCode,
+			LocalDate waitDate, LocalTime waitTime, ExitReason exitReason) {
+		
+		
 		this.userID = userID;
-		this.contactInfo = contactInfo;
+		Email = email;
+		this.phone = phone;
 		this.numOfGuests = numOfGuests;
 		this.confirmationCode = confirmationCode;
-		this.entryTime = LocalTime.now();
+		WaitDate = waitDate;
+		WaitTime = waitTime;
+		this.exitReason = exitReason;
 	}
+
+	
+	
+
+
 	
 	//getters
 	
@@ -37,10 +47,115 @@ public class WaitingListEntry implements Serializable {
 	    return this.userID;
 	}
 	
-	public String getContactInfo() {
-		return this.contactInfo;
-	}
+
 	
+	public Integer getUserID() {
+		return userID;
+	}
+
+
+
+
+
+
+	public void setUserID(Integer userID) {
+		this.userID = userID;
+	}
+
+
+
+
+
+
+	public String getEmail() {
+		return Email;
+	}
+
+
+
+
+
+
+	public void setEmail(String email) {
+		Email = email;
+	}
+
+
+
+
+
+
+	public String getPhone() {
+		return phone;
+	}
+
+
+
+
+
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+
+
+
+
+
+	public LocalDate getWaitDate() {
+		return WaitDate;
+	}
+
+
+
+
+
+
+	public void setWaitDate(LocalDate waitDate) {
+		WaitDate = waitDate;
+	}
+
+
+
+
+
+
+	public LocalTime getWaitTime() {
+		return WaitTime;
+	}
+
+
+
+
+
+
+	public void setWaitTime(LocalTime waitTime) {
+		WaitTime = waitTime;
+	}
+
+
+
+
+
+
+	public void setNumOfGuests(int numOfGuests) {
+		this.numOfGuests = numOfGuests;
+	}
+
+
+
+	public void setConfirmationCode(int confirmationCode) {
+		this.confirmationCode = confirmationCode;
+	}
+
+
+
+	public void setExitReason(ExitReason exitReason) {
+		this.exitReason = exitReason;
+	}
+
+
 	public int getNumOfGuests() {
 		return this.numOfGuests;
 	}
@@ -49,24 +164,13 @@ public class WaitingListEntry implements Serializable {
 		return this.confirmationCode;
 	}
 	
-	public LocalTime getEntryTime() {
-		return this.entryTime;
-	}
-	
-	public LocalTime getExitTime() {
-		return this.exitTime;
-	}
+
 	
 	public ExitReason getExitReason() {
 		return this.exitReason;
 	}
-	
-	/**
-	 * exit method sets the exit time and exit reason from waiting list	
-	 * @param exitReason 
-	 */
+
 	public void exit(ExitReason exitReason) {
 		this.exitReason = exitReason;
-		this.exitTime = LocalTime.now();
 	}
 }

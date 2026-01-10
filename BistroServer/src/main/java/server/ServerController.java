@@ -145,6 +145,18 @@ public class ServerController extends AbstractServer {
         commands.put(ActionType.ADD_SPECIAL_DATE, new AddSpecialDateCommand());
         commands.put(ActionType.UPDATE_SPECIAL_DATE, new UpdateSpecialDateCommand());
         
+        // Command: Update Reservations
+        commands.put(ActionType.UPDATE_RESERVATION, new UpdateReservationCommand());
+
+        // Command: Add to Waiting List
+        commands.put(ActionType.ADD_TO_WAITING_LIST, new AddToWaitingListCommand());
+
+        // Command: Cancel Waiting
+        commands.put(ActionType.CANCEL_WAITING, new CancelWaitingCommand());
+
+        // Command: Get Waiting List Between Dates
+        commands.put(ActionType.GET_WAITING_LIST_BETWEEN_DATES, new GetWaitingListBetweenDatesCommand());
+        
     }
     
     /**
