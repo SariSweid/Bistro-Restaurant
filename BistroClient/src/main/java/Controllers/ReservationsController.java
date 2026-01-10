@@ -7,6 +7,8 @@ import enums.ReservationStatus;
 import handlers.ClientHandler;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -30,26 +32,26 @@ public class ReservationsController {
 
         // --- SETUP TABLE COLUMNS ---
         idColumn.setCellValueFactory(cell ->
-            new javafx.beans.property.SimpleIntegerProperty(cell.getValue().getReservationID()));
+            new SimpleIntegerProperty(cell.getValue().getReservationID()));
 
         dateColumn.setCellValueFactory(cell ->
-            new javafx.beans.property.SimpleStringProperty(cell.getValue().getReservationDate().toString()));
+            new SimpleStringProperty(cell.getValue().getReservationDate().toString()));
 
         dayColumn.setCellValueFactory(cell ->
-            new javafx.beans.property.SimpleStringProperty(
+            new SimpleStringProperty(
                 cell.getValue().getReservationDate().getDayOfWeek().toString()
             ));
 
         TimeColumn.setCellValueFactory(cell ->
-            new javafx.beans.property.SimpleStringProperty(cell.getValue().getReservationTime().toString()));
+            new SimpleStringProperty(cell.getValue().getReservationTime().toString()));
 
         guestsColumn.setCellValueFactory(cell ->
-            new javafx.beans.property.SimpleIntegerProperty(cell.getValue().getNumOfGuests()));
+            new SimpleIntegerProperty(cell.getValue().getNumOfGuests()));
 
         confirmationCodeColumn.setCellValueFactory(cell ->
-            new javafx.beans.property.SimpleIntegerProperty(cell.getValue().getConfirmationCode()));
+            new SimpleIntegerProperty(cell.getValue().getConfirmationCode()));
 
-        // --- REQUEST DATA FROM SERVER ---
+        // --- REQUEST DATA (RESERVATIONS) FROM SERVER ---
         ClientHandler.getClient().getAllReservations();
 
         // --- LOAD DATA AFTER HANDLER STORES IT ---

@@ -34,6 +34,7 @@ public class Subscriber extends User implements Serializable {
 		return this.name;
 	}
 	
+	
 	public String getUserName() {
 		return this.userName;
 	}

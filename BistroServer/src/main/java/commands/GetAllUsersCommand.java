@@ -4,6 +4,7 @@ import java.util.List;
 
 import Entities.Reservation;
 import Entities.User;
+import common.Message;
 import logicControllers.UserController;
 import server.Command;
 import src.ocsf.server.ConnectionToClient;
@@ -24,7 +25,7 @@ public class GetAllUsersCommand implements Command {
             List<User> users = userController.getAllUsers();
 
             // Send the list back to the client
-            client.sendToClient(users);
+            client.sendToClient(new Message(enums.ActionType.GET_ALL_USERS, users));
 
         } catch (Exception e) {
             e.printStackTrace();

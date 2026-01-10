@@ -100,6 +100,9 @@ public class ServerController extends AbstractServer {
         
         // Command: Update user information
         commands.put(ActionType.UPDATE_USER, new UpdateUserCommand());
+        
+        // Command: Get all users information
+        commands.put(ActionType.GET_ALL_USERS, new GetAllUsersCommand());
 
         // Command: Get all available times  // <- ADDED THIS
         commands.put(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesCommand());

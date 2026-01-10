@@ -187,6 +187,7 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_USER_INFORMATION, new GetUserInformationHandler(this));
         handlers.put(ActionType.ADD_USER, new RegisterHandler());
         handlers.put(ActionType.UPDATE_USER, new UpdateUserHandler());
+        handlers.put(ActionType.GET_ALL_USERS, new GetAllUsersHandler());
         handlers.put(ActionType.ADD_RESERVATION, new AddReservationHandler());
         handlers.put(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesHandler());
         handlers.put(ActionType.GET_NEAREST_TIMES, new GetNearestAvailableTimesHandler());
@@ -270,6 +271,11 @@ public class ClientHandler extends AbstractClient {
         connect();
         sendRequest(new Message(ActionType.GET_USER_RESERVATIONS, new GetUserReservationsRequest(userId)));
     }
+    
+    public void getAllUsers() {
+        sendRequest(new Message(ActionType.GET_ALL_USERS, null));
+    }
+
 
     public void cancelReservation(Integer reservationId, Integer confirmationCode, Integer guestId) {
         connect();
