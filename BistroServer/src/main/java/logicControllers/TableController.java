@@ -5,18 +5,21 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import DB.DBController;
+import DAO.ReservationDAO;
+import DAO.TableDAO;
 import Entities.Reservation;
 import Entities.Table;
 
 public class TableController {
-	private final DBController dbController;
+	private final TableDAO TabledbController;
+	private final ReservationDAO Resdb;
 	
 	/**
 	 * constructor to create new TableController
 	 */
 	public TableController() {
-		this.dbController = new DBController();
+		this.TabledbController = new TableDAO();
+		this.Resdb = new ReservationDAO();
 	}
 	
 	/**
@@ -24,7 +27,7 @@ public class TableController {
 	 * @return all tables in the restaurant
 	 */
 	public List<Table> getAllTables(){
-		return this.dbController.GetAllTables();
+		return this.TabledbController.GetAllTables();
 	}
 	
 	/**
@@ -33,7 +36,7 @@ public class TableController {
 	 * @return table found by tableID
 	 */
 	public Table getTableByID(int tableID) {
-		return this.dbController.GetTable(tableID);
+		return this.TabledbController.GetTable(tableID);
 	}
 	
 	/**
@@ -45,7 +48,7 @@ public class TableController {
 	 */
 	public Optional<Table> findAvailableTable(int numOfGuests, LocalDate date, LocalTime time){
 		//Tables that are reserved at this date and time
-		List<Reservation> reservations = this.dbController.getReservationsAt(date, time);
+		List<Reservation> reservations = this.Resdb.getReservationsAt(date, time);
 		
 		//all the restaurant tables
 		List<Table> allTables = this.getAllTables();
@@ -71,7 +74,7 @@ public class TableController {
 			return false;
 		}
 		table.occupy();
-		return this.dbController.UpdateTable(table);
+		return this.TabledbController.UpdateTable(table);
 	}
 	
 	/**
@@ -85,6 +88,6 @@ public class TableController {
 			return false;
 		}
 		table.release();
-		return this.dbController.UpdateTable(table);
+		return this.TabledbController.UpdateTable(table);
 	}
 }

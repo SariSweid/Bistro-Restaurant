@@ -15,21 +15,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import logicControllers.ReservationController;
+import DAO.ReservationDAO;
 import Entities.Reservation;
 import enums.ReservationStatus;
-import DB.DBController;
+import logicControllers.ReservationController;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.WARN)
 class ReservationControllerTest {
 
     private ReservationController controller;
-    private DBController mockDb;
+    private ReservationDAO mockDb;
 
     @BeforeEach
     void setup() {
-        mockDb = mock(DBController.class);
+        mockDb = mock(ReservationDAO.class);
         controller = new ReservationController();
     }
 

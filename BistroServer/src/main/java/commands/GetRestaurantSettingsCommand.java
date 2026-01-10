@@ -5,6 +5,7 @@ import enums.ActionType;
 import logicControllers.RestaurantSettingsController;
 import server.Command;
 import src.ocsf.server.ConnectionToClient;
+import Entities.RestaurantSettings;
 
 public class GetRestaurantSettingsCommand implements Command {
 
@@ -12,10 +13,18 @@ public class GetRestaurantSettingsCommand implements Command {
 
     @Override
     public void execute(Object data, ConnectionToClient client) {
-       
-        Object settings = controller.getAllWeeklyOpeningHours(); 
         try {
+            
+            controller.getAllWeeklyOpeningHours();  
+            controller.getAllSpecialDates();     
+            
+            
+           
+            RestaurantSettings settings = controller.getRestaurantSettings();
+            
+            
             client.sendToClient(new Message(ActionType.GET_RESTAURANT_SETTINGS, settings));
+
         } catch (Exception e) {
             e.printStackTrace();
         }

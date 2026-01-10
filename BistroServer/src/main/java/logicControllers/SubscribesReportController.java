@@ -1,21 +1,30 @@
 package logicControllers;
 
-import Entities.WeekData;
-import enums.ReportType;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import DB.DBController;
 
+import DAO.ReservationDAO;
+import Entities.WeekData;
+
+/**
+ * Controller to generate weekly subscribers reports.
+ * Uses SubscribesReportDAO to access DB.
+ */
 public class SubscribesReportController {
 
-    private final DBController db = new DBController();
+    private final ReservationDAO dao;
+
+    // Constructor
+    public SubscribesReportController() {
+        this.dao = new ReservationDAO(); // DAO handles DB operations
+    }
 
     /**
      * Generates weekly report data for the given type between start and end dates.
-     * @param type Report type (SUBSCRIBERS or SCHEDULE)
+     *
      * @param startDate first day of the month
-     * @param endDate last day of the month
+     * @param endDate   last day of the month
      * @return list of WeekData
      */
     public List<WeekData> generateReportData(LocalDate startDate, LocalDate endDate) {
@@ -28,8 +37,8 @@ public class SubscribesReportController {
             LocalDate weekEnd = weekStart.plusDays(6);
             if (weekEnd.isAfter(endDate)) weekEnd = endDate;
 
-            int completed = db.getCompletedSubscriberReservationsBetween(weekStart, weekEnd);
-            int waitlist = db.getWaitlistSubscriberReservationsBetween(weekStart, weekEnd);
+            int completed = dao.getCompletedSubscriberReservationsBetween(weekStart, weekEnd);
+            int waitlist = dao.getWaitlistSubscriberReservationsBetween(weekStart, weekEnd);
 
             data.add(new WeekData("Week " + weekNum, completed, waitlist));
 

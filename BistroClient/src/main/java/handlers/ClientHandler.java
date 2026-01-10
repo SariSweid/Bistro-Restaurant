@@ -16,6 +16,7 @@ import Controllers.TablesController;
 import Entities.Reservation;
 import Entities.SpecialDates;
 import Entities.User;
+import Entities.WeeklyOpeningHours;
 import client.GuestUpdateReservationUI;
 import common.Message;
 import enums.ActionType;
@@ -384,16 +385,20 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.UPDATE_SPECIAL_DATE, req));
     }
 
-    public void updateRegularOpeningTime(LocalTime openingTime) {
+    public void updateRegularOpeningTime(WeeklyOpeningHours hours) {
         connect();
-        sendRequest(new Message(ActionType.UPDATE_OPENING_TIME,
-                new updateRegularOpeningTimeRequest(openingTime)));
+        sendRequest(new Message(
+            ActionType.UPDATE_OPENING_TIME,
+            new updateRegularOpeningTimeRequest  (hours.getDay(), hours.getOpeningTime())
+        ));
     }
 
-    public void updateRegularClosingTime(LocalTime closingTime) {
+    public void updateRegularClosingTime(WeeklyOpeningHours hours) {
         connect();
-        sendRequest(new Message(ActionType.UPDATE_CLOSING_TIME,
-                new updateRegularClosingTimeRequest(closingTime)));
+        sendRequest(new Message(
+            ActionType.UPDATE_CLOSING_TIME,
+            new updateRegularClosingTimeRequest (hours.getDay(), hours.getClosingTime())
+        ));
     }
 
     /**

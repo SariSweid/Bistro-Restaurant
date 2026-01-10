@@ -1,18 +1,18 @@
 package logicControllers;
 
-import Entities.TimeData;
-import DB.DBController;
-import java.time.LocalDate;
-import java.time.YearMonth;
 import java.time.Duration;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
+
+import DAO.ReservationDAO;
+import DB.DBController;
+import Entities.TimeData;
 
 public class TimeReportController {
 
-    private final DBController db = new DBController();
+    private final ReservationDAO db = new ReservationDAO();
 
     /**
      * Generates the list of TimeData for the previous month from DB.

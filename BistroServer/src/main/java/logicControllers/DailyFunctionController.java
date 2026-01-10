@@ -1,6 +1,8 @@
 package logicControllers;
 
-import DB.DBController;
+import DAO.BillDAO;
+import DAO.ReservationDAO;
+import DAO.TableDAO;
 import Entities.Bill;
 import Entities.Reservation;
 import Entities.Table;
@@ -24,7 +26,9 @@ public class DailyFunctionController extends TimerTask {
     private static Timer timer = new Timer(true);
     private static final Object lock = new Object();
 
-    private final DBController db = new DBController();
+    private final ReservationDAO reservationDAO = new ReservationDAO();
+    private final TableDAO tableDAO = new TableDAO();
+    private final BillDAO billDAO = new BillDAO();
     private final PaymentController paymentController = new PaymentController();
 
     /**
@@ -54,7 +58,7 @@ public class DailyFunctionController extends TimerTask {
     public void run() {
         synchronized (lock) {
             try {
-                List<Reservation> reservations = db.readAllReservations();
+                List<Reservation> reservations = reservationDAO.readAllReservations();
                 LocalDateTime now = LocalDateTime.now();
 
                 for (Reservation r : reservations) {
@@ -62,23 +66,25 @@ public class DailyFunctionController extends TimerTask {
                     LocalDateTime reservationDateTime =
                             LocalDateTime.of(r.getReservationDate(), r.getReservationTime());
 
+                    // Mark no-shows
                     if (r.getStatus() == ReservationStatus.CONFIRMED &&
                             now.isAfter(reservationDateTime.plusMinutes(15))) {
 
                         r.setStatus(ReservationStatus.NOT_SHOWED);
 
                         if (r.getTableID() != null) {
-                            Table table = db.GetTable(r.getTableID());
+                            Table table = tableDAO.GetTable(r.getTableID());
                             if (table != null) {
-                                table.release();
-                                db.UpdateTable(table);
+                                table.release(); // sets IsAvailable = true
+                                tableDAO.UpdateTable(table);
                             }
                             r.setTableID(null);
                         }
 
-                        db.updateReservation(r);
+                        reservationDAO.updateReservation(r);
                     }
 
+                    // Generate bills for seated customers after 2 hours
                     if (r.getStatus() == ReservationStatus.SEATED &&
                             r.getActualArrivalTime() != null &&
                             r.getBillID() == null) {
@@ -94,17 +100,18 @@ public class DailyFunctionController extends TimerTask {
                             if (result.isSuccess() && result.getBill() != null) {
                                 r.setBillID(result.getBill().getBillID());
                                 r.setStatus(ReservationStatus.COMPLETED);
-                                db.updateReservation(r);
+                                reservationDAO.updateReservation(r);
                             }
                         }
                     }
 
+                    // Cancel expired waitlist reservations
                     if (r.getStatus() == ReservationStatus.WAITLIST &&
                             r.getTableID() == null &&
                             now.isAfter(reservationDateTime)) {
 
                         r.setStatus(ReservationStatus.CANCELLED);
-                        db.updateReservation(r);
+                        reservationDAO.updateReservation(r);
                     }
                 }
 

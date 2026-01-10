@@ -1,10 +1,10 @@
 package logicControllers;
 
-import DB.DBController;
+import DAO.TableDAO;
 
 public class TableSettingsController {
 
-    private final DBController db = new DBController();
+    private final TableDAO db = new TableDAO();
 
     public boolean insertTable(int id, int seats) {
         try {
