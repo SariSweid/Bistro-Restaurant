@@ -11,31 +11,25 @@ public class CancelWaitingHandler implements ResponseHandler {
 
     @Override
     public void handle(Object data) {
-        ServerResponse res = (ServerResponse) data;
+    	ServerResponse res = (ServerResponse) data;
 
         Platform.runLater(() -> {
-            BaseDisplayController controller = ClientHandler.getClient().getActiveDisplayController();
+            BaseDisplayController controller =
+                    ClientHandler.getClient().getActiveDisplayController();
             if (controller == null) return;
 
-            if (controller instanceof SubscriberWaitingListController) {
-                SubscriberWaitingListController waitingController = (SubscriberWaitingListController) controller;
+            if (res.isSuccess()) {
 
-                if (res.isSuccess()) {
-                    waitingController.clearConfirmationCodeField();
-                    SceneManager.showInfo(res.getMessage());
-                } else {
-                    SceneManager.showError(res.getMessage() + "\nThere is no waiting list entry with that confirmation code.");
+                if (controller instanceof SubscriberWaitingListController sub) {
+                    sub.clearConfirmationCodeField();
+                } else if (controller instanceof GuestWaitingListController guest) {
+                    guest.clearConfirmationCodeField();
                 }
 
-            } else if (controller instanceof GuestWaitingListController) {
-                GuestWaitingListController guestController = (GuestWaitingListController) controller;
+                SceneManager.showInfo(res.getMessage());
 
-                if (res.isSuccess()) {
-                    guestController.clearConfirmationCodeField();
-                    SceneManager.showInfo(res.getMessage());
-                } else {
-                    SceneManager.showError(res.getMessage() + "\nThere is no waiting list entry with that confirmation code.");
-                }
+            } else {
+                SceneManager.showError(res.getMessage());
             }
         });
     }

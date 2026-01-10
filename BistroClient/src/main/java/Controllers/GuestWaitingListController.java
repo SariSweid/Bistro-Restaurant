@@ -36,6 +36,9 @@ public class GuestWaitingListController extends  BaseDisplayController{
      */
     @FXML
     public void initialize() {
+    	
+    		ClientHandler.getClient().setActiveDisplayController(this);
+    	
         LocalTime start = LocalTime.of(10, 0);
         LocalTime end = LocalTime.of(20, 0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");

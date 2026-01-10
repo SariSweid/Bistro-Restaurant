@@ -31,6 +31,9 @@ public class SubscriberWaitingListController extends  BaseDisplayController {
     @FXML
     public void initialize() {
 
+        // Set this controller as the active display controller
+        ClientHandler.getClient().setActiveDisplayController(this);
+
         LocalTime start = LocalTime.of(10, 0);
         LocalTime end = LocalTime.of(20, 0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");

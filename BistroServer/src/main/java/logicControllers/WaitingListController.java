@@ -9,6 +9,7 @@ import java.util.Random;
 import DAO.WaitingListDAO;
 import Entities.WaitingList;
 import Entities.WaitingListEntry;
+import common.ServerResponse;
 import enums.ExitReason;
 
 public class WaitingListController {
@@ -53,33 +54,61 @@ public class WaitingListController {
     /**
      * Cancel waiting
      */
-    public boolean cancelWaiting(int confirmationCode) {
-        return exitFromWaitingList(confirmationCode, ExitReason.CANCELLED);
+    public ServerResponse cancelWaiting(int confirmationCode, Integer currentUserId) {
+
+        WaitingListEntry entry =
+                waitingListDAO.getByConfirmationCode(confirmationCode);
+
+        if (entry == null) {
+            return new ServerResponse(
+                    false,
+                    null,
+                    "Invalid confirmation code."
+            );
+        }
+
+        if (entry.getExitReason() != null) {
+            return new ServerResponse(
+                    false,
+                    null,
+                    "This waiting request was already closed."
+            );
+        }
+
+        // Ownership check (subscriber only)
+        if (entry.getUserID() != null &&
+            !entry.getUserID().equals(currentUserId)) {
+
+            return new ServerResponse(
+                    false,
+                    null,
+                    "This confirmation code does not belong to your account."
+            );
+        }
+
+        boolean updated =
+                waitingListDAO.updateExitReason(
+                        confirmationCode,
+                        ExitReason.CANCELLED
+                );
+
+        return new ServerResponse(
+                updated,
+                null,
+                updated
+                    ? "Waiting cancelled successfully."
+                    : "Cancellation failed."
+        );
     }
+
 
     /**
      * Exit from waiting list (cancel / seated)
      */
     private boolean exitFromWaitingList(int confirmationCode, ExitReason exitReason) {
-
-        Optional<WaitingListEntry> entryOpt =
-                waitingList.getCurrentWaitingList().stream()
-                        .filter(e -> e.getConfirmationCode() == confirmationCode)
-                        .findFirst();
-
-        if (entryOpt.isPresent()) {
-            WaitingListEntry entry = entryOpt.get();
-            entry.exit(exitReason);
-
-            
-            waitingListDAO.updateExitReason(
-                    confirmationCode,
-                    exitReason
-            );
-            return true;
-        }
-        return false;
+        return waitingListDAO.updateExitReason(confirmationCode, exitReason);
     }
+
     
     
     public List<WaitingListEntry> getWaitingListBetweenDates(LocalDate startDate,LocalDate endDate) {

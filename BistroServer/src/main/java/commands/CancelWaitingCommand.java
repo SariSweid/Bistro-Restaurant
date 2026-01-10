@@ -3,8 +3,10 @@ package commands;
 import java.io.IOException;
 
 import common.Message;
+import common.ServerResponse;
 import enums.ActionType;
 import logicControllers.WaitingListController;
+import messages.CancelWaitingRequest;
 import server.Command;
 import src.ocsf.server.ConnectionToClient;
 
@@ -15,17 +17,26 @@ public class CancelWaitingCommand implements Command {
     @Override
     public void execute(Object data, ConnectionToClient client) {
 
-        int confirmationCode = (int) data;
+        CancelWaitingRequest req = (CancelWaitingRequest) data;
 
-        boolean success = controller.cancelWaiting(confirmationCode);
+        Integer userId =
+                client.getInfo("userID") != null
+                    ? (Integer) client.getInfo("userID")
+                    : null;
+
+        ServerResponse response =
+                controller.cancelWaiting(
+                        req.getConfirmationCode(),
+                        userId
+                );
 
         try {
-			client.sendToClient(
-			        new Message(ActionType.CANCEL_WAITING, success)
-			);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            client.sendToClient(
+                    new Message(ActionType.CANCEL_WAITING, response)
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 }

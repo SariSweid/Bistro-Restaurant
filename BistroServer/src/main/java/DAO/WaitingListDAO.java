@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,26 +18,60 @@ import enums.ExitReason;
  */
 public class WaitingListDAO extends DBController {
 	
+	public WaitingListEntry getByConfirmationCode(int confirmationCode) {
+
+	    String sql = "SELECT * FROM waitinglist WHERE confirmationCode = ?";
+
+	    try (Connection con = getConnection();
+	         PreparedStatement pst = con.prepareStatement(sql)) {
+
+	        pst.setInt(1, confirmationCode);
+	        ResultSet rs = pst.executeQuery();
+
+	        if (!rs.next()) return null;
+
+	        Integer userId = rs.getObject("userID", Integer.class);
+	        String email = rs.getString("Email");
+	        String phone = rs.getString("Phone");
+	        int numOfGuests = rs.getInt("numOfGuests");
+
+	        LocalDate waitDate = rs.getDate("WaitDate").toLocalDate();
+	        LocalTime waitTime = rs.getTime("WaitTime").toLocalTime();
+
+	        String exitStr = rs.getString("exitReason");
+	        ExitReason exitReason =
+	                exitStr != null ? ExitReason.valueOf(exitStr) : null;
+
+	        return new WaitingListEntry(
+	                userId, email, phone, numOfGuests,
+	                confirmationCode, waitDate, waitTime, exitReason
+	        );
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
+
 	
-	public Boolean updateExitReason(int confirmationCode, ExitReason exitReason) {
+	public boolean updateExitReason(int confirmationCode, ExitReason exitReason) {
 
-	    Connection con = getConnection(); // connect to DB
+	    String sql = "UPDATE waitinglist SET exitReason = ? WHERE confirmationCode = ?";
 
-	    try (PreparedStatement pst = con.prepareStatement(
-	            "UPDATE `waitinglist` SET exitReason = ? WHERE confirmationCode = ?")) {
+	    try (Connection con = getConnection();
+	         PreparedStatement pst = con.prepareStatement(sql)) {
 
 	        pst.setString(1, exitReason.name());
 	        pst.setInt(2, confirmationCode);
 
-	        int rows = pst.executeUpdate();
-	        return rows > 0;
+	        return pst.executeUpdate() > 0;
 
 	    } catch (SQLException e) {
-	        System.err.println("SQL Exception during update: " + e.getMessage());
 	        e.printStackTrace();
 	        return false;
 	    }
 	}
+
 
 
 	
