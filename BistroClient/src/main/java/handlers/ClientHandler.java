@@ -1,6 +1,7 @@
 package handlers;
 
 import java.io.IOException;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -174,6 +175,8 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_RESTAURANT_SETTINGS, new GetRestaurantSettingsHandler());
         handlers.put(ActionType.ADD_SPECIAL_DATE, new AddSpecialDateHandler());
         handlers.put(ActionType.UPDATE_SPECIAL_DATE, new UpdateSpecialDateHandler());
+        handlers.put(ActionType.DELETE_SPECIAL_DATE, new DeleteSpecialDateHandler());
+
         handlers.put(ActionType.FORGOT_CODE, new ForgotCodeHandler());
         handlers.put(ActionType.SEAT_CUSTOMER, new SeatCustomerHandler());
         handlers.put(ActionType.GET_ALL_TABLES, new GetAllTablesHandler());
@@ -184,8 +187,12 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_WAITING_LIST_BETWEEN_DATES, new WeeklyWaitingListHandler(null));
         handlers.put(ActionType.ADD_TO_WAITING_LIST, new AddWaitingHandler());
         handlers.put(ActionType.CANCEL_WAITING, new CancelWaitingHandler());
+<<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project
         handlers.put(ActionType.CREATE_OPENING_HOURS, new CreateOpeningHoursHandler());
         handlers.put(ActionType.REMOVE_OPENING_HOURS, new DeleteOpeningHoursHandler());
+=======
+    
+>>>>>>> 49ac2d1 fix + added delete special date button
     }
 
     private void sendRequest(Message msg) {
@@ -372,7 +379,12 @@ public class ClientHandler extends AbstractClient {
         connect();
         sendRequest(new Message(ActionType.UPDATE_SPECIAL_DATE, req));
     }
-
+    
+    public void deleteSpecialDate(LocalDate date) {
+    	connect();
+    	sendRequest(new Message(ActionType.DELETE_SPECIAL_DATE, new DeleteSpecialDateRequest(date)));
+    }
+    
     public void updateRegularOpeningTime(WeeklyOpeningHours hours) {
         connect();
         sendRequest(new Message(ActionType.UPDATE_OPENING_TIME, new updateRegularOpeningTimeRequest(hours.getDay(), hours.getOpeningTime())));

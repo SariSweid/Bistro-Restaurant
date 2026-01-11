@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,6 +136,39 @@ public class RestaurantSettingsDAO extends DBController {
         }
     }
 
+<<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project
+=======
+            return rows > 0;
+	        } catch (SQLException e) {
+        	System.err.println("SQL Exception during update: " + e.getMessage());
+        	e.printStackTrace();
+        	return false; 
+        }	
+		
+	}
+	
+	//deletes a special date from the db
+	public boolean deleteSpecialDate(LocalDate date) {
+		Connection con = getConnection();
+		try(PreparedStatement pst = con.prepareStatement("DELETE FROM 'specialdates")){
+			
+		pst.setDate(1,java.sql.Date.valueOf(date));
+
+		int rows = pst.executeUpdate();
+
+        return rows > 0;
+				
+					
+		}catch(SQLException e) { 
+    	System.err.println("SQL Exception during update: " + e.getMessage());
+    	e.printStackTrace();
+    	return false; 
+		}
+	
+	}
+	
+	
+>>>>>>> 49ac2d1 fix + added delete special date button
     /**
      * Updates the opening hours for an existing day in the database.
      *

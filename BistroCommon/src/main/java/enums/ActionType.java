@@ -28,8 +28,13 @@ public enum ActionType {
     UPDATE_SPECIAL_DATE,
     UPDATE_OPENING_TIME,
     UPDATE_CLOSING_TIME,
+<<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project
     CREATE_OPENING_HOURS,
     REMOVE_OPENING_HOURS,    
+=======
+    DELETE_SPECIAL_DATE,
+    
+>>>>>>> 49ac2d1 fix + added delete special date button
     // Tables
     INSERT_TABLE,
     UPDATE_TABLE,

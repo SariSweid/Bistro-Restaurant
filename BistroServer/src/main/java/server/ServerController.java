@@ -144,6 +144,7 @@ public class ServerController extends AbstractServer {
         commands.put(ActionType.UPDATE_CLOSING_TIME, new UpdateClosingTimeCommand());
         commands.put(ActionType.ADD_SPECIAL_DATE, new AddSpecialDateCommand());
         commands.put(ActionType.UPDATE_SPECIAL_DATE, new UpdateSpecialDateCommand());
+        commands.put(ActionType.DELETE_SPECIAL_DATE, new DeleteSpecialDateCommand());
         
         // Command: Update Reservations
         commands.put(ActionType.UPDATE_RESERVATION, new UpdateReservationCommand());
@@ -157,10 +158,13 @@ public class ServerController extends AbstractServer {
         // Command: Get Waiting List Between Dates
         commands.put(ActionType.GET_WAITING_LIST_BETWEEN_DATES, new GetWaitingListBetweenDatesCommand());
         
+<<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project
         commands.put(ActionType.CREATE_OPENING_HOURS, new CreateOpeningHoursCommand());
         commands.put(ActionType.REMOVE_OPENING_HOURS, new RemoveOpeningHoursCommand());
         
         
+=======
+>>>>>>> 49ac2d1 fix + added delete special date button
         
     }
     

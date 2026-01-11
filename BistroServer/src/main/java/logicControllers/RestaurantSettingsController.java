@@ -67,6 +67,7 @@ public class RestaurantSettingsController {
 		restaurantSettings.setWeeklyOpeningHours(hoursList);
 		return hoursList;
 	}
+<<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project
 
     public List<SpecialDates> getAllSpecialDates() {
         List<SpecialDates> specialList = SPdao.getAllSpecialDates();
@@ -140,4 +141,58 @@ public class RestaurantSettingsController {
         return restaurantSettings.getWeeklyOpeningHours().stream()
                 .anyMatch(h -> h.getDay() == day);
     }
+=======
+	
+	/**
+	 * @return all special dates
+	 */
+	public List<SpecialDates> getAllSpecialDates(){
+		List<SpecialDates> specialList = new ArrayList<>();
+		specialList = SPdao.getAllSpecialDates();
+		System.out.println(specialList);
+		restaurantSettings.setSpecialDates(specialList);
+		return specialList;
+	}
+	
+	/**
+	 * add special date to the restaurant
+	 * @param specialDate
+	 * @return true if the date was added to the db
+	 */
+	public boolean addSpecialDate(SpecialDates specialDate) {
+		this.restaurantSettings.addSpecialDate(specialDate);
+		return this.SPdao.addSpecialDates(specialDate);
+	}
+	
+	/**
+	 * add special date to the restaurant
+	 * @param specialDate
+	 * @return true if the date was added to the db
+	 */
+	public boolean deleteSpecialDate(LocalDate date) {
+	    boolean flag = this.SPdao.deleteSpecialDate(date);
+	    if (flag) {
+	        this.restaurantSettings.getSpecialDates().removeIf(s -> s.getDate().equals(date));
+	    }
+	    return flag;
+	}
+
+	
+	/**
+	 * update a special date
+	 * @param oldDate
+	 * @param specialDate
+	 * @return true if the special date was updated in the db
+	 */
+	public boolean updateSpecialDate(LocalDate oldDate, SpecialDates specialDate) {
+		boolean flag = this.SPdao.updateSpecialDates(oldDate, specialDate);
+		if(flag) {
+			this.restaurantSettings.getSpecialDates().removeIf(s -> s.getDate().equals(oldDate));
+			this.restaurantSettings.addSpecialDate(specialDate);
+		}
+		
+		return flag;
+	}
+	
+>>>>>>> 49ac2d1 fix + added delete special date button
 }

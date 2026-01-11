@@ -103,4 +103,24 @@ public class SpecialDatesDAO extends DBController {
 	        }
 			
 		}
+	
+	
+	public boolean deleteSpecialDate(LocalDate date) {
+	    Connection con = getConnection();
+
+	    try (PreparedStatement pst =
+	            con.prepareStatement("DELETE FROM restaurant_main.specialdates WHERE special_date = ?\r\n"
+	            		+ "")) {
+
+	        pst.setDate(1, java.sql.Date.valueOf(date));
+	        int rows = pst.executeUpdate();
+	        return rows > 0;
+
+	    } catch (SQLException e) {
+	    	System.err.println("SQL Exception during delete: " + e.getMessage());
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+
 }

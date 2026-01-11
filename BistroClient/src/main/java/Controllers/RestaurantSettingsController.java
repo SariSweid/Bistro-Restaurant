@@ -294,6 +294,28 @@ public class RestaurantSettingsController {
         }
     }
     
+<<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project
+=======
+    @FXML
+    public void deleteSpecialDate() {
+    	SpecialDates selected = specialDatesTable.getSelectionModel().getSelectedItem();
+    	if(selected==null) {
+    		SceneManager.showError("No special date selected");
+    		return;
+    	}
+    	
+    	specialDatesList.remove(selected);
+    	specialDatesTable.refresh();
+    	
+    	ClientHandler.getClient().deleteSpecialDate(selected.getDate());
+    	
+    	SceneManager.showInfo("Special date deleted successfully");
+    	
+    	
+    }
+    
+    
+>>>>>>> 49ac2d1 fix + added delete special date button
     
 
     @FXML

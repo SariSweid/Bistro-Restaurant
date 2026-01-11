@@ -108,6 +108,8 @@
             <HBox spacing="10">
                 <Button onAction="#addSpecialDates" style="-fx-background-radius: 15;" text="Add Special Date" />
                 <Button onAction="#updateSpecialDates" style="-fx-background-radius: 15;" text="Update Special Date" />
+                <Button onAction="#deleteSpecialDate" style="-fx-background-radius: 15;" text="Delete Special Date" />
+                
             </HBox>
 
             <HBox alignment="CENTER_LEFT">
