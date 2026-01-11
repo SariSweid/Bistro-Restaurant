@@ -8,6 +8,7 @@ import handlers.ClientHandler;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -34,6 +35,8 @@ public class RestaurantSettingsController {
     @FXML private TableColumn<WeeklyOpeningHours, LocalTime> openingTimeColumn;
     @FXML private TableColumn<WeeklyOpeningHours, LocalTime> closingTimeColumn;
 
+    @FXML private ComboBox<Day> dayComboBox;
+
     @FXML private TextField specialDateField;
     @FXML private TextField specialNoteField;
     @FXML private TextField specialOpenField;
@@ -56,13 +59,17 @@ public class RestaurantSettingsController {
         openingTimeColumn.setCellValueFactory(new PropertyValueFactory<>("openingTime"));
         closingTimeColumn.setCellValueFactory(new PropertyValueFactory<>("closingTime"));
 
+        dayComboBox.setItems(FXCollections.observableArrayList(Day.values()));
+
         weeklyHoursTable.getSelectionModel().selectedItemProperty().addListener((obs, oldRow, row) -> {
             if (row != null) {
                 openingTimeField.setText(row.getOpeningTime().toString());
                 closingTimeField.setText(row.getClosingTime().toString());
+                dayComboBox.setValue(row.getDay());
             } else {
                 openingTimeField.clear();
                 closingTimeField.clear();
+                dayComboBox.setValue(null);
             }
         });
 
@@ -90,17 +97,23 @@ public class RestaurantSettingsController {
 
     @FXML
     public void updateOpeningHours() {
-        WeeklyOpeningHours selected = weeklyHoursTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
+        Day selectedDay = dayComboBox.getValue();
+        if (selectedDay == null) {
             SceneManager.showError("Select a day first");
             return;
         }
         try {
             LocalTime openingTime = LocalTime.parse(openingTimeField.getText().trim());
-            selected.setOpeningTime(openingTime);
-            weeklyHoursTable.refresh();
-            ClientHandler.getClient().updateRegularOpeningTime(selected);
-            openingTimeField.clear();
+            WeeklyOpeningHours wh = weeklyHoursList.stream()
+                    .filter(w -> w.getDay() == selectedDay)
+                    .findFirst()
+                    .orElse(null);
+            if (wh != null) {
+                wh.setOpeningTime(openingTime);
+                weeklyHoursTable.refresh();
+                ClientHandler.getClient().updateRegularOpeningTime(wh);
+                openingTimeField.clear();
+            }
         } catch (Exception e) {
             SceneManager.showError("Invalid format! Use HH:mm (10:00)");
         }
@@ -108,17 +121,23 @@ public class RestaurantSettingsController {
 
     @FXML
     public void updateClosingHours() {
-        WeeklyOpeningHours selected = weeklyHoursTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
+        Day selectedDay = dayComboBox.getValue();
+        if (selectedDay == null) {
             SceneManager.showError("Select a day first");
             return;
         }
         try {
             LocalTime closingTime = LocalTime.parse(closingTimeField.getText().trim());
-            selected.setClosingTime(closingTime);
-            weeklyHoursTable.refresh();
-            ClientHandler.getClient().updateRegularClosingTime(selected);
-            closingTimeField.clear();
+            WeeklyOpeningHours wh = weeklyHoursList.stream()
+                    .filter(w -> w.getDay() == selectedDay)
+                    .findFirst()
+                    .orElse(null);
+            if (wh != null) {
+                wh.setClosingTime(closingTime);
+                weeklyHoursTable.refresh();
+                ClientHandler.getClient().updateRegularClosingTime(wh);
+                closingTimeField.clear();
+            }
         } catch (Exception e) {
             SceneManager.showError("Invalid format! Use HH:mm (23:00)");
         }

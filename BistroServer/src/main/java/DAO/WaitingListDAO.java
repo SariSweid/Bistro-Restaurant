@@ -64,6 +64,29 @@ public class WaitingListDAO extends DBController {
 	    }
 	}
 	
+	/**
+	 * Returns the first waiting list entry (FIFO) with no exit reason, ordered by date and time.
+	 */
+	public WaitingListEntry getNextWaitingEntry() {
+		Connection con = getConnection();
+	    try ( PreparedStatement pst = con.prepareStatement("SELECT * FROM waitinglist WHERE exitReason IS NULL ORDER BY WaitDate ASC, WaitTime ASC LIMIT 1")) {
+	        ResultSet rs = pst.executeQuery();
+	        if (rs.next()) {
+	            Integer userId = rs.getObject("userID", Integer.class);
+	            String email = rs.getString("Email");
+	            String phone = rs.getString("Phone");
+	            int numOfGuests = rs.getInt("numOfGuests");
+	            int confirmationCode = rs.getInt("confirmationCode");
+	            LocalDate waitDate = rs.getDate("WaitDate").toLocalDate();
+	            LocalTime waitTime = rs.getTime("WaitTime").toLocalTime();
+	            return new WaitingListEntry(userId, email, phone, numOfGuests, confirmationCode, waitDate, waitTime, null);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+	
 	
 	public int getWaitlistSubscriberCountBetween(LocalDate start, LocalDate end) {
 
@@ -91,17 +114,18 @@ public class WaitingListDAO extends DBController {
 
 	
 	public boolean updateExitReason(int confirmationCode, ExitReason exitReason) {
-
 	    String sql = "UPDATE waitinglist SET exitReason = ? WHERE confirmationCode = ?";
-
 	    try (Connection con = getConnection();
 	         PreparedStatement pst = con.prepareStatement(sql)) {
-
-	        pst.setString(1, exitReason.name());
+	         
+	        if (exitReason != null) {
+	            pst.setString(1, exitReason.name());
+	        } else {
+	            pst.setNull(1, java.sql.Types.VARCHAR);
+	        }
+	        
 	        pst.setInt(2, confirmationCode);
-
 	        return pst.executeUpdate() > 0;
-
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	        return false;
@@ -111,18 +135,22 @@ public class WaitingListDAO extends DBController {
 
 
 	
-    /**
-     * Inserts a new WaitingListEntry into the database.
-     *
-     * @param w the Reservation to insert
-     * @return true if the insertion succeeded, false otherwise
-     */
+	/**
+	 * Inserts a new WaitingListEntry into the database.
+	 *
+	 * @param w the WaitingListEntry to insert
+	 * @return true if the insertion succeeded, false otherwise
+	 */
 	public Boolean addToWitingList(WaitingListEntry w) {
 
-	    Connection con = getConnection(); // connect to DB
+	    Connection con = getConnection();
 
 	    try (PreparedStatement pst = con.prepareStatement(
-	            "INSERT INTO `waitinglist` (userID, Email, Phone, numOfGuests, confirmationCode, WaitDate, WaitTime, exitReason, status) VALUES (?,?,?,?,?,?,?,?,?)")) {
+	            "INSERT INTO waitinglist " +
+	            "(userID, Email, Phone, numOfGuests, confirmationCode, " +
+	            "WaitDate, WaitTime, enterdate, entertime, exitReason) " +
+	            "VALUES (?,?,?,?,?,?,?,?,?,?)")) {
+
 
 	        if (w.getUserID() == null)
 	            pst.setNull(1, java.sql.Types.INTEGER);
@@ -133,13 +161,22 @@ public class WaitingListDAO extends DBController {
 	        pst.setString(3, w.getPhone());
 	        pst.setInt(4, w.getNumOfGuests());
 	        pst.setInt(5, w.getConfirmationCode());
+
+	       
 	        pst.setDate(6, java.sql.Date.valueOf(w.getWaitDate()));
 	        pst.setTime(7, java.sql.Time.valueOf(w.getWaitTime()));
-	        pst.setString(8, w.getExitReason() == null ? null : w.getExitReason().name());
-	        pst.setString(9, w.getStatus().name());
 
-	        int update_status = pst.executeUpdate();
-	        return update_status > 0;
+	        LocalDate nowDate = LocalDate.now();
+	        LocalTime nowTime = LocalTime.now();
+
+	        pst.setDate(8, java.sql.Date.valueOf(nowDate));
+	        pst.setTime(9, java.sql.Time.valueOf(nowTime));
+
+	
+	        pst.setNull(10, java.sql.Types.VARCHAR);
+
+	        int updateStatus = pst.executeUpdate();
+	        return updateStatus > 0;
 
 	    } catch (SQLException e) {
 	        e.printStackTrace();

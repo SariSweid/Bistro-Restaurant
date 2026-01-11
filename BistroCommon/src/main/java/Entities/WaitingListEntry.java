@@ -35,6 +35,20 @@ public class WaitingListEntry implements Serializable {
 		this.exitReason = exitReason;
 		this.status = status;
 	}
+	
+	public WaitingListEntry(Integer userID, String email, String phone, int numOfGuests, int confirmationCode,
+			LocalDate waitDate, LocalTime waitTime, ExitReason exitReason) {
+		
+		
+		this.userID = userID;
+		Email = email;
+		this.phone = phone;
+		this.numOfGuests = numOfGuests;
+		this.confirmationCode = confirmationCode;
+		WaitDate = waitDate;
+		WaitTime = waitTime;
+		this.exitReason = exitReason;
+	}
 
 	
 	//getters
