@@ -304,6 +304,28 @@ public class TableDAO extends DBController {
 	    }
 	}
 	
+
+    public Table findAvailableTable(int guests) {
+        Table bestFit = null;
+        try {
+            List<Table> tables = this.GetAllTables();
+
+            for (Table t : tables) {
+                
+                if (t.isAvailable() && t.getCapacity() >= guests) {
+                    
+                    if (bestFit == null || t.getCapacity() < bestFit.getCapacity()) {
+                        bestFit = t;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return bestFit; 
+    }
+	
 	/**
 	 * Retrieves a reservation by its ID.
 	 *

@@ -83,6 +83,17 @@ public class DailyFunctionController extends TimerTask {
 
                         reservationDAO.updateReservation(r);
                     }
+                    
+                    if (r.getStatus() == ReservationStatus.WAITLIST && r.getTableID() == null) {
+                        Table availableTable = tableDAO.findAvailableTable(r.getNumOfGuests());
+                        if (availableTable != null) {
+                            r.setTableID(availableTable.getTableID());
+                            r.setStatus(ReservationStatus.SEATED);
+                            tableDAO.UpdateTable(availableTable); 
+                            reservationDAO.updateReservation(r);
+                            
+                        }
+                    }
 
                     // Generate bills for seated customers after 2 hours
                     if (r.getStatus() == ReservationStatus.SEATED &&
