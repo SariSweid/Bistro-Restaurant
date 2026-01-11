@@ -87,6 +87,22 @@ public class WaitingListDAO extends DBController {
 	    return null;
 	}
 	
+	public void updateExitReasonByConfirmationCode(
+	        int confirmationCode,
+	        ExitReason reason) {
+
+	    Connection con = getConnection();
+
+
+	    try (PreparedStatement pst = con.prepareStatement("UPDATE waitinglist SET exitReason = ? WHERE confirmationCode = ? AND exitReason IS NULL")) {
+	        pst.setString(1, reason.name());
+	        pst.setInt(2, confirmationCode);
+	        pst.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
 	
 	public int getWaitlistSubscriberCountBetween(LocalDate start, LocalDate end) {
 
