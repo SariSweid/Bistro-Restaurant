@@ -3,6 +3,7 @@ package commands;
 import server.Command;
 import src.ocsf.server.ConnectionToClient;
 import logicControllers.RestaurantSettingsController;
+import messages.AddSpecialDateRequest;
 import Entities.SpecialDates;
 import common.Message;
 import common.ServerResponse;
@@ -15,7 +16,7 @@ public class AddSpecialDateCommand implements Command {
 
     @Override
     public void execute(Object data, ConnectionToClient client) {
-        if (!(data instanceof SpecialDates sd)) {
+        if (!(data instanceof AddSpecialDateRequest sd)) {
             sendError(client, "Invalid special date data");
             return;
         }

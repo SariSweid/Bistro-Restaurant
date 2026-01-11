@@ -184,6 +184,8 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_WAITING_LIST_BETWEEN_DATES, new WeeklyWaitingListHandler(null));
         handlers.put(ActionType.ADD_TO_WAITING_LIST, new AddWaitingHandler());
         handlers.put(ActionType.CANCEL_WAITING, new CancelWaitingHandler());
+        handlers.put(ActionType.CREATE_OPENING_HOURS, new CreateOpeningHoursHandler());
+        handlers.put(ActionType.REMOVE_OPENING_HOURS, new DeleteOpeningHoursHandler());
     }
 
     private void sendRequest(Message msg) {
@@ -358,6 +360,13 @@ public class ClientHandler extends AbstractClient {
         connect();
         sendRequest(new Message(ActionType.ADD_SPECIAL_DATE, new AddSpecialDateRequest(specialDate)));
     }
+    
+    public void createRegularOpeningHours(WeeklyOpeningHours hours) {
+    	System.out.println("Sending CREATE_OPENING_HOURS for day: " + hours.getDay() + " " + hours.getOpeningTime() + " - " + hours.getClosingTime());
+
+        connect();
+        sendRequest(new Message(ActionType.CREATE_OPENING_HOURS, new CreateRegularOpeningHoursRequest(hours)));
+    }
 
     public void updateSpecialDate(UpdateSpecialDateRequest req) {
         connect();
@@ -372,6 +381,18 @@ public class ClientHandler extends AbstractClient {
     public void updateRegularClosingTime(WeeklyOpeningHours hours) {
         connect();
         sendRequest(new Message(ActionType.UPDATE_CLOSING_TIME, new updateRegularClosingTimeRequest(hours.getDay(), hours.getClosingTime())));
+    }
+    
+    public void deleteRegularOpeningHours(WeeklyOpeningHours wh) {
+        if (wh == null) return;
+        try {
+            connect(); 
+            DeleteOpeningHoursRequest request = new DeleteOpeningHoursRequest(wh.getDay());
+            sendRequest(new Message(ActionType.REMOVE_OPENING_HOURS, request));
+            System.out.println("Sent DELETE_OPENING_HOURS request for day: " + wh.getDay());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setHandler(ReportType type, ReportHandler handler) {

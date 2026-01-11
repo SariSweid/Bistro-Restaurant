@@ -18,6 +18,7 @@ import util.SceneManager;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public class RestaurantSettingsController {
 
@@ -94,6 +95,52 @@ public class RestaurantSettingsController {
         specialDatesTable.refresh();
         weeklyHoursTable.refresh();
     }
+    
+
+    
+    @FXML
+    public void removeDay() {
+        Day selectedDay = dayComboBox.getValue();
+        if (selectedDay == null) {
+            SceneManager.showError("Select a day first");
+            return;
+        }
+
+   
+        WeeklyOpeningHours wh = weeklyHoursList.stream()
+                .filter(w -> w.getDay() == selectedDay)
+                .findFirst()
+                .orElse(null);
+
+        if (wh == null) {
+            SceneManager.showError("Day not found in the table");
+            return;
+        }
+
+        
+        weeklyHoursList.remove(wh);
+
+       
+        try {
+            ClientHandler.getClient().deleteRegularOpeningHours(wh);
+            ClientHandler.getClient().getRestaurantSettings();
+            
+            openingTimeField.clear();
+            closingTimeField.clear();
+            dayComboBox.setValue(null);
+        } catch (Exception e) {
+            SceneManager.showError("Error removing day from database");
+            e.printStackTrace();
+        }
+
+        
+        openingTimeField.clear();
+        closingTimeField.clear();
+        dayComboBox.setValue(null);
+    }
+
+    
+    
 
     @FXML
     public void updateOpeningHours() {
@@ -102,22 +149,48 @@ public class RestaurantSettingsController {
             SceneManager.showError("Select a day first");
             return;
         }
+
+        WeeklyOpeningHours wh = weeklyHoursList.stream()
+                .filter(w -> w.getDay() == selectedDay)
+                .findFirst()
+                .orElse(null);
+
         try {
-            LocalTime openingTime = LocalTime.parse(openingTimeField.getText().trim());
-            WeeklyOpeningHours wh = weeklyHoursList.stream()
-                    .filter(w -> w.getDay() == selectedDay)
-                    .findFirst()
-                    .orElse(null);
-            if (wh != null) {
-                wh.setOpeningTime(openingTime);
-                weeklyHoursTable.refresh();
-                ClientHandler.getClient().updateRegularOpeningTime(wh);
-                openingTimeField.clear();
+            String openText = openingTimeField.getText().trim();
+            String closeText = closingTimeField.getText().trim();
+            LocalTime openingTime = openText.isEmpty() ? null : LocalTime.parse(openText);
+            LocalTime closingTime = closeText.isEmpty() ? null : LocalTime.parse(closeText);
+
+            if (wh == null) {
+              
+                if (openingTime == null || closingTime == null) {
+                    SceneManager.showError("To create a new day, fill both opening and closing times!");
+                    return;
+                }
+
+                wh = new WeeklyOpeningHours(openingTime, closingTime,selectedDay);
+                weeklyHoursList.add(wh);
+                ClientHandler.getClient().createRegularOpeningHours(wh); 
+            } else {
+               
+                if (openingTime != null) {
+                    wh.setOpeningTime(openingTime);
+                    ClientHandler.getClient().updateRegularOpeningTime(wh);
+                }
+                if (closingTime != null) {
+                    wh.setClosingTime(closingTime);
+                    ClientHandler.getClient().updateRegularClosingTime(wh);
+                }
             }
+
+            weeklyHoursTable.refresh();
+            openingTimeField.clear();
+            closingTimeField.clear();
         } catch (Exception e) {
             SceneManager.showError("Invalid format! Use HH:mm (10:00)");
         }
     }
+
 
     @FXML
     public void updateClosingHours() {
@@ -126,22 +199,43 @@ public class RestaurantSettingsController {
             SceneManager.showError("Select a day first");
             return;
         }
+
+        WeeklyOpeningHours wh = weeklyHoursList.stream()
+                .filter(w -> w.getDay() == selectedDay)
+                .findFirst()
+                .orElse(null);
+
         try {
-            LocalTime closingTime = LocalTime.parse(closingTimeField.getText().trim());
-            WeeklyOpeningHours wh = weeklyHoursList.stream()
-                    .filter(w -> w.getDay() == selectedDay)
-                    .findFirst()
-                    .orElse(null);
-            if (wh != null) {
-                wh.setClosingTime(closingTime);
-                weeklyHoursTable.refresh();
-                ClientHandler.getClient().updateRegularClosingTime(wh);
-                closingTimeField.clear();
+            String openText = openingTimeField.getText().trim();
+            String closeText = closingTimeField.getText().trim();
+            LocalTime closingTime = closeText.isEmpty() ? null : LocalTime.parse(closeText);
+
+            if (wh == null) {
+                
+                if (openingTimeField.getText().trim().isEmpty() || closingTime == null) {
+                    SceneManager.showError("To create a new day, fill both opening and closing times!");
+                    return;
+                }
+                LocalTime openingTime = LocalTime.parse(openText);
+                wh = new WeeklyOpeningHours(openingTime, closingTime, selectedDay);
+                weeklyHoursList.add(wh);
+                ClientHandler.getClient().createRegularOpeningHours(wh); 
+            } else {
+                
+                if (closingTime != null) {
+                    wh.setClosingTime(closingTime);
+                    ClientHandler.getClient().updateRegularClosingTime(wh);
+                }
             }
+
+            weeklyHoursTable.refresh();
+            openingTimeField.clear();
+            closingTimeField.clear();
         } catch (Exception e) {
             SceneManager.showError("Invalid format! Use HH:mm (23:00)");
         }
     }
+
 
     @FXML
     public void addSpecialDates() {
@@ -152,18 +246,20 @@ public class RestaurantSettingsController {
             String note = specialNoteField.getText().trim();
 
             SpecialDates newDate = new SpecialDates(open, close, date, note);
+
+       
             specialDatesList.add(newDate);
-            specialDatesTable.refresh();
+
+           
             ClientHandler.getClient().addSpecialDate(newDate);
 
-            specialDateField.clear();
-            specialOpenField.clear();
-            specialCloseField.clear();
-            specialNoteField.clear();
+            specialDatesTable.refresh();
+
         } catch (Exception e) {
             SceneManager.showError("Invalid input");
         }
     }
+
 
     @FXML
     public void updateSpecialDates() {
@@ -187,13 +283,18 @@ public class RestaurantSettingsController {
             ClientHandler.getClient().updateSpecialDate(
                 new UpdateSpecialDateRequest(oldDate, selected.getDescription(), newDate, newOpen, newClose)
             );
-
+            
+            ClientHandler.getClient().getRestaurantSettings();
             specialDatesTable.refresh();
+            
             SceneManager.showInfo("Special date updated successfully");
+            ClientHandler.getClient().getRestaurantSettings();
         } catch (Exception e) {
             SceneManager.showError("Invalid input");
         }
     }
+    
+    
 
     @FXML
     public void previousPage() {

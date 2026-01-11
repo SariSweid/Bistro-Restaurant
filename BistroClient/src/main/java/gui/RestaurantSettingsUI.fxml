@@ -40,6 +40,7 @@
                 <children>
                     <Label text="Day:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
                     <ComboBox fx:id="dayComboBox" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="120" />
+                    <Button onAction="#removeDay" text="Remove" GridPane.rowIndex="0" GridPane.columnIndex="2" />
 
                     <Label text="Opening time:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
                     <TextField fx:id="openingTimeField" promptText="10:00" GridPane.columnIndex="1" GridPane.rowIndex="1" />

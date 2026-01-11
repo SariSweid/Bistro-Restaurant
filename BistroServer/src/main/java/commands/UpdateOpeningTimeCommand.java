@@ -28,7 +28,7 @@ public class UpdateOpeningTimeCommand implements Command {
         }
 
         current.setOpeningTime(req.getOpeningTime());
-        boolean ok = controller.updateWeeklyOpeningHours(current);
+        boolean ok = controller.createOrUpdateWeeklyOpeningHours(current);
 
         controller.getAllWeeklyOpeningHours();
         controller.getAllSpecialDates();

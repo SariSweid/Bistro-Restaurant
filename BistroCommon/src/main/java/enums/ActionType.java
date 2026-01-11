@@ -28,7 +28,8 @@ public enum ActionType {
     UPDATE_SPECIAL_DATE,
     UPDATE_OPENING_TIME,
     UPDATE_CLOSING_TIME,
-    
+    CREATE_OPENING_HOURS,
+    REMOVE_OPENING_HOURS,    
     // Tables
     INSERT_TABLE,
     UPDATE_TABLE,
