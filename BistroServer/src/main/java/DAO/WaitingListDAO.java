@@ -63,6 +63,30 @@ public class WaitingListDAO extends DBController {
 	        return null;
 	    }
 	}
+	
+	
+	public int getWaitlistSubscriberCountBetween(LocalDate start, LocalDate end) {
+
+	    Connection con = getConnection();
+
+	    try (PreparedStatement pst = con.prepareStatement(
+	            "SELECT COUNT(*) FROM waitinglist w JOIN user u ON w.userID = u.UserId WHERE u.Role = 'SUBSCRIBER' AND w.WaitDate BETWEEN ? AND ?")) {
+
+	        pst.setDate(1, java.sql.Date.valueOf(start));
+	        pst.setDate(2, java.sql.Date.valueOf(end));
+
+	        ResultSet rs = pst.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return 0;
+	}
+
 
 
 	
