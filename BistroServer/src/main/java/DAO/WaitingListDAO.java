@@ -193,6 +193,37 @@ public class WaitingListDAO extends DBController {
 
 
 
+	public WaitingListEntry findExistingEntry(Integer userID, LocalDate date, LocalTime time) {
+	    String sql = "SELECT * FROM waitinglist WHERE userID = ? AND WaitDate = ? AND WaitTime = ? AND exitReason IS NULL";
+
+	    try (Connection con = getConnection();
+	         PreparedStatement pst = con.prepareStatement(sql)) {
+
+	        pst.setInt(1, userID);
+	        pst.setDate(2, java.sql.Date.valueOf(date));
+	        pst.setTime(3, java.sql.Time.valueOf(time));
+
+	        ResultSet rs = pst.executeQuery();
+	        if (rs.next()) {
+	            return new WaitingListEntry(
+	                rs.getObject("userID", Integer.class),
+	                rs.getString("Email"),
+	                rs.getString("Phone"),
+	                rs.getInt("numOfGuests"),
+	                rs.getInt("confirmationCode"),
+	                rs.getDate("WaitDate").toLocalDate(),
+	                rs.getTime("WaitTime").toLocalTime(),
+	                rs.getString("exitReason") == null ? null : ExitReason.valueOf(rs.getString("exitReason")),
+	                WaitingStatus.valueOf(rs.getString("status"))
+	            );
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return null;
+	}
 
 
 

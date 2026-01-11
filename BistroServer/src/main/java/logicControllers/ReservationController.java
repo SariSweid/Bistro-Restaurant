@@ -1,8 +1,10 @@
 package logicControllers;
 
 import Entities.Reservation;
+import Entities.RestaurantSettings;
 import Entities.Table;
 import Entities.User;
+import Entities.WeeklyOpeningHours;
 import common.ServerResponse;
 import enums.ReservationStatus;
 import enums.UserRole;
@@ -20,23 +22,42 @@ import java.util.stream.Collectors;
 
 public class ReservationController {
 
-    private static final LocalTime OPEN_TIME = LocalTime.of(10, 00);
-    private static final LocalTime CLOSE_TIME = LocalTime.of(22, 00);
-    private static final int RESERVATION_DURATION = 2;
 
-    private final ReservationDAO resdb;
-    private final TableDAO tabledb;
+	private final ReservationDAO resdb;
+	private final TableDAO tabledb;
+	private final RestaurantSettings settings;
 
-    public ReservationController() {
-        this.resdb = new ReservationDAO();
-        this.tabledb = new TableDAO();
-    }
+	public ReservationController() {
+	    this.resdb = new ReservationDAO();
+	    this.tabledb = new TableDAO();
+	    this.settings = RestaurantSettings.getInstance();
+
+	    // Load settings from DB into the singleton
+	    logicControllers.RestaurantSettingsController sc = new logicControllers.RestaurantSettingsController();
+	    sc.getAllWeeklyOpeningHours();
+	    sc.getAllSpecialDates();
+	}
+
 
     public List<LocalTime> getAvailableTimes(LocalDate date, int guests) {
 
         List<LocalTime> available = new ArrayList<>();
         List<Table> tables = tabledb.GetAllTables();
 
+        // Get dynamic opening hours for this date
+        WeeklyOpeningHours hours = settings.getOpeningHoursForDate(date);
+
+
+        if (hours == null) {
+            // Restaurant closed on this date
+            return Collections.emptyList();
+        }
+
+        LocalTime openTime = hours.getOpeningTime();
+        LocalTime closeTime = hours.getClosingTime();
+        int reservationDuration = settings.getReservationDurationHours();
+
+        // Capacity checks
         int maxTableCapacity = tables.stream()
                                      .mapToInt(Table::getCapacity)
                                      .max()
@@ -48,36 +69,47 @@ public class ReservationController {
                                   .mapToInt(Table::getCapacity)
                                   .sum();
 
-        LocalTime time = OPEN_TIME;
+        // Same-day restriction: must be at least 1 hour from now
+        LocalTime time = openTime;
 
         if (date.equals(LocalDate.now())) {
             LocalTime oneHourFromNow = LocalTime.now().plusHours(1).withSecond(0).withNano(0);
+
             if (oneHourFromNow.isAfter(time)) {
                 int minute = oneHourFromNow.getMinute();
                 if (minute > 0 && minute <= 30) oneHourFromNow = oneHourFromNow.withMinute(30);
                 else if (minute > 30) oneHourFromNow = oneHourFromNow.plusHours(1).withMinute(0);
                 else oneHourFromNow = oneHourFromNow.withMinute(0);
+
                 time = oneHourFromNow;
             }
         }
 
-        while (!time.isAfter(CLOSE_TIME.minusHours(RESERVATION_DURATION))) {
-            if (hasCapacity(date, time, guests, totalCapacity)) available.add(time);
+        // Generate times dynamically
+        LocalTime lastStart = closeTime.minusHours(reservationDuration);
+
+        while (!time.isAfter(lastStart)) {
+            if (hasCapacity(date, time, guests, totalCapacity)) {
+                available.add(time);
+            }
             time = time.plusMinutes(30);
         }
 
         return available;
     }
 
+
     private boolean hasCapacity(LocalDate date, LocalTime time, int guests, int totalCapacity) {
+    		int reservationDuration = settings.getReservationDurationHours();
+    	
         List<Reservation> reservations = resdb.getReservationsAt(date, time);
         int usedSeats = 0;
 
         for (Reservation r : reservations) {
             if (!r.isReservationActive()) continue;
             LocalTime rStart = r.getReservationTime();
-            LocalTime rEnd = rStart.plusHours(RESERVATION_DURATION);
-            LocalTime newEnd = time.plusHours(RESERVATION_DURATION);
+            LocalTime rEnd = rStart.plusHours(reservationDuration);
+            LocalTime newEnd = time.plusHours(reservationDuration);
             boolean overlap = !(time.isAfter(rEnd) || newEnd.isBefore(rStart));
             if (overlap) usedSeats += r.getNumOfGuests();
         }

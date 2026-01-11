@@ -11,6 +11,7 @@ import handlers.ClientHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import util.SceneManager;
@@ -32,20 +33,59 @@ public class SubscriberWaitingListController extends  BaseDisplayController {
     @FXML
     public void initialize() {
 
+    		ClientHandler.getClient().setActiveReservationController(null);
+
         // Set this controller as the active display controller
         ClientHandler.getClient().setActiveDisplayController(this);
 
-        LocalTime start = LocalTime.of(10, 0);
-        LocalTime end = LocalTime.of(20, 0);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        // Block past dates
+        datePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setDisable(empty || date.isBefore(LocalDate.now()));
+            }
+        });
 
-        while (!start.isAfter(end)) {
-            timeComboBox.getItems().add(start.format(formatter));
-            start = start.plusMinutes(30);
+        // Block dates after 1 month
+        datePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setDisable(empty || date.isBefore(LocalDate.now()) || date.isAfter(LocalDate.now().plusMonths(1)));
+            }
+        });
+
+        // When user picks a date → load times
+        datePicker.valueProperty().addListener((obs, oldDate, newDate) -> {
+            if (newDate != null) {
+                loadTimesForDate(newDate);
+            }
+        });
+
+        // Default: today
+        datePicker.setValue(LocalDate.now());
+    }
+    
+    private void loadTimesForDate(LocalDate date) {
+
+        timeComboBox.getItems().clear();
+
+        // Ask server for available times
+        ClientHandler.getClient().getAvailableTimes(date, 1); // 1 guest just to get times
+    }
+
+    public void loadTimes(List<LocalTime> times) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        timeComboBox.getItems().clear();
+
+        for (LocalTime t : times) {
+            timeComboBox.getItems().add(t.format(formatter));
         }
 
-        timeComboBox.getSelectionModel().selectFirst();
-        datePicker.setValue(LocalDate.now());
+        if (!timeComboBox.getItems().isEmpty()) {
+            timeComboBox.getSelectionModel().selectFirst();
+        }
     }
     
     

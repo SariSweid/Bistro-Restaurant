@@ -35,20 +35,19 @@ public class WaitingListController {
 
     /**
      * Add customer to waiting list or create PENDING reservation if table is available.
-     *
      */
     public ServerResponse addToWaitingList(Integer userID, String email, String phone,
                                            int numOfGuests, LocalDate date, LocalTime time) {
 
-        // Check table availability at exact date & time
+        // 1. Check table availability
         Table table = tableDAO.getAvailableTableAtTime(numOfGuests, date, time);
 
         if (table != null) {
-            // Table available -> create PENDING reservation
+            // Table available → create PENDING reservation
             int confirmationCode = generateConfirmationCode();
 
             Reservation reservation = new Reservation(
-                    0, // auto-generated
+                    0,
                     userID,
                     table.getTableID(),
                     null,
@@ -61,27 +60,33 @@ public class WaitingListController {
                     ReservationStatus.PENDING
             );
 
-            boolean created = reservationDAO.insertReservation(reservation);
-            if (!created) {
+            if (!reservationDAO.insertReservation(reservation)) {
                 return new ServerResponse(false, null, "Failed to create reservation");
             }
 
-            // Mark table unavailable
-            boolean updated = tableDAO.updateTableIsAvailable(table.getTableID(), false);
-            if (!updated) {
-                System.err.println("Warning: failed to mark table as unavailable for reservation " +
-                                   reservation.getReservationID());
-            }
-
-            // Schedule auto-cancel in 15 minutes if not SEATED
+            tableDAO.updateTableIsAvailable(table.getTableID(), false);
             scheduleAutoCancel(reservation.getReservationID());
 
-            return new ServerResponse(true, reservation,
-                    "Table available! please procceed to table #" + table.getTableID());
+            return new ServerResponse(
+                    true,
+                    reservation,
+                    "Table available! please proceed to table #" + table.getTableID()
+            );
         }
 
-        // No table -> add to waiting list (requires contact info)
+        // 2. No table → check if user already has a waiting entry
+        WaitingListEntry existing = waitingListDAO.findExistingEntry(userID, date, time);
+        if (existing != null && existing.getExitReason() == null) {
+            return new ServerResponse(
+                    false,
+                    null,
+                    "You are already on the waiting list for this date and time."
+            );
+        }
+
+        // 3. Add new waiting list entry
         int confirmationCode = generateConfirmationCode();
+
         WaitingListEntry entry = new WaitingListEntry(
                 userID,
                 email,
@@ -99,9 +104,13 @@ public class WaitingListController {
             return new ServerResponse(false, null, "Failed to add to waiting list");
         }
 
-        return new ServerResponse(true, entry,
-                "Added to waiting list. Your confirmation code: " + confirmationCode);
+        return new ServerResponse(
+                true,
+                entry,
+                "Added to waiting list. Your confirmation code: " + confirmationCode
+        );
     }
+
 
 
 

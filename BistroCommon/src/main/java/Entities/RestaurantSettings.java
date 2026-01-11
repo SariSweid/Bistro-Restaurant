@@ -88,4 +88,51 @@ public class RestaurantSettings implements Serializable {
 	public void addSpecialDate(SpecialDates specialDate) {
 		this.specialDates.add(specialDate);
 	}
+
+	
+	private int reservationDurationHours = 2; // default
+
+	public int getReservationDurationHours() {
+	    return reservationDurationHours;
+	}
+	
+	public void setReservationDurationHours(int hours) {
+	    this.reservationDurationHours = hours;
+	}
+	
+	
+	/**
+	 * Returns the opening hours for a specific date.
+	 * Special dates override weekly hours.
+	 */
+	public WeeklyOpeningHours getOpeningHoursForDate(java.time.LocalDate date) {
+
+	    // Check special dates override
+	    if (specialDates != null) {
+	        for (SpecialDates sp : specialDates) {
+	            if (sp.getDate().equals(date)) {
+	                return new WeeklyOpeningHours(
+	                    sp.getOpeningTime(),
+	                    sp.getClosingTime(),
+	                    Day.valueOf(date.getDayOfWeek().name())
+	                );
+	            }
+	        }
+	    }
+
+	    // Fall back to weekly hours
+	    if (weeklyOpeningHours != null) {
+	        Day day = Day.valueOf(date.getDayOfWeek().name());
+	        for (WeeklyOpeningHours wh : weeklyOpeningHours) {
+	            if (wh.getDay() == day) {
+	                return wh;
+	            }
+	        }
+	    }
+
+	    // No hours = restaurant closed
+	    return null;
+	}
+
+
 }

@@ -33,7 +33,7 @@ public class AddWaitingHandler implements ResponseHandler {
 
 	        // Handle Reservation (table assigned immediately)
 	        if (res.getData() instanceof Reservation reservation) {
-	            SceneManager.showInfo("Table available! please procceed");
+	            SceneManager.showInfo("Reservation has been made, please arrive in time!");
 	            if (controller instanceof GuestWaitingListController guestController) {
 	                guestController.clearAddFields();
 	            } else if (controller instanceof SubscriberWaitingListController subController) {

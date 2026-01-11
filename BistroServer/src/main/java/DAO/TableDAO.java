@@ -227,7 +227,7 @@ public class TableDAO extends DBController {
 	
 	/**
 	 * Finds an available table for a given number of guests at a specific date and time.
-	 * Returns null if no table is available.
+	 * Considers overlapping reservations and table availability.
 	 */
 	public Table getAvailableTableAtTime(int numOfGuests, LocalDate date, LocalTime time) {
 	    Connection con = getConnection();
@@ -235,22 +235,28 @@ public class TableDAO extends DBController {
 	    try (PreparedStatement pst = con.prepareStatement(
 	        "SELECT t.TableId, t.Capacity, t.IsAvailable " +
 	        "FROM `table` t " +
-	        "LEFT JOIN reservation r ON t.TableId = r.TableId " +
-	        "   AND r.reservationDate = ? " +
-	        "   AND r.reservationTime = ? " +
-	        "   AND r.status IN ('PENDING','CONFIRMED','SEATED') " +
-	        "WHERE t.Capacity >= ? AND r.TableId IS NULL " +
-	        "ORDER BY t.Capacity ASC LIMIT 1"
+	        "WHERE t.Capacity >= ? " +
+	        "  AND t.IsAvailable = 1 " +
+	        "  AND t.TableId NOT IN ( " +
+	        "        SELECT r.TableId " +
+	        "        FROM reservation r " +
+	        "        WHERE r.reservationDate = ? " +
+	        "          AND r.status IN ('PENDING','CONFIRMED','SEATED') " +
+	        "          AND ABS(TIMESTAMPDIFF(MINUTE, r.reservationTime, ?)) < 120 " +  // 2-hour duration
+	        "  ) " +
+	        "ORDER BY t.Capacity ASC " +
+	        "LIMIT 1"
 	    )) {
-	        pst.setDate(1, java.sql.Date.valueOf(date));
-	        pst.setTime(2, java.sql.Time.valueOf(time));
-	        pst.setInt(3, numOfGuests);
+
+	        pst.setInt(1, numOfGuests);
+	        pst.setDate(2, java.sql.Date.valueOf(date));
+	        pst.setTime(3, java.sql.Time.valueOf(time));
 
 	        ResultSet rs = pst.executeQuery();
 	        if (rs.next()) {
 	            int tableId = rs.getInt("TableId");
 	            int capacity = rs.getInt("Capacity");
-	            boolean isAvailable = rs.getBoolean("IsAvailable"); // general availability
+	            boolean isAvailable = rs.getBoolean("IsAvailable");
 	            return new Table(tableId, capacity, isAvailable);
 	        }
 
@@ -258,8 +264,9 @@ public class TableDAO extends DBController {
 	        e.printStackTrace();
 	    }
 
-	    return null; // no table available
+	    return null;
 	}
+
 
 
 

@@ -4,7 +4,8 @@ import java.time.LocalTime;
 import java.util.List;
 
 import Controllers.BaseReservationController;
-import Controllers.GuestMakeReservationController;
+import Controllers.GuestWaitingListController;
+import Controllers.SubscriberWaitingListController;
 import common.ServerResponse;
 import javafx.application.Platform;
 
@@ -12,10 +13,11 @@ public class GetAvailableTimesHandler implements ResponseHandler {
 
     @Override
     public void handle(Object data) {
-    		if (!(data instanceof ServerResponse res)) {
-             System.out.println("Unexpected server response for GetAvailableTimes.");
-             return;
-         }
+
+        if (!(data instanceof ServerResponse res)) {
+            System.out.println("Unexpected server response for GetAvailableTimes.");
+            return;
+        }
 
         if (!res.isSuccess()) {
             System.out.println(res.getMessage());
@@ -24,20 +26,30 @@ public class GetAvailableTimesHandler implements ResponseHandler {
 
         List<LocalTime> times = (List<LocalTime>) res.getData();
 
-        // Get the active reservation controller (guest or subscriber)
-        BaseReservationController controller = ClientHandler.getClient().getActiveReservationController();
-;
+        // Try reservation controllers first
+        BaseReservationController reservationController =
+                ClientHandler.getClient().getActiveReservationController();
 
-        if (controller == null) {
-            System.out.println("ERROR: No active reservation controller found");
+        if (reservationController != null) {
+            Platform.runLater(() -> reservationController.updateAvailableTimes(times));
             return;
         }
-        
-        
-        System.out.println("Success = " + res.isSuccess());
-        System.out.println("Message = " + res.getMessage());
-        System.out.println("Data = " + res.getData());
-        
-        Platform.runLater(() -> controller.updateAvailableTimes(times));
+
+        // Try waiting list controllers
+        Object displayController = ClientHandler.getClient().getActiveDisplayController();
+
+        if (displayController instanceof GuestWaitingListController guestCtrl) {
+            Platform.runLater(() -> guestCtrl.loadTimes(times));
+            return;
+        }
+
+        if (displayController instanceof SubscriberWaitingListController subCtrl) {
+        	System.out.println(">>> USING NEW GetAvailableTimesHandler <<<");
+            Platform.runLater(() -> subCtrl.loadTimes(times));
+            return;
+        }
+
+        System.out.println("ERROR: No active controller found for available times");
     }
 }
+
