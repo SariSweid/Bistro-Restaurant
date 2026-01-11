@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import enums.ExitReason;
+import enums.WaitingStatus;
 /**
  * WaitingListEntry class represents an entry in the waiting list
  */
@@ -17,13 +18,11 @@ public class WaitingListEntry implements Serializable {
 	private LocalDate WaitDate;
 	private LocalTime WaitTime;
 	private ExitReason exitReason; // why the customer left the waiting list
-	
-	
-	
+	private WaitingStatus status;   // WAITING / NOTIFIED / SEATED
 	
 	
 	public WaitingListEntry(Integer userID, String email, String phone, int numOfGuests, int confirmationCode,
-			LocalDate waitDate, LocalTime waitTime, ExitReason exitReason) {
+			LocalDate waitDate, LocalTime waitTime, ExitReason exitReason, WaitingStatus status) {
 		
 		
 		this.userID = userID;
@@ -34,28 +33,15 @@ public class WaitingListEntry implements Serializable {
 		WaitDate = waitDate;
 		WaitTime = waitTime;
 		this.exitReason = exitReason;
+		this.status = status;
 	}
-
-	
-	
-
 
 	
 	//getters
 	
-	public int getUserId() {
-	    return this.userID;
-	}
-	
-
-	
 	public Integer getUserID() {
 		return userID;
 	}
-
-
-
-
 
 
 	public void setUserID(Integer userID) {
@@ -63,35 +49,18 @@ public class WaitingListEntry implements Serializable {
 	}
 
 
-
-
-
-
 	public String getEmail() {
 		return Email;
 	}
-
-
-
-
 
 
 	public void setEmail(String email) {
 		Email = email;
 	}
 
-
-
-
-
-
 	public String getPhone() {
 		return phone;
 	}
-
-
-
-
 
 
 	public void setPhone(String phone) {
@@ -99,17 +68,9 @@ public class WaitingListEntry implements Serializable {
 	}
 
 
-
-
-
-
 	public LocalDate getWaitDate() {
 		return WaitDate;
 	}
-
-
-
-
 
 
 	public void setWaitDate(LocalDate waitDate) {
@@ -117,26 +78,13 @@ public class WaitingListEntry implements Serializable {
 	}
 
 
-
-
-
-
 	public LocalTime getWaitTime() {
 		return WaitTime;
 	}
 
-
-
-
-
-
 	public void setWaitTime(LocalTime waitTime) {
 		WaitTime = waitTime;
 	}
-
-
-
-
 
 
 	public void setNumOfGuests(int numOfGuests) {
@@ -144,17 +92,16 @@ public class WaitingListEntry implements Serializable {
 	}
 
 
-
 	public void setConfirmationCode(int confirmationCode) {
 		this.confirmationCode = confirmationCode;
 	}
-
 
 
 	public void setExitReason(ExitReason exitReason) {
 		this.exitReason = exitReason;
 	}
 
+	
 
 	public int getNumOfGuests() {
 		return this.numOfGuests;
@@ -164,7 +111,6 @@ public class WaitingListEntry implements Serializable {
 		return this.confirmationCode;
 	}
 	
-
 	
 	public ExitReason getExitReason() {
 		return this.exitReason;
@@ -173,4 +119,16 @@ public class WaitingListEntry implements Serializable {
 	public void exit(ExitReason exitReason) {
 		this.exitReason = exitReason;
 	}
+
+
+	public void setStatus(WaitingStatus status) {
+	    this.status = status;
+	}
+	
+	public WaitingStatus getStatus() {
+		return status;
+	}
+
+
+
 }

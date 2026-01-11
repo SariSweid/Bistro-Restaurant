@@ -28,8 +28,8 @@ public class TableDAO extends DBController {
      * @return true if the update succeeded, false otherwise
      */
     public boolean updateTableIsAvailable(int tableId, boolean isAvailable) {
-        Connection con = getConnection();
-        try (PreparedStatement pst = con.prepareStatement(
+        try(Connection con = getConnection();
+        		PreparedStatement pst = con.prepareStatement(
                 "UPDATE `table` SET IsAvailable = ? WHERE TableId = ?"
         )) {
             pst.setBoolean(1, isAvailable);
@@ -226,55 +226,43 @@ public class TableDAO extends DBController {
 
 	
 	/**
-	 * Assigns a waiting customer to an available table if possible.
-	 *
-	 * @return true if a waiting customer was successfully assigned, false otherwise
+	 * Finds an available table for a given number of guests at a specific date and time.
+	 * Returns null if no table is available.
 	 */
-	public Boolean notifyTableIsAvailable() throws SQLException {
+	public Table getAvailableTableAtTime(int numOfGuests, LocalDate date, LocalTime time) {
 	    Connection con = getConnection();
-	    
 
-	    try {
-	       PreparedStatement pst1 = con.prepareStatement("SELECT userID, numOfGuests FROM waitinglist LIMIT 1"); // first we  check if there is waitings
-	        ResultSet rs = pst1.executeQuery();
+	    try (PreparedStatement pst = con.prepareStatement(
+	        "SELECT t.TableId, t.Capacity, t.IsAvailable " +
+	        "FROM `table` t " +
+	        "LEFT JOIN reservation r ON t.TableId = r.TableId " +
+	        "   AND r.reservationDate = ? " +
+	        "   AND r.reservationTime = ? " +
+	        "   AND r.status IN ('PENDING','CONFIRMED','SEATED') " +
+	        "WHERE t.Capacity >= ? AND r.TableId IS NULL " +
+	        "ORDER BY t.Capacity ASC LIMIT 1"
+	    )) {
+	        pst.setDate(1, java.sql.Date.valueOf(date));
+	        pst.setTime(2, java.sql.Time.valueOf(time));
+	        pst.setInt(3, numOfGuests);
 
-	        if (!rs.next()) 
-	            return false; 
-	        
-	        int userID = rs.getInt("userID");
-	        int numGuests = rs.getInt("numOfGuests");
-	        
+	        ResultSet rs = pst.executeQuery();
+	        if (rs.next()) {
+	            int tableId = rs.getInt("TableId");
+	            int capacity = rs.getInt("Capacity");
+	            boolean isAvailable = rs.getBoolean("IsAvailable"); // general availability
+	            return new Table(tableId, capacity, isAvailable);
+	        }
 
-
-	        PreparedStatement pst2 = con.prepareStatement("SELECT TableId FROM `table`  WHERE IsAvailable=1 AND capacity >= ? ORDER BY capacity LIMIT 1"); // than we search for him a table
-	        pst2.setInt(1, numGuests);
-
-	        ResultSet rs2 = pst2.executeQuery();
-	        if (!rs2.next()) 
-	           return false; 
-	        
-
-	        int tableId = rs2.getInt("TableId");
-
-	        PreparedStatement pst3 = con.prepareStatement("DELETE FROM waitinglist WHERE userID=?"); // we remove him from the waiting list
-	        pst3.setInt(1, userID);
-	        int deleted = pst3.executeUpdate();
-
-	        
-	        PreparedStatement pst4 = con.prepareStatement("UPDATE `table` SET IsAvailable=0 WHERE TableId=?"); // update the table that he is taken
-	        pst4.setInt(1, tableId);
-	        int updated = pst4.executeUpdate();
-	        
-	        return deleted > 0 && updated > 0;
-
-	        
-
-	    } catch (Exception e) {
-        	System.err.println("SQL Exception during update: " + e.getMessage());
-        	e.printStackTrace();
-        	return false;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
 	    }
+
+	    return null; // no table available
 	}
+
+
+
 	
 	/**
 	 * Frees the table assigned to a reservation and updates the reservation status to COMPLETED.
@@ -360,4 +348,6 @@ public class TableDAO extends DBController {
 		
 		return r; // There isnt Res with this ID.
 	}
+
+
 }

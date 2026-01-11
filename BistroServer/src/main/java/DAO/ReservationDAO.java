@@ -368,9 +368,9 @@ public class ReservationDAO extends DBController {
      * @return true if insertion succeeded, false otherwise
      */
     public boolean insertReservation(Reservation r) {
-        Connection con = getConnection();
+    		try (Connection con = getConnection();
 
-        try (PreparedStatement pst = con.prepareStatement(
+    			PreparedStatement pst = con.prepareStatement(
                 "INSERT INTO `reservation` " + 
                 "(customerID, tableId, billId, numOfGuests, confirmationCode, reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime, status) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -378,7 +378,12 @@ public class ReservationDAO extends DBController {
         )) {
 
         	
-            pst.setInt(1, r.getCustomerId());
+	        	if (r.getCustomerId() != null) {
+	        	    pst.setInt(1, r.getCustomerId());
+	        	} else {
+	        	    pst.setNull(1, java.sql.Types.INTEGER);
+	        	}
+
             pst.setObject(2, r.getTableID(), java.sql.Types.INTEGER);
             pst.setObject(3, r.getBillID(), java.sql.Types.INTEGER);
             pst.setInt(4, r.getNumOfGuests());
@@ -406,6 +411,36 @@ public class ReservationDAO extends DBController {
         }
     }
     
+    
+    public int createPendingReservation(int userId, Integer tableId, int numGuests) {
+        try (Connection con = getConnection();
+             PreparedStatement pst = con.prepareStatement(
+                 "INSERT INTO reservation (customerID, TableId, numOfGuests, status, reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime) " +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                 PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            LocalDate nowDate = LocalDate.now();
+            LocalTime nowTime = LocalTime.now();
+
+            pst.setInt(1, userId);
+            pst.setInt(2, tableId);
+            pst.setInt(3, numGuests);
+            pst.setString(4, "PENDING");
+            pst.setDate(5, java.sql.Date.valueOf(nowDate));
+            pst.setTime(6, java.sql.Time.valueOf(nowTime));
+            pst.setDate(7, java.sql.Date.valueOf(nowDate));
+            pst.setTime(8, java.sql.Time.valueOf(nowTime));
+
+            pst.executeUpdate();
+            ResultSet rs = pst.getGeneratedKeys();
+            if (rs.next()) return rs.getInt(1);
+            return -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
     
     /**
      * Retrieves the count of reservations between two dates.

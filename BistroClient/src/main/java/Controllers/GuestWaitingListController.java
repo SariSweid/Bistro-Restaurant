@@ -6,11 +6,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import Entities.Reservation;
+import enums.ActionType;
+import enums.UserRole;
+import handlers.AddWaitingHandler;
 import handlers.ClientHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import messages.RegisterRequest;
 import util.SceneManager;
 
 /**
@@ -25,7 +29,6 @@ public class GuestWaitingListController extends  BaseDisplayController{
 
     @FXML
     private ComboBox<String> timeComboBox;
-
     
     
     @FXML
@@ -38,7 +41,7 @@ public class GuestWaitingListController extends  BaseDisplayController{
     public void initialize() {
     	
     		ClientHandler.getClient().setActiveDisplayController(this);
-    	
+    		 
         LocalTime start = LocalTime.of(10, 0);
         LocalTime end = LocalTime.of(20, 0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -65,8 +68,7 @@ public class GuestWaitingListController extends  BaseDisplayController{
         try {
             int numOfGuests = Integer.parseInt(numberOfDiners.getText().trim());
             String contactInfo = emailOrPhone.getText().trim();
-            String timeStr = timeComboBox.getValue();
-            LocalTime selectedTime = LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm"));
+            LocalTime selectedTime = LocalTime.parse(timeComboBox.getValue(), DateTimeFormatter.ofPattern("HH:mm"));
             LocalDate selectedDate = LocalDate.now();
 
             String email = null;
@@ -81,16 +83,46 @@ public class GuestWaitingListController extends  BaseDisplayController{
                 return;
             }
 
-            Integer userID = null; // guest
+            // Generate guest ID and register guest
+            int guestId = generateUniqueGuestId();
+            RegisterRequest register = new RegisterRequest(
+                    guestId, null, email, phone, null, 0, UserRole.GUEST
+            );
+            ClientHandler.getClient().register(register);
 
-             ClientHandler.getClient().addWaitingList(userID, email, phone, numOfGuests, selectedDate, selectedTime);
-
-            showAlert("Reservation Confirmed", "You have been added to the waiting list.");
+            // Use the real userID for waiting list
+            ClientHandler.getClient().addWaitingList(
+                    guestId, email, phone, numOfGuests, selectedDate, selectedTime
+            );
 
         } catch (NumberFormatException e) {
             showAlert("Invalid Input", "Please enter a valid number of guests.");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private int generateUniqueGuestId() {
+        return 10000 + (int)(Math.random() * 10000);
+    }
+
+
+    @FXML
+    private void onRemoveFromWaitingList() {
+        String codeText = confirmationCodeField.getText();
+        if (codeText == null || codeText.isEmpty()) {
+            showAlert("Error", "Please enter your confirmation code.");
+            return;
+        }
+
+        try {
+            int code = Integer.parseInt(codeText);
+
+          
+            ClientHandler.getClient().cancelWaiting(code);
+
+        } catch (NumberFormatException e) {
+            showAlert("Error", "Invalid confirmation code.");
         }
     }
     
@@ -121,6 +153,14 @@ public class GuestWaitingListController extends  BaseDisplayController{
         confirmationCodeField.clear();
     }
 
+    public TextField getConfirmationCodeField() {
+		return confirmationCodeField;
+	}
+
+	public void setConfirmationCodeField(TextField confirmationCodeField) {
+		this.confirmationCodeField = confirmationCodeField;
+	}
+	
     /**
      * Determines if the input string is a valid phone number.
      * @param input the string to check

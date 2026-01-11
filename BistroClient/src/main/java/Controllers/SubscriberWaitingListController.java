@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import Entities.Reservation;
+import Entities.User;
 import handlers.ClientHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -61,13 +62,35 @@ public class SubscriberWaitingListController extends  BaseDisplayController {
             String timeStr = timeComboBox.getValue();
             LocalTime selectedTime = LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm"));
 
-            Integer userID = ClientHandler.getClient().getCurrentUserId();
+            if (selectedDate == null) {
+                showAlert("Invalid Input", "Please select a date.");
+                return;
+            }
+            if (numOfGuests <= 0) {
+                showAlert("Invalid Input", "Number of diners must be greater than zero.");
+                return;
+            }
 
-            ClientHandler.getClient().addWaitingList(userID, null,null, numOfGuests, selectedDate, selectedTime);
+            // Get current user (Subscriber) from ClientHandler
+            User currentUser = ClientHandler.getClient().getCurrentUser();
+            if (currentUser == null) {
+                showAlert("Error", "No logged-in user.");
+                return;
+            }
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Reservation Confirmed");
-            alert.showAndWait();
+            Integer userID = currentUser.getUserId();
+            String email = currentUser.getEmail();
+            String phone = currentUser.getPhone();
+
+            // Send request to server, handled by AddWaitingHandler
+            ClientHandler.getClient().addWaitingList(
+                    userID,
+                    email,
+                    phone,
+                    numOfGuests,
+                    selectedDate,
+                    selectedTime
+            );
 
         } catch (NumberFormatException e) {
             showAlert("Invalid Input", "Please enter a valid number of diners.");
@@ -75,6 +98,9 @@ public class SubscriberWaitingListController extends  BaseDisplayController {
             e.printStackTrace();
         }
     }
+
+
+
     
     public void clearAddFields() {
         numberOfDiners.clear();

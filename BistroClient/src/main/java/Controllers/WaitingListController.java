@@ -44,7 +44,7 @@ public class WaitingListController {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        idColumn.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getUserId()).asObject());
+        idColumn.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getUserID()).asObject());
         emailColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEmail()));
         phoneColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPhone()));
         dateColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getWaitDate().format(dateFormatter)));

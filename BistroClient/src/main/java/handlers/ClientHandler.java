@@ -272,7 +272,7 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.SEAT_CUSTOMER, req));
     }
 
-    public void addWaitingList(int userID, String email, String phone, int numOfGuests, LocalDate date, LocalTime time) {
+    public void addWaitingList(Integer userID, String email, String phone, int numOfGuests, LocalDate date, LocalTime time) {
         //connect();
         AddToWaitingListRequest req = new AddToWaitingListRequest(userID, email, phone, numOfGuests, date, time);
         sendRequest(new Message(ActionType.ADD_TO_WAITING_LIST, req));

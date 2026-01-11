@@ -45,6 +45,9 @@
 
             <Label text="Time:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
             <ComboBox fx:id="timeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-background-radius: 10;"/>
+            
+            <Label text="Confirmation Code:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+            <TextField fx:id="confirmationCodeField" promptText="Enter code" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
         </children>
 
         <rowConstraints>
@@ -58,7 +61,7 @@
     <Button onAction="#ontakeplace" prefWidth="180.0"
             style="-fx-background-radius: 15; -fx-background-color: #deb887; -fx-text-fill: white; -fx-font-weight: bold;"
             text="Take a Place!"/>
-
+	<Button fx:id="removeButton" onAction="#onRemoveFromWaitingList" text="Remove from Waiting List" style="-fx-background-radius: 15; -fx-background-color: #ff6b6b; -fx-text-fill: white;"/>
     <Button onAction="#onPreviousPage" prefWidth="140.0"
             style="-fx-background-radius: 15; -fx-background-color: #deb887; -fx-text-fill: white; -fx-font-weight: bold;"
             text="Previous Page"/>

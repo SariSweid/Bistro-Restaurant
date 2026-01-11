@@ -61,6 +61,29 @@ public class RestaurantSettingsController {
 	}
 	
 	/**
+	 * Returns the opening hours for a specific date.
+	 * Special dates override weekly hours.
+	 */
+	public WeeklyOpeningHours getOpeningHoursForDate(LocalDate date) {
+
+	    // Check special dates override
+	    for (SpecialDates sp : restaurantSettings.getSpecialDates()) {
+	        if (sp.getDate().equals(date)) {
+	            return new WeeklyOpeningHours(
+	                sp.getOpeningTime(),
+	                sp.getClosingTime(),
+	                Day.valueOf(date.getDayOfWeek().name())
+	            );
+	        }
+	    }
+
+	    // Otherwise use weekly hours
+	    Day day = Day.valueOf(date.getDayOfWeek().name());
+	    return restaurantSettings.getOpeningHoursForDay(day);
+	}
+
+	
+	/**
 	 * update opening and closing hours of a given weekday
 	 * @param hours
 	 * @return true if the opening and closing hours were updated in the db
