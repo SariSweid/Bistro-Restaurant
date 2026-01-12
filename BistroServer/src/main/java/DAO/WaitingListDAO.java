@@ -104,6 +104,8 @@ public class WaitingListDAO extends DBController {
 	}
 	
 	
+	
+	
 	public int getWaitlistSubscriberCountBetween(LocalDate start, LocalDate end) {
 
 	    Connection con = getConnection();
@@ -125,7 +127,44 @@ public class WaitingListDAO extends DBController {
 
 	    return 0;
 	}
+	public List<WaitingListEntry> getWaitingEntriesWithoutExitReason() {
 
+	    List<WaitingListEntry> list = new ArrayList<>();
+	    Connection con = getConnection();
+
+	    try (PreparedStatement pst = con.prepareStatement(
+	            "SELECT * FROM waitinglist WHERE exitReason IS NULL")) {
+
+	        ResultSet rs = pst.executeQuery();
+
+	        while (rs.next()) {
+
+	            WaitingListEntry entry = new WaitingListEntry(
+	                    rs.getInt("userID"),
+	                    rs.getString("Email"),
+	                    rs.getString("Phone"),
+	                    rs.getInt("numOfGuests"),
+	                    rs.getInt("confirmationCode"),
+	                    rs.getDate("WaitDate").toLocalDate(),
+	                    rs.getTime("WaitTime").toLocalTime(),
+	                    null,
+	                    WaitingStatus.WAITING
+	            );
+
+	            list.add(entry);
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return list;
+	}
+
+
+
+	
+	
 
 
 	
