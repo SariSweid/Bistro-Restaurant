@@ -43,7 +43,7 @@ public class WaitingListController {
         Table table = tableDAO.getAvailableTableAtTime(numOfGuests, date, time);
 
         if (table != null) {
-            // Table available → create PENDING reservation
+            // Table available → create CONFIRMED reservation
             int confirmationCode = generateConfirmationCode();
 
             Reservation reservation = new Reservation(
@@ -57,7 +57,7 @@ public class WaitingListController {
                     time,
                     LocalDate.now(),
                     LocalTime.now(),
-                    ReservationStatus.PENDING
+                    ReservationStatus.CONFIRMED
             );
 
             if (!reservationDAO.insertReservation(reservation)) {
@@ -115,14 +115,14 @@ public class WaitingListController {
 
 
     /**
-     * Cancels a PENDING reservation after 15 minutes if not SEATED
+     * Cancels a CONFIRMED reservation after 15 minutes if not SEATED
      */
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
     private void scheduleAutoCancel(int reservationID) {
         scheduler.schedule(() -> {
             try {
                 Reservation r = reservationDAO.GetReservation(reservationID);
-                if (r != null && r.getStatus() == ReservationStatus.PENDING) {
+                if (r != null && r.getStatus() == ReservationStatus.CONFIRMED) {
                     boolean cancelled = reservationDAO.cancelReservationInDB(reservationID);
                     if (cancelled) {
                         tableDAO.updateTableIsAvailable(r.getTableID(), true);

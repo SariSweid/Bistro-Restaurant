@@ -43,9 +43,6 @@ public class WaitingListDAO extends DBController {
 	        ExitReason exitReason =
 	                exitStr != null ? ExitReason.valueOf(exitStr) : null;
 
-	        WaitingStatus status =
-	                WaitingStatus.valueOf(rs.getString("status"));
-
 	        return new WaitingListEntry(
 	                userId,
 	                email,
@@ -54,8 +51,7 @@ public class WaitingListDAO extends DBController {
 	                confirmationCode,
 	                waitDate,
 	                waitTime,
-	                exitReason,
-	                status
+	                exitReason
 	        );
 
 	    } catch (SQLException e) {
