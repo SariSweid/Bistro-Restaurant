@@ -249,57 +249,80 @@ public class ReservationDAO extends DBController {
      *
      * @return a list of all reservations
      */
-    public List<Reservation> readAllReservations() {
-    	
-    	List<Reservation> reservations = new ArrayList<>(); // made new list to return
-    	Connection con = getConnection(); //connect to DB
-    	
-    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation`")){ // ask from DB the all Orders 
-    		
-    		ResultSet rs = pst.executeQuery();
-    		
-    		while(rs.next()) { // read from DB
-    			
-    			int reservationID  = rs.getInt("reservationID");
-    			Date reservationDate  = rs.getDate("reservationDate"); 
-    			Time reservationTime  = rs.getTime("reservationTime");
-    			int numOfGuests  = rs.getInt("numOfGuests");
-    			int confirmation_code = rs.getInt("confirmationCode");
-    			enums.ReservationStatus status = enums.ReservationStatus.valueOf(rs.getString("status"));
-    			int customerID  = rs.getInt("customerID");
-    			int tableID  = rs.getInt("TableId");
-    			int billID  = rs.getInt("BillId");
-    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
-    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
+	public List<Reservation> readAllReservations() {
 
-    			
-    			//conver date and time to local
-    			LocalDate resDate = reservationDate.toLocalDate();
-    			LocalTime resTime = reservationTime.toLocalTime();
-    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
-    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
-    			
-    			Reservation r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
-    											,resDate,resTime,placedDate,placedTime,status);
-    			
-                reservations.add(r);
-    			
-    		}
-    		
-    		for (Reservation r : reservations) {
-    		    System.out.println(r);
-    		}
-    		
-    		
-    	} catch (SQLException e) {
+	    List<Reservation> reservations = new ArrayList<>();
+	    Connection con = getConnection();
 
-			e.printStackTrace();
-		}
-    	
-    	
-		return reservations;    	
-    }
-    
+	    try (PreparedStatement pst =
+	                 con.prepareStatement("SELECT * FROM `reservation`")) {
+
+	        ResultSet rs = pst.executeQuery();
+
+	        while (rs.next()) {
+
+	            int reservationID = rs.getInt("reservationID");
+
+	            Date reservationDate = rs.getDate("reservationDate");
+	            Time reservationTime = rs.getTime("reservationTime");
+
+	            int numOfGuests = rs.getInt("numOfGuests");
+	            int confirmation_code = rs.getInt("confirmationCode");
+
+	            enums.ReservationStatus status =
+	                    enums.ReservationStatus.valueOf(rs.getString("status"));
+
+	            int customerID = rs.getInt("customerID");
+	            int tableID = rs.getInt("TableId");
+
+	            Integer billID = rs.getObject("BillId", Integer.class);
+
+	            Date reservationPlacedDate = rs.getDate("reservationPlacedDate");
+	            Time reservationPlacedTime = rs.getTime("reservationPlacedTime");
+
+	            Time actualArrivalTimeDB = rs.getTime("actualArrivalTime");
+
+	            LocalDate resDate = reservationDate.toLocalDate();
+	            LocalTime resTime = reservationTime.toLocalTime();
+
+	            LocalDate placedDate = reservationPlacedDate.toLocalDate();
+	            LocalTime placedTime = reservationPlacedTime.toLocalTime();
+
+	            LocalTime actualArrivalTime = null;
+	            if (actualArrivalTimeDB != null) {
+	                actualArrivalTime = actualArrivalTimeDB.toLocalTime();
+	            }
+
+	            Reservation r = new Reservation(
+	                    reservationID,
+	                    customerID,
+	                    tableID,
+	                    billID,
+	                    numOfGuests,
+	                    confirmation_code,
+	                    resDate,
+	                    resTime,
+	                    placedDate,
+	                    placedTime,
+	                    status
+	            );
+
+	            r.setActualArrivalTime(actualArrivalTime);
+
+	            reservations.add(r);
+	        }
+
+	        for (Reservation r : reservations) {
+	            System.out.println(r);
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return reservations;
+	}
+
     public boolean isSubscriberByReservationId(int reservationID) {
     	Connection con = getConnection();
         boolean result = false;

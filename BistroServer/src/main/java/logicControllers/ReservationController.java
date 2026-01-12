@@ -180,10 +180,11 @@ public class ReservationController {
 
     public boolean cancelReservation(User user, Integer reservationId, Integer confirmationCode, Integer guestId) {
         Reservation r = null;
-        if (user != null && 
-        		(user.getRole() == UserRole.SUBSCRIBER || 
-        		user.getRole() == UserRole.SUPERVISOR ||
-        		user.getRole() == UserRole.MANAGER)) {
+
+        if (user != null &&
+                (user.getRole() == UserRole.SUBSCRIBER ||
+                 user.getRole() == UserRole.SUPERVISOR ||
+                 user.getRole() == UserRole.MANAGER)) {
             r = resdb.GetReservation(reservationId);
             if (r == null || r.getCustomerId() != user.getUserId()) return false;
         } else if (guestId != null) {
@@ -197,8 +198,18 @@ public class ReservationController {
         if (r.getStatus() == ReservationStatus.CANCELLED) return false;
 
         r.setStatus(ReservationStatus.CANCELLED);
-        return resdb.cancelReservationInDB(r.getReservationID());
+
+        
+        boolean cancelled = resdb.cancelReservationInDB(r.getReservationID());
+
+        if (cancelled) {
+            
+            tabledb.updateTableIsAvailable(r.getTableID(), true);  
+        }
+
+        return cancelled;
     }
+
 
     public Reservation getReservationByCode(int code) {
         List<Reservation> all = resdb.readAllReservations();

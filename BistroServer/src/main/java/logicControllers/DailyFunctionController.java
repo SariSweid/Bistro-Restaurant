@@ -155,13 +155,21 @@ public class DailyFunctionController implements Runnable {
     }
 
     private void handleBillGeneration() {
+    	
         List<Reservation> reservations = reservationDAO.readAllReservations();
         LocalDateTime now = LocalDateTime.now();
 
         for (Reservation r : reservations) {
+        	System.out.println("ID=" + r.getReservationID());
+        	System.out.println("STATUS=" + r.getStatus());
+        	System.out.println("ARRIVAL=" + r.getActualArrivalTime());
+        	System.out.println("BILL=" + r.getBillID());
+
+        	
             if (r.getStatus() != ReservationStatus.SEATED ||
                 r.getActualArrivalTime() == null ||
                 r.getBillID() != null)
+            	
                 continue;
 
             LocalDateTime arrivalDateTime =
