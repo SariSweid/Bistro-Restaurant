@@ -158,13 +158,10 @@ public class ServerController extends AbstractServer {
         // Command: Get Waiting List Between Dates
         commands.put(ActionType.GET_WAITING_LIST_BETWEEN_DATES, new GetWaitingListBetweenDatesCommand());
         
-<<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project
         commands.put(ActionType.CREATE_OPENING_HOURS, new CreateOpeningHoursCommand());
         commands.put(ActionType.REMOVE_OPENING_HOURS, new RemoveOpeningHoursCommand());
         
         
-=======
->>>>>>> 49ac2d1 fix + added delete special date button
         
     }
     

@@ -187,12 +187,9 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.GET_WAITING_LIST_BETWEEN_DATES, new WeeklyWaitingListHandler(null));
         handlers.put(ActionType.ADD_TO_WAITING_LIST, new AddWaitingHandler());
         handlers.put(ActionType.CANCEL_WAITING, new CancelWaitingHandler());
-<<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project
         handlers.put(ActionType.CREATE_OPENING_HOURS, new CreateOpeningHoursHandler());
         handlers.put(ActionType.REMOVE_OPENING_HOURS, new DeleteOpeningHoursHandler());
-=======
     
->>>>>>> 49ac2d1 fix + added delete special date button
     }
 
     private void sendRequest(Message msg) {

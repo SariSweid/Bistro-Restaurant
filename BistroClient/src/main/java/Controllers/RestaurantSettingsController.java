@@ -294,8 +294,7 @@ public class RestaurantSettingsController {
         }
     }
     
-<<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project
-=======
+    
     @FXML
     public void deleteSpecialDate() {
     	SpecialDates selected = specialDatesTable.getSelectionModel().getSelectedItem();
@@ -315,7 +314,6 @@ public class RestaurantSettingsController {
     }
     
     
->>>>>>> 49ac2d1 fix + added delete special date button
     
 
     @FXML

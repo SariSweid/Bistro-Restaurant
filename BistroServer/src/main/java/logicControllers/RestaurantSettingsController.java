@@ -67,13 +67,14 @@ public class RestaurantSettingsController {
 		restaurantSettings.setWeeklyOpeningHours(hoursList);
 		return hoursList;
 	}
-<<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project
 
     public List<SpecialDates> getAllSpecialDates() {
         List<SpecialDates> specialList = SPdao.getAllSpecialDates();
         restaurantSettings.setSpecialDates(specialList);
         return specialList;
     }
+    
+    
 
     public boolean addSpecialDate(AddSpecialDateRequest specialDate) {
     	
@@ -81,14 +82,7 @@ public class RestaurantSettingsController {
         return SPdao.addSpecialDates(specialDate.getSpecialDate());
     }
 
-    public boolean updateSpecialDate(LocalDate oldDate, SpecialDates specialDate) {
-        boolean flag = SPdao.updateSpecialDates(oldDate, specialDate);
-        if (flag) {
-            restaurantSettings.getSpecialDates().removeIf(s -> s.getDate().equals(oldDate));
-            restaurantSettings.addSpecialDate(specialDate);
-        }
-        return flag;
-    }
+    
 
     /**
      * Creates a new weekly opening hours entry for a day.
@@ -141,18 +135,9 @@ public class RestaurantSettingsController {
         return restaurantSettings.getWeeklyOpeningHours().stream()
                 .anyMatch(h -> h.getDay() == day);
     }
-=======
+
 	
-	/**
-	 * @return all special dates
-	 */
-	public List<SpecialDates> getAllSpecialDates(){
-		List<SpecialDates> specialList = new ArrayList<>();
-		specialList = SPdao.getAllSpecialDates();
-		System.out.println(specialList);
-		restaurantSettings.setSpecialDates(specialList);
-		return specialList;
-	}
+	
 	
 	/**
 	 * add special date to the restaurant
@@ -194,5 +179,5 @@ public class RestaurantSettingsController {
 		return flag;
 	}
 	
->>>>>>> 49ac2d1 fix + added delete special date button
+	
 }
