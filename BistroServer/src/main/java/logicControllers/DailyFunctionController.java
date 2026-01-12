@@ -14,15 +14,14 @@ import util.PaymentResult;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
+public class DailyFunctionController implements Runnable {
 
-public class DailyFunctionController extends TimerTask {
-
-    private static Timer timer = new Timer(true);
+    private static final int CHECK_INTERVAL_MS = 60 * 1000; // 1 minute
     private static final Object lock = new Object();
+
+    private boolean isRunning = false;
+    private Thread workerThread;
 
     private final ReservationDAO reservationDAO = new ReservationDAO();
     private final TableDAO tableDAO = new TableDAO();
@@ -30,31 +29,47 @@ public class DailyFunctionController extends TimerTask {
     private final WaitingListDAO waitingListDAO = new WaitingListDAO();
     private final PaymentController paymentController = new PaymentController();
 
-    public static void startDailyTimer() {
-        timer.scheduleAtFixedRate(
-                new DailyFunctionController(),
-                0,
-                TimeUnit.MINUTES.toMillis(1)
-        );
+    /* ================= CONTROL ================= */
+
+    public void start() {
+        if (!isRunning) {
+            isRunning = true;
+            workerThread = new Thread(this, "DailyFunctionWatchdog");
+            workerThread.start();
+            System.out.println("[Watchdog] DailyFunctionController started");
+        }
     }
 
-    public static void stopTimer() {
-        timer.cancel();
-        timer = new Timer(true);
+    public void stop() {
+        isRunning = false;
+        System.out.println("[Watchdog] DailyFunctionController stopped");
     }
+
+    /* ================= MAIN LOOP ================= */
 
     @Override
     public void run() {
-        synchronized (lock) {
+        while (isRunning) {
             try {
-                handleNoShows();
-                handleWaitingList();
-                handleBillGeneration();
+                synchronized (lock) {
+                    handleNoShows();
+                    handleWaitingList();
+                    cancelExpiredWaitingListEntries();
+                    handleBillGeneration();
+                }
+
+                Thread.sleep(CHECK_INTERVAL_MS);
+
+            } catch (InterruptedException e) {
+                isRunning = false;
             } catch (Exception e) {
+                System.err.println("[Watchdog] Error: " + e.getMessage());
                 e.printStackTrace();
             }
         }
     }
+
+    /* ================= LOGIC ================= */
 
     private void handleNoShows() {
         List<Reservation> reservations = reservationDAO.readAllReservations();
@@ -84,17 +99,8 @@ public class DailyFunctionController extends TimerTask {
         }
     }
 
-
-    /**
-     * Creates a reservation for the first waiting list entry (FIFO)
-     * if a suitable table is available.
-     *
-     * Each waiting list entry is handled at most once.
-     */
     private void handleWaitingList() {
-
         WaitingListEntry entry = waitingListDAO.getNextWaitingEntry();
-
         if (entry == null)
             return;
 
@@ -119,7 +125,6 @@ public class DailyFunctionController extends TimerTask {
         );
 
         reservation.setTableID(availableTable.getTableID());
-
         reservationDAO.insertReservation(reservation);
 
         availableTable.occupy();
@@ -130,21 +135,18 @@ public class DailyFunctionController extends TimerTask {
                 ExitReason.SEATED
         );
     }
-    
-    private void cancelExpiredWaitingListEntries() {
 
+    private void cancelExpiredWaitingListEntries() {
         List<WaitingListEntry> waitingList =
                 waitingListDAO.getWaitingEntriesWithoutExitReason();
 
         LocalDateTime now = LocalDateTime.now();
 
         for (WaitingListEntry entry : waitingList) {
-
             LocalDateTime entryDateTime =
                     LocalDateTime.of(entry.getWaitDate(), entry.getWaitTime());
 
             if (entryDateTime.isBefore(now)) {
-
                 waitingListDAO.updateExitReasonByConfirmationCode(
                         entry.getConfirmationCode(),
                         ExitReason.CANCELLED
@@ -152,11 +154,6 @@ public class DailyFunctionController extends TimerTask {
             }
         }
     }
-
-
-
-
-
 
     private void handleBillGeneration() {
         List<Reservation> reservations = reservationDAO.readAllReservations();

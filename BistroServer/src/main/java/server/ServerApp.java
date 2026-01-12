@@ -33,7 +33,8 @@ public class ServerApp extends Application {
         }
         
         //  Start the DailyFunctionController timer
-        DailyFunctionController.startDailyTimer();
+        DailyFunctionController DailyFunction = new DailyFunctionController();
+        DailyFunction.start();   
 
         // 4. Show the window
         Scene scene = new Scene(root);
