@@ -39,64 +39,68 @@ public class ReservationController {
 	}
 
 
-    public List<LocalTime> getAvailableTimes(LocalDate date, int guests) {
+	public List<LocalTime> getAvailableTimes(LocalDate date, int guests) {
 
-        List<LocalTime> available = new ArrayList<>();
-        List<Table> tables = tabledb.GetAllTables();
+	    List<LocalTime> available = new ArrayList<>();
+	    List<Table> tables = tabledb.GetAllTables();
 
-        // Get dynamic opening hours for this date
-        WeeklyOpeningHours hours = settings.getOpeningHoursForDate(date);
+	    WeeklyOpeningHours hours = settings.getOpeningHoursForDate(date);
 
+	    if (hours == null) {
+	        return Collections.emptyList();
+	    }
 
-        if (hours == null) {
-            // Restaurant closed on this date
-            return Collections.emptyList();
-        }
+	    LocalTime openTime = hours.getOpeningTime();
+	    LocalTime closeTime = hours.getClosingTime();
+	    int reservationDuration = settings.getReservationDurationHours();
 
-        LocalTime openTime = hours.getOpeningTime();
-        LocalTime closeTime = hours.getClosingTime();
-        int reservationDuration = settings.getReservationDurationHours();
+	    int maxTableCapacity = tables.stream()
+	                                 .mapToInt(Table::getCapacity)
+	                                 .max()
+	                                 .orElse(0);
 
-        // Capacity checks
-        int maxTableCapacity = tables.stream()
-                                     .mapToInt(Table::getCapacity)
-                                     .max()
-                                     .orElse(0);
+	    if (guests > maxTableCapacity)
+	        return Collections.emptyList();
 
-        if (guests > maxTableCapacity) return Collections.emptyList();
+	    int totalCapacity = tables.stream()
+	                              .mapToInt(Table::getCapacity)
+	                              .sum();
 
-        int totalCapacity = tables.stream()
-                                  .mapToInt(Table::getCapacity)
-                                  .sum();
+	    LocalTime time = openTime;
 
-        // Same-day restriction: must be at least 1 hour from now
-        LocalTime time = openTime;
+	    if (date.equals(LocalDate.now())) {
+	        LocalTime oneHourFromNow = LocalTime.now().plusHours(1).withSecond(0).withNano(0);
 
-        if (date.equals(LocalDate.now())) {
-            LocalTime oneHourFromNow = LocalTime.now().plusHours(1).withSecond(0).withNano(0);
+	        if (oneHourFromNow.isAfter(time)) {
+	            int minute = oneHourFromNow.getMinute();
+	            if (minute > 0 && minute <= 30)
+	                oneHourFromNow = oneHourFromNow.withMinute(30);
+	            else if (minute > 30)
+	                oneHourFromNow = oneHourFromNow.plusHours(1).withMinute(0);
+	            else
+	                oneHourFromNow = oneHourFromNow.withMinute(0);
 
-            if (oneHourFromNow.isAfter(time)) {
-                int minute = oneHourFromNow.getMinute();
-                if (minute > 0 && minute <= 30) oneHourFromNow = oneHourFromNow.withMinute(30);
-                else if (minute > 30) oneHourFromNow = oneHourFromNow.plusHours(1).withMinute(0);
-                else oneHourFromNow = oneHourFromNow.withMinute(0);
+	            time = oneHourFromNow;
+	        }
+	    }
 
-                time = oneHourFromNow;
-            }
-        }
+	    LocalTime lastStart = closeTime.minusHours(reservationDuration);
 
-        // Generate times dynamically
-        LocalTime lastStart = closeTime.minusHours(reservationDuration);
+	    while (!time.isAfter(lastStart)) {
+	        if (hasCapacity(date, time, guests, totalCapacity)) {
+	            available.add(time);
+	        }
+	        time = time.plusMinutes(30);
+	    }
 
-        while (!time.isAfter(lastStart)) {
-            if (hasCapacity(date, time, guests, totalCapacity)) {
-                available.add(time);
-            }
-            time = time.plusMinutes(30);
-        }
+	    System.out.println("Available times for " + date + " (" + guests + " guests):");
+	    for (LocalTime t : available) {
+	        System.out.println(t);
+	    }
 
-        return available;
-    }
+	    return available;
+	}
+
 
 
     private boolean hasCapacity(LocalDate date, LocalTime time, int guests, int totalCapacity) {
