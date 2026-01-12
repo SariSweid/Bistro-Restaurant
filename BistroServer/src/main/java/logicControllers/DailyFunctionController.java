@@ -29,23 +29,22 @@ public class DailyFunctionController implements Runnable {
     private final WaitingListDAO waitingListDAO = new WaitingListDAO();
     private final PaymentController paymentController = new PaymentController();
 
-    /* ================= CONTROL ================= */
+
 
     public void start() {
         if (!isRunning) {
             isRunning = true;
             workerThread = new Thread(this, "DailyFunctionWatchdog");
             workerThread.start();
-            System.out.println("[Watchdog] DailyFunctionController started");
+            System.out.println("DailyFunctionController started");
         }
     }
 
     public void stop() {
         isRunning = false;
-        System.out.println("[Watchdog] DailyFunctionController stopped");
+        System.out.println("DailyFunctionController stopped");
     }
 
-    /* ================= MAIN LOOP ================= */
 
     @Override
     public void run() {
@@ -63,13 +62,13 @@ public class DailyFunctionController implements Runnable {
             } catch (InterruptedException e) {
                 isRunning = false;
             } catch (Exception e) {
-                System.err.println("[Watchdog] Error: " + e.getMessage());
+                System.err.println(" Error: " + e.getMessage());
                 e.printStackTrace();
             }
         }
     }
 
-    /* ================= LOGIC ================= */
+
 
     private void handleNoShows() {
         List<Reservation> reservations = reservationDAO.readAllReservations();
