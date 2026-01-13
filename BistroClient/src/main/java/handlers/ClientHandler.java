@@ -50,10 +50,19 @@ public class ClientHandler extends AbstractClient {
         initializeHandlers();
     }
 
+    //used for all classes other than MainMenuApp
     public static ClientHandler getClient() {
         if (instance == null) {
+        	return getClient("localhost");
+        }
+        return instance;
+    }
+    
+    //used only in MainMenuApp class
+    public static ClientHandler getClient(String host) {
+        if (instance == null) {
             try {
-                instance = new ClientHandler("localhost", 5555);
+                instance = new ClientHandler(host, 5555);
                 instance.connect();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -61,7 +70,7 @@ public class ClientHandler extends AbstractClient {
         }
         return instance;
     }
-
+    
     public void connect() {
         if (!connected) {
             try {
@@ -71,7 +80,7 @@ public class ClientHandler extends AbstractClient {
                 e.printStackTrace();
             }
         }
-    }//
+    }
 
     public void setCurrentUser(User user) {
         this.currentUser = user;
