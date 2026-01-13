@@ -71,7 +71,7 @@ public class ClientHandler extends AbstractClient {
                 e.printStackTrace();
             }
         }
-    }
+    }//
 
     public void setCurrentUser(User user) {
         this.currentUser = user;
