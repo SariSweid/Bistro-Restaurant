@@ -50,6 +50,11 @@ public class MonthYearSelectorController {
 
         SceneManager.switchTo("SubscribersReportUI.fxml"); 
     }
+    
+    @FXML
+    private void onPreviousPage() {
+        SceneManager.switchTo("ManagerUI.fxml");
+    }
 
 
     private boolean validateSelection() {

@@ -15,7 +15,7 @@
     </padding>
    <ImageView fx:id="logoImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
       <image>
-         <Image url="@../../../../../../../../../BistroLogo.png" />
+         <Image url="@/images/BistroLogo.png" />
       </image>
    </ImageView>
 

@@ -28,7 +28,12 @@ public enum ActionType {
     UPDATE_SPECIAL_DATE,
     UPDATE_OPENING_TIME,
     UPDATE_CLOSING_TIME,
+    CREATE_OPENING_HOURS,
+    REMOVE_OPENING_HOURS,    
+
+    DELETE_SPECIAL_DATE,
     
+
     // Tables
     INSERT_TABLE,
     UPDATE_TABLE,
@@ -40,5 +45,10 @@ public enum ActionType {
     PAY,
     
     // Reports
-    GET_REPORT
+    GET_REPORT,
+    
+    //Waiting List
+    ADD_TO_WAITING_LIST,
+    CANCEL_WAITING,
+    GET_WAITING_LIST_BETWEEN_DATES
 }

@@ -249,57 +249,80 @@ public class ReservationDAO extends DBController {
      *
      * @return a list of all reservations
      */
-    public List<Reservation> readAllReservations() {
-    	
-    	List<Reservation> reservations = new ArrayList<>(); // made new list to return
-    	Connection con = getConnection(); //connect to DB
-    	
-    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation`")){ // ask from DB the all Orders 
-    		
-    		ResultSet rs = pst.executeQuery();
-    		
-    		while(rs.next()) { // read from DB
-    			
-    			int reservationID  = rs.getInt("reservationID");
-    			Date reservationDate  = rs.getDate("reservationDate"); 
-    			Time reservationTime  = rs.getTime("reservationTime");
-    			int numOfGuests  = rs.getInt("numOfGuests");
-    			int confirmation_code = rs.getInt("confirmationCode");
-    			enums.ReservationStatus status = enums.ReservationStatus.valueOf(rs.getString("status"));
-    			int customerID  = rs.getInt("customerID");
-    			int tableID  = rs.getInt("TableId");
-    			int billID  = rs.getInt("BillId");
-    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
-    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
+	public List<Reservation> readAllReservations() {
 
-    			
-    			//conver date and time to local
-    			LocalDate resDate = reservationDate.toLocalDate();
-    			LocalTime resTime = reservationTime.toLocalTime();
-    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
-    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
-    			
-    			Reservation r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
-    											,resDate,resTime,placedDate,placedTime,status);
-    			
-                reservations.add(r);
-    			
-    		}
-    		
-    		for (Reservation r : reservations) {
-    		    System.out.println(r);
-    		}
-    		
-    		
-    	} catch (SQLException e) {
+	    List<Reservation> reservations = new ArrayList<>();
+	    Connection con = getConnection();
 
-			e.printStackTrace();
-		}
-    	
-    	
-		return reservations;    	
-    }
-    
+	    try (PreparedStatement pst =
+	                 con.prepareStatement("SELECT * FROM `reservation`")) {
+
+	        ResultSet rs = pst.executeQuery();
+
+	        while (rs.next()) {
+
+	            int reservationID = rs.getInt("reservationID");
+
+	            Date reservationDate = rs.getDate("reservationDate");
+	            Time reservationTime = rs.getTime("reservationTime");
+
+	            int numOfGuests = rs.getInt("numOfGuests");
+	            int confirmation_code = rs.getInt("confirmationCode");
+
+	            enums.ReservationStatus status =
+	                    enums.ReservationStatus.valueOf(rs.getString("status"));
+
+	            int customerID = rs.getInt("customerID");
+	            int tableID = rs.getInt("TableId");
+
+	            Integer billID = rs.getObject("BillId", Integer.class);
+
+	            Date reservationPlacedDate = rs.getDate("reservationPlacedDate");
+	            Time reservationPlacedTime = rs.getTime("reservationPlacedTime");
+
+	            Time actualArrivalTimeDB = rs.getTime("actualArrivalTime");
+
+	            LocalDate resDate = reservationDate.toLocalDate();
+	            LocalTime resTime = reservationTime.toLocalTime();
+
+	            LocalDate placedDate = reservationPlacedDate.toLocalDate();
+	            LocalTime placedTime = reservationPlacedTime.toLocalTime();
+
+	            LocalTime actualArrivalTime = null;
+	            if (actualArrivalTimeDB != null) {
+	                actualArrivalTime = actualArrivalTimeDB.toLocalTime();
+	            }
+
+	            Reservation r = new Reservation(
+	                    reservationID,
+	                    customerID,
+	                    tableID,
+	                    billID,
+	                    numOfGuests,
+	                    confirmation_code,
+	                    resDate,
+	                    resTime,
+	                    placedDate,
+	                    placedTime,
+	                    status
+	            );
+
+	            r.setActualArrivalTime(actualArrivalTime);
+
+	            reservations.add(r);
+	        }
+
+	        for (Reservation r : reservations) {
+	            System.out.println(r);
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return reservations;
+	}
+
     public boolean isSubscriberByReservationId(int reservationID) {
     	Connection con = getConnection();
         boolean result = false;
@@ -316,25 +339,6 @@ public class ReservationDAO extends DBController {
         return result;
     }
     
-    public int getWaitlistSubscriberReservationsBetween(LocalDate start, LocalDate end) {
-    	
-    	Connection con = getConnection();
-
-        try ( PreparedStatement pst = con.prepareStatement("SELECT COUNT(*) FROM reservation r JOIN user u ON r.customerID = u.UserId WHERE u.Role = 'SUBSCRIBER' AND r.status = 'WAITLIST' AND r.reservationDate BETWEEN ? AND ?")) {
-
-            pst.setDate(1, java.sql.Date.valueOf(start));
-            pst.setDate(2, java.sql.Date.valueOf(end));
-
-            ResultSet rs = pst.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
     
     public int getCompletedSubscriberReservationsBetween(LocalDate start, LocalDate end) {
         
@@ -368,9 +372,9 @@ public class ReservationDAO extends DBController {
      * @return true if insertion succeeded, false otherwise
      */
     public boolean insertReservation(Reservation r) {
-        Connection con = getConnection();
+    		try (Connection con = getConnection();
 
-        try (PreparedStatement pst = con.prepareStatement(
+    			PreparedStatement pst = con.prepareStatement(
                 "INSERT INTO `reservation` " + 
                 "(customerID, tableId, billId, numOfGuests, confirmationCode, reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime, status) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -378,7 +382,12 @@ public class ReservationDAO extends DBController {
         )) {
 
         	
-            pst.setInt(1, r.getCustomerId());
+	        	if (r.getCustomerId() != null) {
+	        	    pst.setInt(1, r.getCustomerId());
+	        	} else {
+	        	    pst.setNull(1, java.sql.Types.INTEGER);
+	        	}
+
             pst.setObject(2, r.getTableID(), java.sql.Types.INTEGER);
             pst.setObject(3, r.getBillID(), java.sql.Types.INTEGER);
             pst.setInt(4, r.getNumOfGuests());
@@ -406,6 +415,36 @@ public class ReservationDAO extends DBController {
         }
     }
     
+    
+    public int createPendingReservation(int userId, Integer tableId, int numGuests) {
+        try (Connection con = getConnection();
+             PreparedStatement pst = con.prepareStatement(
+                 "INSERT INTO reservation (customerID, TableId, numOfGuests, status, reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime) " +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                 PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            LocalDate nowDate = LocalDate.now();
+            LocalTime nowTime = LocalTime.now();
+
+            pst.setInt(1, userId);
+            pst.setInt(2, tableId);
+            pst.setInt(3, numGuests);
+            pst.setString(4, "PENDING");
+            pst.setDate(5, java.sql.Date.valueOf(nowDate));
+            pst.setTime(6, java.sql.Time.valueOf(nowTime));
+            pst.setDate(7, java.sql.Date.valueOf(nowDate));
+            pst.setTime(8, java.sql.Time.valueOf(nowTime));
+
+            pst.executeUpdate();
+            ResultSet rs = pst.getGeneratedKeys();
+            if (rs.next()) return rs.getInt(1);
+            return -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
     
     /**
      * Retrieves the count of reservations between two dates.

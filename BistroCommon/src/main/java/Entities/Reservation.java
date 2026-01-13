@@ -13,7 +13,7 @@ import enums.ReservationStatus;
 public class Reservation implements Serializable {
 	
 	private int reservationID;
-	private final int customerID;
+	private final Integer customerID;
 	private Integer tableID; //id of the table that was assigned to the reservation, Integer and not int to initialize with null until table is assigned 
 	private Integer billID; //Integer and not int to initialize with null until bill is generated
 	private int numOfGuests;
@@ -88,7 +88,7 @@ public class Reservation implements Serializable {
 		return this.reservationID;
 	}
 	
-	public int getCustomerId() {
+	public Integer getCustomerId() {
 	    return this.customerID;
 	}
 	

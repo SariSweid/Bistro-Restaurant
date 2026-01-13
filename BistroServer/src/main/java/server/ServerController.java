@@ -144,6 +144,24 @@ public class ServerController extends AbstractServer {
         commands.put(ActionType.UPDATE_CLOSING_TIME, new UpdateClosingTimeCommand());
         commands.put(ActionType.ADD_SPECIAL_DATE, new AddSpecialDateCommand());
         commands.put(ActionType.UPDATE_SPECIAL_DATE, new UpdateSpecialDateCommand());
+        commands.put(ActionType.DELETE_SPECIAL_DATE, new DeleteSpecialDateCommand());
+        
+        // Command: Update Reservations
+        commands.put(ActionType.UPDATE_RESERVATION, new UpdateReservationCommand());
+
+        // Command: Add to Waiting List
+        commands.put(ActionType.ADD_TO_WAITING_LIST, new AddToWaitingListCommand());
+
+        // Command: Cancel Waiting
+        commands.put(ActionType.CANCEL_WAITING, new CancelWaitingCommand());
+
+        // Command: Get Waiting List Between Dates
+        commands.put(ActionType.GET_WAITING_LIST_BETWEEN_DATES, new GetWaitingListBetweenDatesCommand());
+        
+        commands.put(ActionType.CREATE_OPENING_HOURS, new CreateOpeningHoursCommand());
+        commands.put(ActionType.REMOVE_OPENING_HOURS, new RemoveOpeningHoursCommand());
+        
+        
         
     }
     

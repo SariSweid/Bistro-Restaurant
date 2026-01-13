@@ -12,4 +12,5 @@
     <Button onAction="#onTimeReport" prefWidth="220" style="-fx-font-size: 15px; -fx-background-color: #4caf50; -fx-text-fill: white; -fx-background-radius: 8;" text="Generate Time Report" />
     
     <Button onAction="#onSubscribersReport" prefWidth="220" style="-fx-font-size: 15px; -fx-background-color: #2196f3; -fx-text-fill: white; -fx-background-radius: 8;" text="Generate Subscribers Report" />
+   <Button onAction="#onPreviousPage" prefWidth="140" style="-fx-background-radius: 15; -fx-font-size: 14px;" text="Previous Page" />
 </VBox>

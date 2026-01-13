@@ -3,129 +3,191 @@ package logicControllers;
 import DAO.BillDAO;
 import DAO.ReservationDAO;
 import DAO.TableDAO;
+import DAO.WaitingListDAO;
 import Entities.Bill;
 import Entities.Reservation;
 import Entities.Table;
+import Entities.WaitingListEntry;
+import enums.ExitReason;
 import enums.ReservationStatus;
 import util.PaymentResult;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
-/**
- * Executes periodic daily operations on reservations such as:
- * - Marking no-shows
- * - Generating bills after dining time
- * - Cancelling expired waitlist reservations
- */
-public class DailyFunctionController extends TimerTask {
+public class DailyFunctionController implements Runnable {
 
-    private static Timer timer = new Timer(true);
+    private static final int CHECK_INTERVAL_MS = 60 * 1000; // 1 minute
     private static final Object lock = new Object();
+
+    private boolean isRunning = false;
+    private Thread workerThread;
 
     private final ReservationDAO reservationDAO = new ReservationDAO();
     private final TableDAO tableDAO = new TableDAO();
     private final BillDAO billDAO = new BillDAO();
+    private final WaitingListDAO waitingListDAO = new WaitingListDAO();
     private final PaymentController paymentController = new PaymentController();
 
-    /**
-     * Starts the daily timer task.
-     * The task runs once every minute.
-     */
-    public static void startDailyTimer() {
-        timer.scheduleAtFixedRate(
-                new DailyFunctionController(),
-                0,
-                TimeUnit.MINUTES.toMillis(1)
-        );
+
+
+    public void start() {
+        if (!isRunning) {
+            isRunning = true;
+            workerThread = new Thread(this, "DailyFunctionWatchdog");
+            workerThread.start();
+            System.out.println("DailyFunctionController started");
+        }
     }
 
-    /**
-     * Stops the running timer and resets it.
-     */
-    public static void stopTimer() {
-        timer.cancel();
-        timer = new Timer(true);
+    public void stop() {
+        isRunning = false;
+        System.out.println("DailyFunctionController stopped");
     }
 
-    /**
-     * Executes periodic reservation maintenance logic.
-     */
+
     @Override
     public void run() {
-        synchronized (lock) {
+        while (isRunning) {
             try {
-                List<Reservation> reservations = reservationDAO.readAllReservations();
-                LocalDateTime now = LocalDateTime.now();
-
-                for (Reservation r : reservations) {
-
-                    LocalDateTime reservationDateTime =
-                            LocalDateTime.of(r.getReservationDate(), r.getReservationTime());
-
-                    // Mark no-shows
-                    if (r.getStatus() == ReservationStatus.CONFIRMED &&
-                            now.isAfter(reservationDateTime.plusMinutes(15))) {
-
-                        r.setStatus(ReservationStatus.NOT_SHOWED);
-
-                        if (r.getTableID() != null) {
-                            Table table = tableDAO.GetTable(r.getTableID());
-                            if (table != null) {
-                                table.release(); // sets IsAvailable = true
-                                tableDAO.UpdateTable(table);
-                            }
-                            r.setTableID(null);
-                        }
-
-                        reservationDAO.updateReservation(r);
-                    }
-
-                    // Generate bills for seated customers after 2 hours
-                    if (r.getStatus() == ReservationStatus.SEATED &&
-                            r.getActualArrivalTime() != null &&
-                            r.getBillID() == null) {
-
-                        LocalDateTime actualArrivalDateTime =
-                                LocalDateTime.of(r.getReservationDate(), r.getActualArrivalTime());
-
-                        if (now.isAfter(actualArrivalDateTime.plusHours(2))) {
-
-                            Bill bill = new Bill(0, r.getReservationID(), generateRandomAmount());
-                            PaymentResult result = paymentController.addPayment(bill);
-
-                            if (result.isSuccess() && result.getBill() != null) {
-                                r.setBillID(result.getBill().getBillID());
-                                r.setStatus(ReservationStatus.COMPLETED);
-                                reservationDAO.updateReservation(r);
-                            }
-                        }
-                    }
-
-                    // Cancel expired waitlist reservations
-                    if (r.getStatus() == ReservationStatus.WAITLIST &&
-                            r.getTableID() == null &&
-                            now.isAfter(reservationDateTime)) {
-
-                        r.setStatus(ReservationStatus.CANCELLED);
-                        reservationDAO.updateReservation(r);
-                    }
+                synchronized (lock) {
+                    handleNoShows();
+                    handleWaitingList();
+                    cancelExpiredWaitingListEntries();
+                    handleBillGeneration();
                 }
 
+                Thread.sleep(CHECK_INTERVAL_MS);
+
+            } catch (InterruptedException e) {
+                isRunning = false;
             } catch (Exception e) {
+                System.err.println(" Error: " + e.getMessage());
                 e.printStackTrace();
             }
         }
     }
 
-    /**
-     * Generates a random bill amount between 100 and 1000.
-     *
-     * @return rounded bill amount
-     */
+
+
+    private void handleNoShows() {
+        List<Reservation> reservations = reservationDAO.readAllReservations();
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Reservation r : reservations) {
+            if (r.getStatus() != ReservationStatus.CONFIRMED)
+                continue;
+
+            LocalDateTime reservationDateTime =
+                    LocalDateTime.of(r.getReservationDate(), r.getReservationTime());
+
+            if (now.isAfter(reservationDateTime.plusMinutes(15))) {
+                r.setStatus(ReservationStatus.NOT_SHOWED);
+
+                if (r.getTableID() != null) {
+                    Table table = tableDAO.GetTable(r.getTableID());
+                    if (table != null) {
+                        table.release();
+                        tableDAO.UpdateTable(table);
+                    }
+                    r.setTableID(null);
+                }
+
+                reservationDAO.updateReservation(r);
+            }
+        }
+    }
+
+    private void handleWaitingList() {
+        WaitingListEntry entry = waitingListDAO.getNextWaitingEntry();
+        if (entry == null)
+            return;
+
+        if (entry.getExitReason() == ExitReason.CANCELLED ||
+            entry.getExitReason() == ExitReason.SEATED)
+            return;
+
+        Table availableTable =
+                tableDAO.findAvailableTable(entry.getNumOfGuests());
+
+        if (availableTable == null)
+            return;
+
+        Reservation reservation = new Reservation(
+                0,
+                entry.getUserID(),
+                entry.getNumOfGuests(),
+                entry.getConfirmationCode(),
+                entry.getWaitDate(),
+                entry.getWaitTime(),
+                ReservationStatus.CONFIRMED
+        );
+
+        reservation.setTableID(availableTable.getTableID());
+        reservationDAO.insertReservation(reservation);
+
+        availableTable.occupy();
+        tableDAO.UpdateTable(availableTable);
+
+        waitingListDAO.updateExitReasonByConfirmationCode(
+                entry.getConfirmationCode(),
+                ExitReason.SEATED
+        );
+    }
+
+    private void cancelExpiredWaitingListEntries() {
+        List<WaitingListEntry> waitingList =
+                waitingListDAO.getWaitingEntriesWithoutExitReason();
+
+        LocalDateTime now = LocalDateTime.now();
+
+        for (WaitingListEntry entry : waitingList) {
+            LocalDateTime entryDateTime =
+                    LocalDateTime.of(entry.getWaitDate(), entry.getWaitTime());
+
+            if (entryDateTime.isBefore(now)) {
+                waitingListDAO.updateExitReasonByConfirmationCode(
+                        entry.getConfirmationCode(),
+                        ExitReason.CANCELLED
+                );
+            }
+        }
+    }
+
+    private void handleBillGeneration() {
+    	
+        List<Reservation> reservations = reservationDAO.readAllReservations();
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Reservation r : reservations) {
+        	System.out.println("ID=" + r.getReservationID());
+        	System.out.println("STATUS=" + r.getStatus());
+        	System.out.println("ARRIVAL=" + r.getActualArrivalTime());
+        	System.out.println("BILL=" + r.getBillID());
+
+        	
+            if (r.getStatus() != ReservationStatus.SEATED ||
+                r.getActualArrivalTime() == null ||
+                r.getBillID() != null)
+            	
+                continue;
+
+            LocalDateTime arrivalDateTime =
+                    LocalDateTime.of(r.getReservationDate(), r.getActualArrivalTime());
+
+            if (now.isAfter(arrivalDateTime.plusHours(2))) {
+                Bill bill = new Bill(0, r.getReservationID(), generateRandomAmount());
+                PaymentResult result = paymentController.addPayment(bill);
+
+                if (result.isSuccess() && result.getBill() != null) {
+                    r.setBillID(result.getBill().getBillID());
+                    r.setStatus(ReservationStatus.COMPLETED);
+                    reservationDAO.updateReservation(r);
+                }
+            }
+        }
+    }
+
     private double generateRandomAmount() {
         double amount = 100 + Math.random() * 900;
         return Math.round(amount * 100.0) / 100.0;

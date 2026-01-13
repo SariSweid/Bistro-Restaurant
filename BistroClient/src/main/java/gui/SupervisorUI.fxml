@@ -24,8 +24,9 @@
    </Button>
 
     <Button onAction="#onShowWaitingList" prefWidth="260" style="-fx-background-radius: 15;" text="Show Waiting List" />
-    <Button onAction="#onShowReservations" prefWidth="260" style="-fx-background-radius: 15;" text="Show Reservations" />
+    <Button onAction="#onShowReservations" prefWidth="260" style="-fx-background-radius: 15;" text="Show Active Reservations" />
     <Button onAction="#onGetAllUsers" prefWidth="260" style="-fx-background-radius: 15;" text="Show Subscribers" />
+    <Button onAction="#onShowDiners" prefWidth="260" style="-fx-background-radius: 15;" text="Show Current Diners" />
     <Button onAction="#onEditTables" prefWidth="260" style="-fx-background-radius: 15;" text="Edit Tables" />
     <Button onAction="#onEditOpeningHours" prefWidth="260" style="-fx-background-radius: 15;" text="Edit Opening Hours" />
     <Button onAction="#onsuboptions" prefWidth="260" style="-fx-background-radius: 15;" text="Subscriber Screen" />

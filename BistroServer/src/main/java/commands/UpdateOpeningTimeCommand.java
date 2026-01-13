@@ -3,7 +3,11 @@ package commands;
 import server.Command;
 import src.ocsf.server.ConnectionToClient;
 import logicControllers.RestaurantSettingsController;
+import messages.updateRegularOpeningTimeRequest;
 import Entities.WeeklyOpeningHours;
+import common.Message;
+import common.ServerResponse;
+import enums.ActionType;
 
 public class UpdateOpeningTimeCommand implements Command {
 
@@ -12,19 +16,46 @@ public class UpdateOpeningTimeCommand implements Command {
 
     @Override
     public void execute(Object data, ConnectionToClient client) {
-        if (!(data instanceof WeeklyOpeningHours)) return;
+        if (!(data instanceof updateRegularOpeningTimeRequest req)) {
+            sendError(client, "Invalid opening time request");
+            return;
+        }
 
-        WeeklyOpeningHours hours = (WeeklyOpeningHours) data;
+        WeeklyOpeningHours current = controller.getOpeningHoursForDay(req.getDay());
+        if (current == null) {
+            sendError(client, "Day not found");
+            return;
+        }
 
-        WeeklyOpeningHours current =
-                controller.getOpeningHoursForDay(hours.getDay());
+        current.setOpeningTime(req.getOpeningTime());
+        boolean ok = controller.createOrUpdateWeeklyOpeningHours(current);
 
-        current.setOpeningTime(hours.getOpeningTime());
-        controller.updateWeeklyOpeningHours(current);
-        
-        System.out.println("OPENING UPDATE: day=" + hours.getDay() + " open=" + hours.getOpeningTime());
-        boolean ok = controller.updateWeeklyOpeningHours(current);
-        System.out.println("OPENING UPDATE OK? " + ok);
+        controller.getAllWeeklyOpeningHours();
+        controller.getAllSpecialDates();
 
+        if (!ok) {
+            sendError(client, "Failed to update opening time");
+            return;
+        }
+
+        sendSuccess(client, "Opening time updated");
+    }
+
+    private void sendSuccess(ConnectionToClient client, String msg) {
+        try {
+            client.sendToClient(new Message(
+                ActionType.GET_RESTAURANT_SETTINGS,
+                new ServerResponse(true, controller.getRestaurantSettings(), msg)
+            ));
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void sendError(ConnectionToClient client, String msg) {
+        try {
+            client.sendToClient(new Message(
+                ActionType.GET_RESTAURANT_SETTINGS,
+                new ServerResponse(false, null, msg)
+            ));
+        } catch (Exception e) { e.printStackTrace(); }
     }
 }

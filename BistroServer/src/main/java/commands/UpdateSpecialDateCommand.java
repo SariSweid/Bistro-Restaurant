@@ -5,6 +5,9 @@ import src.ocsf.server.ConnectionToClient;
 import logicControllers.RestaurantSettingsController;
 import messages.UpdateSpecialDateRequest;
 import Entities.SpecialDates;
+import common.Message;
+import common.ServerResponse;
+import enums.ActionType;
 
 public class UpdateSpecialDateCommand implements Command {
 
@@ -13,23 +16,48 @@ public class UpdateSpecialDateCommand implements Command {
 
     @Override
     public void execute(Object data, ConnectionToClient client) {
-        if (!(data instanceof UpdateSpecialDateRequest)) return;
-        
-        UpdateSpecialDateRequest req = (UpdateSpecialDateRequest) data;
-        
-        SpecialDates updated = new SpecialDates(req.getOpeningTime(),req.getClosingTime(),req.getDate(),req.getDescription());
-        
-        boolean flag = controller.updateSpecialDate(req.getOldDate(), updated);
-        
-        try {
-        	client.sendToClient(flag ? "UPDATE_SPECIAL_DATE_OK" : "UPDATE_SPECIAL_DATE_FAIL");
-        } catch(Exception e) {
-        	e.printStackTrace();
+        if (!(data instanceof UpdateSpecialDateRequest req)) {
+            sendError(client, "Invalid special date update request");
+            return;
         }
-        	
-        
-        
 
-        
+        SpecialDates updated = new SpecialDates(
+                req.getOpeningTime(),
+                req.getClosingTime(),
+                req.getDate(),
+                req.getDescription()
+        );
+
+        boolean ok = controller.updateSpecialDate(req.getOldDate(), updated);
+
+        controller.getAllWeeklyOpeningHours();
+        controller.getAllSpecialDates();
+
+        if (!ok) {
+            sendError(client, "Failed to update special date");
+            return;
+        }
+
+        sendSuccess(client, "Special date updated successfully");
+    }
+
+    private void sendSuccess(ConnectionToClient client, String msg) {
+        try {
+            client.sendToClient(new Message(
+                    ActionType.GET_RESTAURANT_SETTINGS,
+                    new ServerResponse(true,
+                            controller.getRestaurantSettings(),
+                            msg)
+            ));
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void sendError(ConnectionToClient client, String msg) {
+        try {
+            client.sendToClient(new Message(
+                    ActionType.GET_RESTAURANT_SETTINGS,
+                    new ServerResponse(false, null, msg)
+            ));
+        } catch (Exception e) { e.printStackTrace(); }
     }
 }

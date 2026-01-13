@@ -10,74 +10,53 @@ import Entities.RestaurantSettings;
 import Entities.SpecialDates;
 import Entities.WeeklyOpeningHours;
 import enums.Day;
+import messages.AddSpecialDateRequest;
 
-/**
- * RestaurantSettingsController manages the restaurant settings
- * and communicates with RestaurantSettingsDAO for database operations.
- */
 public class RestaurantSettingsController {
-	private final RestaurantSettings restaurantSettings;
-	private final RestaurantSettingsDAO dao;
-	private final SpecialDatesDAO SPdao;
-	
-	
-	/**
-	 * constructor - creates new RestaurantSettingsController
-	 */
-	public RestaurantSettingsController() {
-		this.restaurantSettings = RestaurantSettings.getInstance();
-		this.dao = new RestaurantSettingsDAO();
-		this.SPdao = new SpecialDatesDAO();
-	}
-	
-	public RestaurantSettings getRestaurantSettings() {
-		return restaurantSettings;
-	}
+    private final RestaurantSettings restaurantSettings;
+    private final RestaurantSettingsDAO dao;
+    private final SpecialDatesDAO SPdao;
 
-	/**
-	 * @return max tables in the restaurant
-	 */
-	public int getMaxTables() {
-		return this.restaurantSettings.getMaxTables();
-	}
-	
-	/**
-	 * update the max tables in the restaurant
-	 * @param newMaxTables
-	 * @return true if the update succeeded
-	 */
-	public boolean updateMaxTables(int newMaxTables) {
-		this.restaurantSettings.setMaxTables(newMaxTables);
-		return this.dao.updateMaxTable(restaurantSettings);
-	}
-	
-	/**
-	 * gets the opening and closing hours of a given day
-	 * @param day
-	 * @return opening hours of the day
-	 */
-	public WeeklyOpeningHours getOpeningHoursForDay(Day day) {
-		return this.restaurantSettings.getOpeningHoursForDay(day);
-	}
-	
-	/**
-	 * update opening and closing hours of a given weekday
-	 * @param hours
-	 * @return true if the opening and closing hours were updated in the db
-	 */
-	public boolean updateWeeklyOpeningHours(WeeklyOpeningHours hours) {
-		// remove old hours for this day
-		this.restaurantSettings.getWeeklyOpeningHours().removeIf(h -> h.getDay() == hours.getDay());
-		// add new hours
-		this.restaurantSettings.addWeeklyOpeningHour(hours);
-		
-		// update in db using DAO
-		boolean openingUpdate = this.dao.updateOpeningHours(restaurantSettings, hours.getDay());
-		boolean closingUpdate = this.dao.updateClosingHours(restaurantSettings, hours.getDay());
-		
-		return openingUpdate && closingUpdate;
-	}
-	
+    public RestaurantSettingsController() {
+        this.restaurantSettings = RestaurantSettings.getInstance();
+        this.dao = new RestaurantSettingsDAO();
+        this.SPdao = new SpecialDatesDAO();
+    }
+
+    public RestaurantSettings getRestaurantSettings() {
+        return restaurantSettings;
+    }
+
+    public int getMaxTables() {
+        return this.restaurantSettings.getMaxTables();
+    }
+
+    public boolean updateMaxTables(int newMaxTables) {
+        this.restaurantSettings.setMaxTables(newMaxTables);
+        return this.dao.updateMaxTable(restaurantSettings);
+    }
+
+    public WeeklyOpeningHours getOpeningHoursForDay(Day day) {
+        return this.restaurantSettings.getOpeningHoursForDay(day);
+    }
+
+    public WeeklyOpeningHours getOpeningHoursForDate(LocalDate date) {
+        for (SpecialDates sp : restaurantSettings.getSpecialDates()) {
+            if (sp.getDate().equals(date)) {
+                return new WeeklyOpeningHours(
+                        sp.getOpeningTime(),
+                        sp.getClosingTime(),
+                        Day.valueOf(date.getDayOfWeek().name())
+                );
+            }
+        }
+
+        Day day = Day.valueOf(date.getDayOfWeek().name());
+        return restaurantSettings.getOpeningHoursForDay(day);
+    }
+    
+    
+
 	/**
 	 * @return all weekly opening hours
 	 */
@@ -88,17 +67,77 @@ public class RestaurantSettingsController {
 		restaurantSettings.setWeeklyOpeningHours(hoursList);
 		return hoursList;
 	}
+
+    public List<SpecialDates> getAllSpecialDates() {
+        List<SpecialDates> specialList = SPdao.getAllSpecialDates();
+        restaurantSettings.setSpecialDates(specialList);
+        return specialList;
+    }
+    
+    
+
+    public boolean addSpecialDate(AddSpecialDateRequest specialDate) {
+    	
+        restaurantSettings.addSpecialDate(specialDate.getSpecialDate());
+        return SPdao.addSpecialDates(specialDate.getSpecialDate());
+    }
+
+    
+
+    /**
+     * Creates a new weekly opening hours entry for a day.
+     * If the day already exists in DB, updates its times instead.
+     *
+     * @param hours WeeklyOpeningHours object with day, openingTime, closingTime
+     * @return true if inserted or updated successfully
+     */
+    public boolean createOrUpdateWeeklyOpeningHours(WeeklyOpeningHours hours) {
+        boolean existsInDB = dao.existsDay(hours.getDay());
+        boolean success;
+
+        if (existsInDB) {
+            boolean openingUpdated = dao.updateOpeningHours(hours);
+            boolean closingUpdated = dao.updateClosingHours(hours);
+            restaurantSettings.getWeeklyOpeningHours().removeIf(h -> h.getDay() == hours.getDay());
+            restaurantSettings.addWeeklyOpeningHour(hours);
+            success = openingUpdated && closingUpdated;
+        } else {
+            restaurantSettings.addWeeklyOpeningHour(hours);
+            success = dao.insertWeeklyOpeningHours(hours);
+        }
+
+        return success;
+    }
+    
+    /**
+     * Removes a weekly opening hours entry for a specific day.
+     *
+     * @param day the day to remove
+     * @return true if removed successfully
+     */
+    public boolean removeWeeklyOpeningHours(Day day) {
+    	System.out.println("asdasdasdasdasd");
+        boolean removedFromDB = dao.deleteWeeklyOpeningHours(day);
+        if (removedFromDB) {
+            restaurantSettings.getWeeklyOpeningHours().removeIf(h -> h.getDay() == day);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if a day exists in memory (restaurantSettings object)
+     *
+     * @param day Day to check
+     * @return true if day exists
+     */
+    public boolean isDayExisting(Day day) {
+        return restaurantSettings.getWeeklyOpeningHours().stream()
+                .anyMatch(h -> h.getDay() == day);
+    }
+
 	
-	/**
-	 * @return all special dates
-	 */
-	public List<SpecialDates> getAllSpecialDates(){
-		List<SpecialDates> specialList = new ArrayList<>();
-		specialList = SPdao.getAllSpecialDates();
-		System.out.println(specialList);
-		restaurantSettings.setSpecialDates(specialList);
-		return specialList;
-	}
+	
 	
 	/**
 	 * add special date to the restaurant
@@ -109,6 +148,20 @@ public class RestaurantSettingsController {
 		this.restaurantSettings.addSpecialDate(specialDate);
 		return this.SPdao.addSpecialDates(specialDate);
 	}
+	
+	/**
+	 * add special date to the restaurant
+	 * @param specialDate
+	 * @return true if the date was added to the db
+	 */
+	public boolean deleteSpecialDate(LocalDate date) {
+	    boolean flag = this.SPdao.deleteSpecialDate(date);
+	    if (flag) {
+	        this.restaurantSettings.getSpecialDates().removeIf(s -> s.getDate().equals(date));
+	    }
+	    return flag;
+	}
+
 	
 	/**
 	 * update a special date
@@ -125,4 +178,6 @@ public class RestaurantSettingsController {
 		
 		return flag;
 	}
+	
+	
 }

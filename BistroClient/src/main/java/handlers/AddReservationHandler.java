@@ -1,5 +1,6 @@
 package handlers;
 
+import java.io.IOException;
 import java.util.List;
 
 import Controllers.BaseReservationController;
@@ -14,7 +15,8 @@ public class AddReservationHandler implements ResponseHandler {
     @Override
     public void handle(Object data) {
     	
-    		BaseReservationController controller = ClientHandler.getClient().getActiveReservationController();
+    		BaseReservationController controller;
+			controller = ClientHandler.getClient().getActiveReservationController();
 
         if (controller == null) {
             System.out.println("ERROR: GuestMakeReservationController is null");

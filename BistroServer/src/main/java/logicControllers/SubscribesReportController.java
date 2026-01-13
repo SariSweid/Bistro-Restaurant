@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import DAO.ReservationDAO;
+import DAO.WaitingListDAO;
 import Entities.WeekData;
 
 /**
@@ -14,10 +15,12 @@ import Entities.WeekData;
 public class SubscribesReportController {
 
     private final ReservationDAO dao;
+    private final WaitingListDAO waitDao;
 
     // Constructor
     public SubscribesReportController() {
         this.dao = new ReservationDAO(); // DAO handles DB operations
+        this.waitDao = new WaitingListDAO(); // DAO for waiting 
     }
 
     /**
@@ -38,7 +41,7 @@ public class SubscribesReportController {
             if (weekEnd.isAfter(endDate)) weekEnd = endDate;
 
             int completed = dao.getCompletedSubscriberReservationsBetween(weekStart, weekEnd);
-            int waitlist = dao.getWaitlistSubscriberReservationsBetween(weekStart, weekEnd);
+            int waitlist = waitDao.getWaitlistSubscriberCountBetween(weekStart, weekEnd);
 
             data.add(new WeekData("Week " + weekNum, completed, waitlist));
 

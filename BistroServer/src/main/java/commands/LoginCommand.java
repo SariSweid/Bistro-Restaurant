@@ -48,6 +48,7 @@ public class LoginCommand implements Command {
                     }
                     response = new ServerResponse(true, sub, "Subscriber login successful");
                     client.setInfo("user", sub);  // store in session
+                    client.setInfo("userID", sub.getUserId());
                 }
                 case SUPERVISOR -> {
                 		Supervisor sup = (Supervisor) user;
@@ -58,6 +59,7 @@ public class LoginCommand implements Command {
                     }
                     response = new ServerResponse(true, sup, "Supervisor login successful");
                     client.setInfo("user", sup);  // store in session
+                    client.setInfo("userID", sup.getUserId());
                 }
                 case MANAGER -> {
 	                	Manager mgr = (Manager) user;
@@ -68,6 +70,7 @@ public class LoginCommand implements Command {
 	                }
 	                response = new ServerResponse(true, mgr, "Supervisor login successful");
 	                client.setInfo("user", mgr);  // store in session
+	                client.setInfo("userID", mgr.getUserId());
 	            }
                 default -> {
                     response = new ServerResponse(false, null, "Unknown role");
