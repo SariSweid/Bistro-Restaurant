@@ -22,7 +22,7 @@ public class MonthYearSelectorController {
         );
 
         int currentYear = YearMonth.now().getYear();
-        IntStream.rangeClosed(currentYear-2, currentYear).forEach(yearCombo.getItems()::add);
+        IntStream.rangeClosed(currentYear-2, currentYear-1).forEach(yearCombo.getItems()::add);
     }
 
     @FXML

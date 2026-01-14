@@ -178,22 +178,33 @@ public class WaitingListController {
             );
         }
 
-        // Ownership check
-        if (entry.getUserID() != null &&
-            !entry.getUserID().equals(currentUserId)) {
-        		System.out.println(currentUserId);
-            return new ServerResponse(
+        
+        System.out.println("BEFOROREFOORFOERO");
+        System.out.println("currentUserId = " + currentUserId);
+        System.out.println("entry = " + entry);
+        System.out.println("entry.getUserID() = " + entry.getUserID());
+
+        if (currentUserId != null) {
+            if (entry.getUserID() != null &&
+                !entry.getUserID().equals(currentUserId)) {
+                System.out.println("Entered ownership IF: currentUserId = " + currentUserId);
+                return new ServerResponse(
                     false,
                     null,
                     "This confirmation code does not belong to your account."
-            );
+                );
+            }
         }
+
+        System.out.println("beforgksrfkskfskdfksddfksdkff");
+
 
         boolean updated =
                 waitingListDAO.updateExitReason(
                         confirmationCode,
                         ExitReason.CANCELLED
                 );
+        
 
         return new ServerResponse(
                 updated,

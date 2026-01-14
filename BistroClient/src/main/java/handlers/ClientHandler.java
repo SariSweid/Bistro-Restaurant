@@ -295,7 +295,10 @@ public class ClientHandler extends AbstractClient {
 
     public void cancelWaiting(int confirmationCode) {
         //connect();
-    		int userId = getCurrentUserId();
+    	int userId = getCurrentUserId();
+    	if (userId == 0) { // it is a guest
+    		
+    	}
         CancelWaitingRequest req = new CancelWaitingRequest(confirmationCode, userId);
         sendRequest(new Message(ActionType.CANCEL_WAITING, req));
     }
