@@ -11,7 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import util.SceneManager;
 
-public class OrderController extends BaseDisplayController {
+public class SubscribersHistortOrdersController extends BaseDisplayController {
 
     @FXML private TableView<Reservation> reservationsTable;
     @FXML private TableColumn<Reservation, Integer> idColumn;
@@ -32,16 +32,18 @@ public class OrderController extends BaseDisplayController {
 
     @Override
     public void showReservations(List<Reservation> list) {
-        if (list == null || list.isEmpty()) {
+    	System.out.println("the list is equal to:" + list);
+    	System.out.println();
+        if (list == null) {
             reservationsTable.setItems(FXCollections.observableArrayList());
             return;
         }
 
-        List<Reservation> confirmed = list.stream()
-                .filter(r -> r.getStatus() == ReservationStatus.CONFIRMED)
+        List<Reservation> completed = list.stream()
+                .filter(r -> r.getStatus() == ReservationStatus.COMPLETED)
                 .toList();
 
-        reservationsTable.setItems(FXCollections.observableArrayList(confirmed));
+        reservationsTable.setItems(FXCollections.observableArrayList(completed));
     }
 
     public void refreshReservations() {

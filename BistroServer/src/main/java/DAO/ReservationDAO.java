@@ -239,7 +239,7 @@ public class ReservationDAO extends DBController {
 	public List<Reservation> getReservationsByCustomer(int customerId) {
 	    List<Reservation> list = new ArrayList<>();
 	    String sql = "SELECT * FROM reservation " +
-	                 "WHERE customerID = ? AND status IN ('CONFIRMED','PENDING','SEATED')";
+	                 "WHERE customerID = ? AND status IN ('CONFIRMED','COMPLETED')";
 
 	    try (Connection con = getConnection();
 	         PreparedStatement pst = con.prepareStatement(sql)) {
