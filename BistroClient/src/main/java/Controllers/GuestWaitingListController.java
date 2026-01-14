@@ -116,7 +116,7 @@ public class GuestWaitingListController extends  BaseDisplayController{
             int numOfGuests = Integer.parseInt(numberOfDiners.getText().trim());
             String contactInfo = emailOrPhone.getText().trim();
             LocalTime selectedTime = LocalTime.parse(timeComboBox.getValue(), DateTimeFormatter.ofPattern("HH:mm"));
-            LocalDate selectedDate = LocalDate.now();
+            LocalDate selectedDate = datePicker.getValue();
 
             String email = null;
             String phone = null;
