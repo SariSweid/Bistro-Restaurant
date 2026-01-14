@@ -23,7 +23,7 @@ public class LoginController implements Initializable {
     private javafx.scene.control.TextField userID;
 
     @FXML
-    private javafx.scene.control.TextField membershipCode;
+    private javafx.scene.control.PasswordField membershipCode;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
