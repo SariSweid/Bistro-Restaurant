@@ -93,18 +93,18 @@ public class RestaurantSettingsDAO extends DBController {
      * @param day the day to delete
      * @return true if deletion succeeded, false otherwise
      */
-    public boolean deleteWeeklyOpeningHours(Day day) {
-        Connection con = getConnection();
-        try (PreparedStatement pst = con.prepareStatement(
-                "DELETE FROM restaurantsettings WHERE Day = ?")) {
-            pst.setString(1, day.name());
-            int rows = pst.executeUpdate();
-            return rows > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+	    public boolean deleteWeeklyOpeningHours(Day day) {
+	        Connection con = getConnection();
+	        try (PreparedStatement pst = con.prepareStatement(
+	                "DELETE FROM restaurantsettings WHERE Day = ?")) {
+	            pst.setString(1, day.name());
+	            int rows = pst.executeUpdate();
+	            return rows > 0;
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+	    }
 
     public Boolean updateMaxTable(RestaurantSettings r) {
         Connection con = getConnection();

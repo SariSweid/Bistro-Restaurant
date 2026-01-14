@@ -9,6 +9,7 @@ import java.util.List;
 
 import DB.DBController;
 import Entities.*;
+import enums.Day;
 import enums.ReservationStatus;
 
 /**
@@ -81,6 +82,114 @@ public class ReservationDAO extends DBController {
 
         return count;
     }
+    
+    public List<Reservation> getReservationsByDate(LocalDate date) {
+        List<Reservation> reservations = new ArrayList<>();
+        Connection con = getConnection();
+        
+        String sql = "SELECT * FROM reservation WHERE reservationDate = ? AND status != ?";
+        
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setDate(1, java.sql.Date.valueOf(date));
+            pst.setString(2, ReservationStatus.CANCELLED.name()); 
+
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    Reservation r = new Reservation(
+                        rs.getInt("reservationID"),
+                        rs.getInt("customerID"),
+                        rs.getObject("tableID") != null ? rs.getInt("tableID") : null,
+                        rs.getObject("BillId") != null ? rs.getInt("BillId") : null,
+                        rs.getInt("numOfGuests"),
+                        rs.getInt("confirmationCode"),
+                        rs.getDate("reservationDate").toLocalDate(),
+                        rs.getTime("reservationTime").toLocalTime(),
+                        rs.getDate("reservationPlacedDate").toLocalDate(),
+                        rs.getTime("reservationPlacedTime").toLocalTime(),
+                        ReservationStatus.valueOf(rs.getString("status"))
+                    );
+
+       
+                    if (rs.getTime("actualarrivaltime") != null) {
+                        r.setActualArrivalTime(rs.getTime("actualarrivaltime").toLocalTime());
+                    }
+
+              
+                    if (rs.getTime("departuretiime") != null) {
+                        r.setExpectedDepartureTime(rs.getTime("departuretiime").toLocalTime());
+                    }
+
+                    reservations.add(r);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return reservations;
+    }
+
+    
+    public List<Reservation> getReservationsByDay(Day day) {
+        List<Reservation> reservations = new ArrayList<>();
+        Connection con = getConnection();
+        
+        String sql = "SELECT * FROM reservation WHERE DAYOFWEEK(reservationDate) = ? AND status != ?";
+
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, dayToMySQLDay(day));
+            pst.setString(2, ReservationStatus.CANCELLED.name());
+
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    Reservation r = new Reservation(
+                        rs.getInt("reservationID"),
+                        rs.getInt("customerID"),
+                        rs.getObject("tableID") != null ? rs.getInt("tableID") : null,
+                        rs.getObject("BillId") != null ? rs.getInt("BillId") : null,
+                        rs.getInt("numOfGuests"),
+                        rs.getInt("confirmationCode"),
+                        rs.getDate("reservationDate").toLocalDate(),
+                        rs.getTime("reservationTime").toLocalTime(),
+                        rs.getDate("reservationPlacedDate").toLocalDate(),
+                        rs.getTime("reservationPlacedTime").toLocalTime(),
+                        ReservationStatus.valueOf(rs.getString("status"))
+                    );
+
+                    if (rs.getTime("actualarrivaltime") != null) {
+                        r.setActualArrivalTime(rs.getTime("actualarrivaltime").toLocalTime());
+                    }
+                    if (rs.getTime("departuretiime") != null) {
+                        r.setExpectedDepartureTime(rs.getTime("departuretiime").toLocalTime());
+                    }
+
+                    reservations.add(r);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return reservations;
+    }
+
+    private int dayToMySQLDay(Day day) {
+        switch (day) {
+            case SUNDAY: return 1;
+            case MONDAY: return 2;
+            case TUESDAY: return 3;
+            case WEDNESDAY: return 4;
+            case THURSDAY: return 5;
+            case FRIDAY: return 6;
+            case SATURDAY: return 7;
+            default: return 0;
+        }
+    }
+
+
+
 
     
     

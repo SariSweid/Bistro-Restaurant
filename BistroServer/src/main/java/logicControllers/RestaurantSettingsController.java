@@ -4,8 +4,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import DAO.ReservationDAO;
 import DAO.RestaurantSettingsDAO;
 import DAO.SpecialDatesDAO;
+import Entities.Reservation;
 import Entities.RestaurantSettings;
 import Entities.SpecialDates;
 import Entities.WeeklyOpeningHours;
@@ -13,14 +15,17 @@ import enums.Day;
 import messages.AddSpecialDateRequest;
 
 public class RestaurantSettingsController {
+	
     private final RestaurantSettings restaurantSettings;
     private final RestaurantSettingsDAO dao;
     private final SpecialDatesDAO SPdao;
+	private final ReservationDAO reservationDAO;
 
     public RestaurantSettingsController() {
         this.restaurantSettings = RestaurantSettings.getInstance();
         this.dao = new RestaurantSettingsDAO();
         this.SPdao = new SpecialDatesDAO();
+        this.reservationDAO = new ReservationDAO();
     }
 
     public RestaurantSettings getRestaurantSettings() {
@@ -116,10 +121,15 @@ public class RestaurantSettingsController {
      * @return true if removed successfully
      */
     public boolean removeWeeklyOpeningHours(Day day) {
-    	System.out.println("asdasdasdasdasd");
         boolean removedFromDB = dao.deleteWeeklyOpeningHours(day);
         if (removedFromDB) {
             restaurantSettings.getWeeklyOpeningHours().removeIf(h -> h.getDay() == day);
+
+            List<Reservation> reservations = reservationDAO.getReservationsByDay(day);
+            for (Reservation r : reservations) {
+                reservationDAO.cancelReservationInDB(r.getReservationID());
+            }
+
             return true;
         }
         return false;
@@ -135,6 +145,8 @@ public class RestaurantSettingsController {
         return restaurantSettings.getWeeklyOpeningHours().stream()
                 .anyMatch(h -> h.getDay() == day);
     }
+    
+    
 
 	
 	
@@ -158,6 +170,11 @@ public class RestaurantSettingsController {
 	    boolean flag = this.SPdao.deleteSpecialDate(date);
 	    if (flag) {
 	        this.restaurantSettings.getSpecialDates().removeIf(s -> s.getDate().equals(date));
+	        
+	        List<Reservation> reservations = this.reservationDAO.getReservationsByDate(date);
+	        for (Reservation r : reservations) {
+	            reservationDAO.cancelReservationInDB(r.getReservationID());
+	        }
 	    }
 	    return flag;
 	}

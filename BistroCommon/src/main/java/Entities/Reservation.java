@@ -84,6 +84,18 @@ public class Reservation implements Serializable {
 	
 	//getters
 	
+	public Integer getCustomerID() {
+		return customerID;
+	}
+
+	public void setReservationPlacedDate(LocalDate reservationPlacedDate) {
+		this.reservationPlacedDate = reservationPlacedDate;
+	}
+
+	public void setReservationPlacedTime(LocalTime reservationPlacedTime) {
+		this.reservationPlacedTime = reservationPlacedTime;
+	}
+
 	public int getReservationID() {
 		return this.reservationID;
 	}
