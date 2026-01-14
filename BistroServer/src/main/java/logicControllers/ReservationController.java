@@ -182,26 +182,30 @@ public class ReservationController {
                 (user.getRole() == UserRole.SUBSCRIBER ||
                  user.getRole() == UserRole.SUPERVISOR ||
                  user.getRole() == UserRole.MANAGER)) {
+
             r = resdb.GetReservation(reservationId);
-            if (r == null || r.getCustomerId() != user.getUserId()) return false;
+            if (r == null) return false;
+
         } else if (guestId != null) {
-            r = getReservationByCode(confirmationCode);
-            if (r == null || r.getCustomerId() != guestId) return false;
-        } else if (confirmationCode != null) {
+
             r = getReservationByCode(confirmationCode);
             if (r == null) return false;
+
+        } else if (confirmationCode != null) {
+
+            r = getReservationByCode(confirmationCode);
+            if (r == null) return false;
+
         } else return false;
 
         if (r.getStatus() == ReservationStatus.CANCELLED) return false;
 
         r.setStatus(ReservationStatus.CANCELLED);
 
-        
         boolean cancelled = resdb.cancelReservationInDB(r.getReservationID());
 
         if (cancelled) {
-            
-            tabledb.updateTableIsAvailable(r.getTableID(), true);  
+            tabledb.updateTableIsAvailable(r.getTableID(), true);
         }
 
         return cancelled;
