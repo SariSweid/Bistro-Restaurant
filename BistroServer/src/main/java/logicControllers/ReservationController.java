@@ -104,6 +104,57 @@ public class ReservationController {
 
 	    return available;
 	}
+	
+
+	/**
+	 * Returns a list of available times for the waiting list on a given date for a number of guests.
+	 * Takes into account special dates, weekly hours, today's current time, and reservation duration.
+	 *
+	 * @param date The date to get available times for.
+	 * @param guests Number of guests.
+	 * @return List of available LocalTime objects. Empty list if no times are available.
+	 */
+	public List<LocalTime> getAllTimesForWaitingList(LocalDate date, int guests) {
+	    List<LocalTime> times = new ArrayList<>();
+	    List<Table> tables = tabledb.GetAllTables();
+
+	    int maxTableCapacity = tables.stream().mapToInt(Table::getCapacity).max().orElse(0);
+	    if (guests > maxTableCapacity) return Collections.emptyList();
+
+	    WeeklyOpeningHours hours = settings.getOpeningHoursForDate(date);
+	    if (hours == null) return Collections.emptyList();
+
+	    LocalTime openTime = hours.getOpeningTime();
+	    LocalTime closeTime = hours.getClosingTime();
+	    int reservationDuration = settings.getReservationDurationHours();
+
+	    LocalTime lastStart = closeTime.minusHours(reservationDuration);
+	    LocalTime time = openTime;
+
+	    if (date.equals(LocalDate.now())) {
+	        LocalTime nowPlusOneHour = LocalTime.now().plusHours(1).withSecond(0).withNano(0);
+
+	        int minute = nowPlusOneHour.getMinute();
+	        if (minute > 0 && minute <= 30) nowPlusOneHour = nowPlusOneHour.withMinute(30);
+	        else if (minute > 30) nowPlusOneHour = nowPlusOneHour.plusHours(1).withMinute(0);
+	        else nowPlusOneHour = nowPlusOneHour.withMinute(0);
+
+	        if (nowPlusOneHour.isAfter(openTime)) {
+	            time = nowPlusOneHour;
+	        }
+	    }
+
+	    if (time.isAfter(lastStart)) return Collections.emptyList();
+
+	    while (!time.isAfter(lastStart)) {
+	        times.add(time);
+	        time = time.plusMinutes(30);
+	    }
+
+	    return times;
+	}
+	
+
 
 
     public List<AvailableDateTimes> getNearestAvailableDates(LocalDate requestedDate, int guests) {

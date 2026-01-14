@@ -101,6 +101,8 @@ public class RestaurantSettings implements Serializable {
 	}
 	
 	
+	
+	
 	/**
 	 * Returns the opening hours for a specific date.
 	 * Special dates override weekly hours.

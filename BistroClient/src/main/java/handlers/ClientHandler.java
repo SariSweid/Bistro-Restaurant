@@ -265,9 +265,9 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.UPDATE_RESERVATION, new UpdateReservationRequest(id, date, time, guests, status)));
     }
 
-    public void getAvailableTimes(LocalDate date, int guests) {
+    public void getAvailableTimes(LocalDate date, int guests, boolean forWaitingList) {
         connect();
-        sendRequest(new Message(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesRequest(date, guests)));
+        sendRequest(new Message(ActionType.GET_AVAILABLE_TIMES, new GetAvailableTimesRequest(date, guests, forWaitingList)));
     }
 
     public void getNearestAvailableTimes(LocalDate date, int guests) {

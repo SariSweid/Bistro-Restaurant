@@ -41,6 +41,8 @@ public class RestaurantSettingsDAO extends DBController {
 
         return hoursList;
     }
+    
+    
 
     public boolean insertWeeklyOpeningHours(WeeklyOpeningHours hours) {
         Connection con = getConnection();

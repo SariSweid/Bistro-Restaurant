@@ -19,8 +19,15 @@ public class GetAvailableTimesCommand implements Command {
         try {
             GetAvailableTimesRequest req = (GetAvailableTimesRequest) data;
 
-            List<LocalTime> times =
-            		controller.getAvailableTimes(req.getDate(), req.getGuests());
+            List<LocalTime> times;
+
+            if (req.isForWaitingList()) {
+                // Use the waiting list version
+                times = controller.getAllTimesForWaitingList(req.getDate(), req.getGuests());
+            } else {
+                // Normal reservation
+                times = controller.getAvailableTimes(req.getDate(), req.getGuests());
+            }
 
             client.sendToClient(
                 new Message(
@@ -41,4 +48,5 @@ public class GetAvailableTimesCommand implements Command {
             } catch (Exception ignored) {}
         }
     }
+
 }

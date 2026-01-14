@@ -28,6 +28,7 @@ public class DailyFunctionController implements Runnable {
     private final BillDAO billDAO = new BillDAO();
     private final WaitingListDAO waitingListDAO = new WaitingListDAO();
     private final PaymentController paymentController = new PaymentController();
+    private final TableController tableController = new TableController();
 
 
 
@@ -100,18 +101,35 @@ public class DailyFunctionController implements Runnable {
 
     private void handleWaitingList() {
         WaitingListEntry entry = waitingListDAO.getNextWaitingEntry();
-        if (entry == null)
-            return;
+        if (entry == null) return;
+        if (entry.getExitReason() == ExitReason.CANCELLED || entry.getExitReason() == ExitReason.SEATED) return;
 
-        if (entry.getExitReason() == ExitReason.CANCELLED ||
-            entry.getExitReason() == ExitReason.SEATED)
-            return;
+        List<Table> allTables = tableController.getAllTables();
+        List<Reservation> reservations = reservationDAO.getConfirmedReservationsAt(entry.getWaitDate(), entry.getWaitTime());
 
-        Table availableTable =
-                tableDAO.findAvailableTable(entry.getNumOfGuests());
+        
+        boolean[] tableOccupied = new boolean[allTables.size()];
+        for (Reservation r : reservations) {
+            for (int i = 0; i < allTables.size(); i++) {
+                Table t = allTables.get(i);
+                if (!tableOccupied[i] && t.getCapacity() >= r.getNumOfGuests()) {
+                    tableOccupied[i] = true;
+                    break;
+                }
+            }
+        }
 
-        if (availableTable == null)
-            return;
+        
+        boolean canSeat = false;
+        for (int i = 0; i < allTables.size(); i++) {
+            Table t = allTables.get(i);
+            if (!tableOccupied[i] && t.getCapacity() >= entry.getNumOfGuests()) {
+                canSeat = true;
+                break;
+            }
+        }
+
+        if (!canSeat) return;
 
         Reservation reservation = new Reservation(
                 0,
@@ -123,17 +141,13 @@ public class DailyFunctionController implements Runnable {
                 ReservationStatus.CONFIRMED
         );
 
-        reservation.setTableID(availableTable.getTableID());
         reservationDAO.insertReservation(reservation);
 
-        availableTable.occupy();
-        tableDAO.UpdateTable(availableTable);
-
-        waitingListDAO.updateExitReasonByConfirmationCode(
-                entry.getConfirmationCode(),
-                ExitReason.SEATED
-        );
+        waitingListDAO.updateExitReasonByConfirmationCode(entry.getConfirmationCode(), ExitReason.SEATED);
     }
+
+
+
 
     private void cancelExpiredWaitingListEntries() {
         List<WaitingListEntry> waitingList =

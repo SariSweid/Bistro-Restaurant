@@ -86,6 +86,15 @@ public class RestaurantSettingsController {
         restaurantSettings.addSpecialDate(specialDate.getSpecialDate());
         return SPdao.addSpecialDates(specialDate.getSpecialDate());
     }
+    
+    public WeeklyOpeningHours getHoursForDay(LocalDate date) {
+
+    	Day day = Day.valueOf(date.getDayOfWeek().name());
+
+    	WeeklyOpeningHours hours = getOpeningHoursForDay(day);
+
+        return hours; 
+    }
 
     
 

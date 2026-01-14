@@ -1,6 +1,5 @@
 package Controllers;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -38,13 +37,21 @@ public abstract class BaseReservationController {
     public void initialize() {
         ClientHandler.getClient().setActiveReservationController(this);
 
-        // Hide times when date changes
         if (datePicker != null) {
             datePicker.valueProperty().addListener((obs, oldDate, newDate) -> hideTimeSelection());
         }
     }
 
-    // --- Check Availability ---
+    protected int getNumberOfDiners() throws NumberFormatException {
+        String text = numberOfDinersField.getText();
+        if (text == null || text.trim().isEmpty()) {
+            throw new NumberFormatException("Number of diners field is empty");
+        }
+        int diners = Integer.parseInt(text.trim());
+        if (diners <= 0) throw new NumberFormatException("Number of diners must be > 0");
+        return diners;
+    }
+
     protected void checkAvailability() {
         int diners;
         LocalDate resDate = datePicker.getValue();
@@ -55,28 +62,33 @@ public abstract class BaseReservationController {
         }
 
         try {
-            diners = Integer.parseInt(numberOfDinersField.getText());
-            if (diners <= 0) throw new NumberFormatException();
+            diners = getNumberOfDiners();
         } catch (NumberFormatException e) {
             showError("Please enter a valid number of diners");
             return;
         }
 
-        ClientHandler.getClient().getAvailableTimes(resDate, diners);
+        ClientHandler.getClient().getAvailableTimes(resDate, diners, false);
     }
 
-    // --- Called by server handler ---
     public void updateAvailableTimes(List<LocalTime> times) {
         Platform.runLater(() -> {
+            int diners;
+            try {
+                diners = getNumberOfDiners();
+            } catch (NumberFormatException e) {
+                showError("Please enter a valid number of diners");
+                return;
+            }
+
+            LocalDate date = datePicker.getValue();
+            System.out.println("UpdateAvailableTimes called. Date: " + date + ", diners: " + diners + ", times received: " + times);
+
             if (times.isEmpty()) {
-                try {
-                    ClientHandler.getClient().getNearestAvailableTimes(
-                            datePicker.getValue(),
-                            Integer.parseInt(numberOfDinersField.getText())
-                    );
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                    showError("Failed to get alternative times");
+                if (date != null) {
+                    ClientHandler.getClient().getNearestAvailableTimes(date, diners);
+                } else {
+                    showError("Please select a date before checking availability");
                 }
                 return;
             }
@@ -90,7 +102,7 @@ public abstract class BaseReservationController {
         });
     }
 
-    // --- Show alternatives returned by server ---
+
     public void showNearestAvailableTimes(List<messages.AvailableDateTimes> alternatives) {
         if (alternatives == null || alternatives.isEmpty()) {
             showError("No available reservations on the selected date or nearby dates.");
@@ -124,7 +136,6 @@ public abstract class BaseReservationController {
         submitAlternativeReservation(chosenDate, chosenTime);
     }
 
-    // --- Submit Reservation ---
     protected void submitReservation() {
         LocalTime selectedTime = timeComboBox.getValue();
         if (selectedTime == null) {
@@ -134,43 +145,36 @@ public abstract class BaseReservationController {
 
         int diners;
         try {
-            diners = Integer.parseInt(numberOfDinersField.getText());
-            if (diners <= 0) throw new NumberFormatException();
+            diners = getNumberOfDiners();
         } catch (NumberFormatException e) {
             showError("Please enter a valid number of diners");
             return;
         }
 
         LocalDate resDate = datePicker.getValue();
-        Reservation r;
-
         int customerId = ClientHandler.getClient().getCurrentUserId();
-		r = new Reservation(0, customerId, diners, 0, resDate, selectedTime, ReservationStatus.CONFIRMED);
-		ClientHandler.getClient().addReservation(r);
+        Reservation r = new Reservation(0, customerId, diners, 0, resDate, selectedTime, ReservationStatus.CONFIRMED);
+        ClientHandler.getClient().addReservation(r);
 
         resetForm();
     }
 
-    // --- Submit alternative reservation ---
     protected void submitAlternativeReservation(LocalDate date, LocalTime time) {
         int diners;
         try {
-            diners = Integer.parseInt(numberOfDinersField.getText());
-            if (diners <= 0) throw new NumberFormatException();
+            diners = getNumberOfDiners();
         } catch (NumberFormatException e) {
             showError("Please enter a valid number of diners");
             return;
         }
 
-        Reservation r;
         int customerId = ClientHandler.getClient().getCurrentUserId();
-		r = new Reservation(0, customerId, diners, 0, date, time, ReservationStatus.CONFIRMED);
-		ClientHandler.getClient().addReservation(r);
+        Reservation r = new Reservation(0, customerId, diners, 0, date, time, ReservationStatus.CONFIRMED);
+        ClientHandler.getClient().addReservation(r);
 
         resetForm();
     }
 
-    // --- Helper ---
     public void showError(String msg) {
         SceneManager.showError(msg);
     }
@@ -179,7 +183,6 @@ public abstract class BaseReservationController {
         SceneManager.showInfo(msg);
     }
 
-    // Limit DatePicker one hour from now TO one month
     protected void setupDatePickerLimits() {
         LocalDate today = LocalDate.now();
         LocalDate maxDate = today.plusMonths(1);

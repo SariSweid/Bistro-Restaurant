@@ -60,6 +60,21 @@ public class ReservationDAO extends DBController {
         }
     }
     
+    public List<Reservation> getConfirmedReservationsAt(LocalDate date, LocalTime time) {
+        List<Reservation> allReservations = readAllReservations(); 
+        List<Reservation> result = new ArrayList<>();
+
+        for (Reservation r : allReservations) {
+            if (r.getStatus() == ReservationStatus.CONFIRMED &&
+                r.getReservationDate().equals(date) &&
+                r.getReservationTime().equals(time)) {
+                result.add(r);
+            }
+        }
+
+        return result;
+    }
+    
     public int countOverlappingReservations(LocalDate date, LocalTime time, int durationHours, int groupSize) {
         int count = 0;
 

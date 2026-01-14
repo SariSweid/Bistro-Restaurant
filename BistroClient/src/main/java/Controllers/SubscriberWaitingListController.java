@@ -72,7 +72,7 @@ public class SubscriberWaitingListController extends  BaseDisplayController {
         timeComboBox.getItems().clear();
 
         // Ask server for available times
-        ClientHandler.getClient().getAvailableTimes(date, 1); // 1 guest just to get times
+        ClientHandler.getClient().getAvailableTimes(date, 1,true); // 1 guest just to get times
     }
 
     public void loadTimes(List<LocalTime> times) {

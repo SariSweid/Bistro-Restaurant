@@ -14,17 +14,24 @@ import DAO.WaitingListDAO;
 import Entities.Reservation;
 import Entities.Table;
 import Entities.WaitingListEntry;
+import Entities.WeeklyOpeningHours;
 import common.ServerResponse;
 import enums.ExitReason;
 import enums.ReservationStatus;
 import enums.WaitingStatus;
 
+/**
+ * Controller for handling waiting list and reservation logic.
+ * Decides if a guest can get a reservation or should be added to the waiting list.
+ */
 public class WaitingListController {
-	
-	private Random random;
+
+    private Random random;
     private final TableDAO tableDAO;
     private final ReservationDAO reservationDAO;
     private final WaitingListDAO waitingListDAO;
+
+    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
 
     public WaitingListController() {
         this.random = new Random();
@@ -33,63 +40,78 @@ public class WaitingListController {
         this.waitingListDAO = new WaitingListDAO();
     }
 
-    
     /**
-     * Add customer to waiting list or create PENDING reservation if table is available.
+     * Adds a user to the waiting list or creates a reservation if a table is available.
+     *
+     * @param userID      User ID
+     * @param email       User email
+     * @param phone       User phone number
+     * @param numOfGuests Number of guests
+     * @param date        Desired date
+     * @param time        Desired time
+     * @return ServerResponse containing status, reservation/waiting list entry, and a message
      */
     public ServerResponse addToWaitingList(Integer userID, String email, String phone,
                                            int numOfGuests, LocalDate date, LocalTime time) {
 
-    	// Check table availability using new logic
-    	List<Table> tables = tableDAO.GetAllTables();
+        List<Table> tables = tableDAO.GetAllTables();
 
-    	int tablesThatFit = (int) tables.stream()
-    	        .filter(t -> t.getCapacity() >= numOfGuests)
-    	        .count();
+        int maxTableCapacity = tables.stream()
+                                     .mapToInt(Table::getCapacity)
+                                     .max()
+                                     .orElse(0);
 
-    	int overlapping = reservationDAO.countOverlappingReservations(
-    	        date,
-    	        time,
-    	        2, // reservation duration hours
-    	        numOfGuests
-    	);
+        if (numOfGuests > maxTableCapacity) {
+            return new ServerResponse(
+                    false,
+                    null,
+                    "Cannot accommodate group of this size. Max table size is " + maxTableCapacity
+            );
+        }
 
-    	boolean tableAvailable = overlapping < tablesThatFit;
+        int tablesThatFit = (int) tables.stream()
+                                        .filter(t -> t.getCapacity() >= numOfGuests)
+                                        .count();
 
-    	if (tableAvailable) {
-    	    int confirmationCode = generateConfirmationCode();
+        int overlapping = reservationDAO.countOverlappingReservations(
+                date,
+                time,
+                2,
+                numOfGuests
+        );
 
-    	    Reservation reservation = new Reservation(
-    	            0,
-    	            userID,
-    	            null, // no table assigned yet
-    	            null,
-    	            numOfGuests,
-    	            confirmationCode,
-    	            date,
-    	            time,
-    	            LocalDate.now(),
-    	            LocalTime.now(),
-    	            ReservationStatus.CONFIRMED
-    	    );
+        boolean tableAvailable = overlapping < tablesThatFit;
 
-    	    if (!reservationDAO.insertReservation(reservation)) {
-    	        return new ServerResponse(false, null, "Failed to create reservation");
-    	    }
+        if (tableAvailable) {
+            int confirmationCode = generateConfirmationCode();
 
-    	    // No tableDAO.updateTableIsAvailable() here
+            Reservation reservation = new Reservation(
+                    0,
+                    userID,
+                    null,
+                    null,
+                    numOfGuests,
+                    confirmationCode,
+                    date,
+                    time,
+                    LocalDate.now(),
+                    LocalTime.now(),
+                    ReservationStatus.CONFIRMED
+            );
 
-    	    scheduleAutoCancel(reservation.getReservationID());
+            if (!reservationDAO.insertReservation(reservation)) {
+                return new ServerResponse(false, null, "Failed to create reservation");
+            }
 
-    	    return new ServerResponse(
-    	            true,
-    	            reservation,
-    	            "Table available! Your reservation is confirmed. Your confirmation code is: " + confirmationCode
-    	    );
-    	}
+            scheduleAutoCancel(reservation.getReservationID());
 
+            return new ServerResponse(
+                    true,
+                    reservation,
+                    "Table available! Your reservation is confirmed. Your confirmation code is: " + confirmationCode
+            );
+        }
 
-        // No table → check if user already has a waiting entry
         WaitingListEntry existing = waitingListDAO.findExistingEntry(userID, date, time);
         if (existing != null && existing.getExitReason() == null) {
             return new ServerResponse(
@@ -99,7 +121,6 @@ public class WaitingListController {
             );
         }
 
-        // Add new waiting list entry
         int confirmationCode = generateConfirmationCode();
 
         WaitingListEntry entry = new WaitingListEntry(
@@ -126,13 +147,11 @@ public class WaitingListController {
         );
     }
 
-
-
-
     /**
-     * Cancels a CONFIRMED reservation after 15 minutes if not SEATED
+     * Schedules automatic cancellation of a reservation after 15 minutes if the user does not arrive.
+     *
+     * @param reservationID Reservation ID
      */
-    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
     private void scheduleAutoCancel(int reservationID) {
         scheduler.schedule(() -> {
             try {
@@ -153,10 +172,12 @@ public class WaitingListController {
         }, 15, TimeUnit.MINUTES);
     }
 
-
-
     /**
-     * Cancel waiting
+     * Cancels a waiting list entry based on the confirmation code.
+     *
+     * @param confirmationCode Confirmation code
+     * @param currentUserId    Current user ID
+     * @return ServerResponse indicating success or failure
      */
     public ServerResponse cancelWaiting(int confirmationCode, Integer currentUserId) {
 
@@ -178,46 +199,45 @@ public class WaitingListController {
             );
         }
 
-
         if (currentUserId != null) {
             if (entry.getUserID() != null &&
                 !entry.getUserID().equals(currentUserId)) {
-                System.out.println("Entered ownership IF: currentUserId = " + currentUserId);
                 return new ServerResponse(
-                    false,
-                    null,
-                    "This confirmation code does not belong to your account."
+                        false,
+                        null,
+                        "This confirmation code does not belong to your account."
                 );
             }
         }
 
-
-
-        boolean updated =
-                waitingListDAO.updateExitReason(
-                        confirmationCode,
-                        ExitReason.CANCELLED
-                );
-        
+        boolean updated = waitingListDAO.updateExitReason(confirmationCode, ExitReason.CANCELLED);
 
         return new ServerResponse(
                 updated,
                 null,
-                updated
-                    ? "Waiting cancelled successfully."
-                    : "Cancellation failed."
+                updated ? "Waiting cancelled successfully." : "Cancellation failed."
         );
     }
-    
-    
-    public List<WaitingListEntry> getWaitingListBetweenDates(LocalDate startDate,LocalDate endDate) {
-    	
 
-
+    /**
+     * Returns the waiting list entries between two dates.
+     *
+     * @param startDate Start date
+     * @param endDate   End date
+     * @return List of WaitingListEntry
+     */
+    public List<WaitingListEntry> getWaitingListBetweenDates(LocalDate startDate, LocalDate endDate) {
         return waitingListDAO.getWaitingListBetweenDates(startDate, endDate);
     }
 
+    /**
+     * Generates a random 6-digit confirmation code.
+     *
+     * @return Confirmation code
+     */
     private int generateConfirmationCode() {
         return 100000 + random.nextInt(900000);
     }
+
+
 }

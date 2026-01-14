@@ -9,6 +9,7 @@ import DAO.ReservationDAO;
 import DAO.TableDAO;
 import Entities.Reservation;
 import Entities.Table;
+import enums.ReservationStatus;
 
 public class TableController {
 	private final TableDAO TabledbController;
@@ -62,6 +63,23 @@ public class TableController {
         		reservations.stream().noneMatch(r -> r.getTableID() == t.getTableID())).min((t1, t2) -> 
         		Integer.compare(t1.getCapacity(), t2.getCapacity()));
 	}
+	
+	public int getTotalAvailableSeats(LocalDate date, LocalTime time) {
+	    List<Table> allTables = getAllTables();
+	    List<Reservation> reservations = Resdb.getReservationsAt(date, time);
+
+	    int usedSeats = reservations.stream()
+	                                .filter(r -> r.getStatus() == ReservationStatus.CONFIRMED)
+	                                .mapToInt(Reservation::getNumOfGuests)
+	                                .sum();
+
+	    int totalCapacity = allTables.stream()
+	                                 .mapToInt(Table::getCapacity)
+	                                 .sum();
+
+	    return totalCapacity - usedSeats;
+	}
+
 	
 	/**
 	 * marks table as occupied and update its status in db
