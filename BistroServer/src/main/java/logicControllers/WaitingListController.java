@@ -178,11 +178,6 @@ public class WaitingListController {
             );
         }
 
-        
-        System.out.println("BEFOROREFOORFOERO");
-        System.out.println("currentUserId = " + currentUserId);
-        System.out.println("entry = " + entry);
-        System.out.println("entry.getUserID() = " + entry.getUserID());
 
         if (currentUserId != null) {
             if (entry.getUserID() != null &&
@@ -196,7 +191,6 @@ public class WaitingListController {
             }
         }
 
-        System.out.println("beforgksrfkskfskdfksddfksdkff");
 
 
         boolean updated =
