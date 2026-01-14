@@ -59,6 +59,30 @@ public class ReservationDAO extends DBController {
         }
     }
     
+    public int countOverlappingReservations(LocalDate date, LocalTime time, int durationHours, int groupSize) {
+        int count = 0;
+
+        for (Reservation r : readAllReservations()) {
+            if (!r.isReservationActive()) continue;
+            if (!r.getReservationDate().equals(date)) continue;
+
+            // Only count reservations that require a table that can fit this group
+            if (r.getNumOfGuests() < groupSize) continue;
+
+            LocalTime existingStart = r.getReservationTime();
+            LocalTime existingEnd = existingStart.plusHours(durationHours);
+
+            LocalTime newStart = time;
+            LocalTime newEnd = time.plusHours(durationHours);
+
+            boolean overlap = existingStart.isBefore(newEnd) && existingEnd.isAfter(newStart);
+            if (overlap) count++;
+        }
+
+        return count;
+    }
+
+    
     
     public List<TimeData> getTimeDataBetween(LocalDate startDate, LocalDate endDate) {
         Connection con = getConnection();

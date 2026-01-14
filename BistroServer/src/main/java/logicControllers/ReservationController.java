@@ -62,15 +62,12 @@ public class ReservationController {
 	    if (guests > maxTableCapacity)
 	        return Collections.emptyList();
 
-	    int totalCapacity = tables.stream()
-	                              .mapToInt(Table::getCapacity)
-	                              .sum();
-
 	    LocalTime time = openTime;
 
 	    if (date.equals(LocalDate.now())) {
 	        LocalTime oneHourFromNow = LocalTime.now().plusHours(1).withSecond(0).withNano(0);
 
+	       // Enforce "at least 1 hour from now" rule
 	        if (oneHourFromNow.isAfter(time)) {
 	            int minute = oneHourFromNow.getMinute();
 	            if (minute > 0 && minute <= 30)
@@ -87,39 +84,27 @@ public class ReservationController {
 	    LocalTime lastStart = closeTime.minusHours(reservationDuration);
 
 	    while (!time.isAfter(lastStart)) {
-	        if (hasCapacity(date, time, guests, totalCapacity)) {
-	            available.add(time);
-	        }
-	        time = time.plusMinutes(30);
-	    }
+		    	int tablesThatFit = (int) tables.stream()
+		    	        .filter(t -> t.getCapacity() >= guests)
+		    	        .count();
+	
+		    	int overlapping = resdb.countOverlappingReservations(
+		    	        date,
+		    	        time,
+		    	        reservationDuration,
+		    	        guests
+		    	);
+	
+		    	if (overlapping < tablesThatFit) {
+		    	    available.add(time);
+		    	}
 
-	    System.out.println("Available times for " + date + " (" + guests + " guests):");
-	    for (LocalTime t : available) {
-	        System.out.println(t);
+	        time = time.plusMinutes(30);
 	    }
 
 	    return available;
 	}
 
-
-
-    private boolean hasCapacity(LocalDate date, LocalTime time, int guests, int totalCapacity) {
-    		int reservationDuration = settings.getReservationDurationHours();
-    	
-        List<Reservation> reservations = resdb.getReservationsAt(date, time);
-        int usedSeats = 0;
-
-        for (Reservation r : reservations) {
-            if (!r.isReservationActive()) continue;
-            LocalTime rStart = r.getReservationTime();
-            LocalTime rEnd = rStart.plusHours(reservationDuration);
-            LocalTime newEnd = time.plusHours(reservationDuration);
-            boolean overlap = !(time.isAfter(rEnd) || newEnd.isBefore(rStart));
-            if (overlap) usedSeats += r.getNumOfGuests();
-        }
-
-        return (usedSeats + guests) <= totalCapacity;
-    }
 
     public List<AvailableDateTimes> getNearestAvailableDates(LocalDate requestedDate, int guests) {
         List<AvailableDateTimes> result = new ArrayList<>();
@@ -164,8 +149,20 @@ public class ReservationController {
         int maxTableCapacity = tables.stream().mapToInt(Table::getCapacity).max().orElse(0);
         if (r.getNumOfGuests() > maxTableCapacity) return false;
 
-        int totalCapacity = tables.stream().mapToInt(Table::getCapacity).sum();
-        if (!hasCapacity(r.getReservationDate(), r.getReservationTime(), r.getNumOfGuests(), totalCapacity)) return false;
+        int tablesThatFit = (int) tables.stream()
+                .filter(t -> t.getCapacity() >= r.getNumOfGuests())
+                .count();
+
+        int overlapping = resdb.countOverlappingReservations(
+                r.getReservationDate(),
+                r.getReservationTime(),
+                settings.getReservationDurationHours(),
+                r.getNumOfGuests()
+        );
+
+        if (overlapping >= tablesThatFit)
+            return false;
+
 
         r.setTableID(null);
         r.setConfirmationCode(generateConfirmationCode());
