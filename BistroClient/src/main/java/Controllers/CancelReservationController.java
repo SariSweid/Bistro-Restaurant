@@ -1,8 +1,8 @@
 package Controllers;
 
 import Entities.Reservation;
+import enums.ReservationStatus;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -25,16 +25,13 @@ public class CancelReservationController extends BaseDisplayController {
 
     @FXML
     public void initialize() {
-        // Register this controller in ClientHandler
         ClientHandler.getClient().setActiveDisplayController(this);
 
-        // Setup table columns
         idCol.setCellValueFactory(new PropertyValueFactory<>("reservationID"));
         dateCol.setCellValueFactory(new PropertyValueFactory<>("reservationDate"));
         timeCol.setCellValueFactory(new PropertyValueFactory<>("reservationTime"));
         guestsCol.setCellValueFactory(new PropertyValueFactory<>("numOfGuests"));
 
-        // Load reservations
         refreshReservations();
     }
 
@@ -42,9 +39,14 @@ public class CancelReservationController extends BaseDisplayController {
     public void showReservations(List<Reservation> list) {
         if (list == null || list.isEmpty()) {
             reservationsTable.setItems(FXCollections.observableArrayList());
-        } else {
-            reservationsTable.setItems(FXCollections.observableArrayList(list));
+            return;
         }
+
+        List<Reservation> confirmed = list.stream()
+                .filter(r -> r.getStatus() == ReservationStatus.CONFIRMED)
+                .toList();
+
+        reservationsTable.setItems(FXCollections.observableArrayList(confirmed));
     }
 
     public void refreshReservations() {
