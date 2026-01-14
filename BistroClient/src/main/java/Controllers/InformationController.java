@@ -56,17 +56,17 @@ public class InformationController {
             case SUBSCRIBER -> {
                 Subscriber s = (Subscriber) user;
                 s.setName(name.getText());
-                s.setName(userName.getText());
+                s.setUserName(userName.getText());
             }
             case MANAGER -> {
                 Manager m = (Manager) user;
                 m.setName(name.getText());
-                m.setName(userName.getText());
+                m.setUserName(userName.getText());
             }
             case SUPERVISOR -> {
                 Supervisor s = (Supervisor) user;
                 s.setName(name.getText());
-                s.setName(userName.getText());
+                s.setUserName(userName.getText());
             }
         }
 

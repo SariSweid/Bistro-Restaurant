@@ -48,4 +48,9 @@ public class Subscriber extends User implements Serializable {
 	public void setName(String newName) {
 		this.name = newName;
 	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+		
+	}
 }
