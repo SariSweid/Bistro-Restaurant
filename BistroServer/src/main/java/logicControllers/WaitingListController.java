@@ -33,48 +33,63 @@ public class WaitingListController {
         this.waitingListDAO = new WaitingListDAO();
     }
 
+    
     /**
      * Add customer to waiting list or create PENDING reservation if table is available.
      */
     public ServerResponse addToWaitingList(Integer userID, String email, String phone,
                                            int numOfGuests, LocalDate date, LocalTime time) {
 
-        // 1. Check table availability
-        Table table = tableDAO.getAvailableTableAtTime(numOfGuests, date, time);
+    	// Check table availability using new logic
+    	List<Table> tables = tableDAO.GetAllTables();
 
-        if (table != null) {
-            // Table available → create CONFIRMED reservation
-            int confirmationCode = generateConfirmationCode();
+    	int tablesThatFit = (int) tables.stream()
+    	        .filter(t -> t.getCapacity() >= numOfGuests)
+    	        .count();
 
-            Reservation reservation = new Reservation(
-                    0,
-                    userID,
-                    table.getTableID(),
-                    null,
-                    numOfGuests,
-                    confirmationCode,
-                    date,
-                    time,
-                    LocalDate.now(),
-                    LocalTime.now(),
-                    ReservationStatus.CONFIRMED
-            );
+    	int overlapping = reservationDAO.countOverlappingReservations(
+    	        date,
+    	        time,
+    	        2, // reservation duration hours
+    	        numOfGuests
+    	);
 
-            if (!reservationDAO.insertReservation(reservation)) {
-                return new ServerResponse(false, null, "Failed to create reservation");
-            }
+    	boolean tableAvailable = overlapping < tablesThatFit;
 
-            tableDAO.updateTableIsAvailable(table.getTableID(), false);
-            scheduleAutoCancel(reservation.getReservationID());
+    	if (tableAvailable) {
+    	    int confirmationCode = generateConfirmationCode();
 
-            return new ServerResponse(
-                    true,
-                    reservation,
-                    "Table available! please proceed to table #" + table.getTableID()
-            );
-        }
+    	    Reservation reservation = new Reservation(
+    	            0,
+    	            userID,
+    	            null, // no table assigned yet
+    	            null,
+    	            numOfGuests,
+    	            confirmationCode,
+    	            date,
+    	            time,
+    	            LocalDate.now(),
+    	            LocalTime.now(),
+    	            ReservationStatus.CONFIRMED
+    	    );
 
-        // 2. No table → check if user already has a waiting entry
+    	    if (!reservationDAO.insertReservation(reservation)) {
+    	        return new ServerResponse(false, null, "Failed to create reservation");
+    	    }
+
+    	    // No tableDAO.updateTableIsAvailable() here
+
+    	    scheduleAutoCancel(reservation.getReservationID());
+
+    	    return new ServerResponse(
+    	            true,
+    	            reservation,
+    	            "Table available! Your reservation is confirmed. Your confirmation code is: " + confirmationCode
+    	    );
+    	}
+
+
+        // No table → check if user already has a waiting entry
         WaitingListEntry existing = waitingListDAO.findExistingEntry(userID, date, time);
         if (existing != null && existing.getExitReason() == null) {
             return new ServerResponse(
@@ -84,7 +99,7 @@ public class WaitingListController {
             );
         }
 
-        // 3. Add new waiting list entry
+        // Add new waiting list entry
         int confirmationCode = generateConfirmationCode();
 
         WaitingListEntry entry = new WaitingListEntry(
@@ -107,7 +122,7 @@ public class WaitingListController {
         return new ServerResponse(
                 true,
                 entry,
-                "Added to waiting list. Your confirmation code: " + confirmationCode
+                "Added to waiting list. Your confirmation code: " + entry.getConfirmationCode()
         );
     }
 

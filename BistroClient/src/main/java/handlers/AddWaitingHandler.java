@@ -27,13 +27,13 @@ public class AddWaitingHandler implements ResponseHandler {
 	        }
 
 	        if (!res.isSuccess()) {
-	            SceneManager.showError("Operation failed: " + res.getMessage());
+	            SceneManager.showError(res.getMessage());
 	            return;
 	        }
 
 	        // Handle Reservation (table assigned immediately)
 	        if (res.getData() instanceof Reservation reservation) {
-	            SceneManager.showInfo("Reservation has been made, please arrive in time!");
+	            SceneManager.showInfo(res.getMessage());
 	            if (controller instanceof GuestWaitingListController guestController) {
 	                guestController.clearAddFields();
 	            } else if (controller instanceof SubscriberWaitingListController subController) {
