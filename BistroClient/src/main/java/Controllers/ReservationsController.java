@@ -72,8 +72,7 @@ public class ReservationsController {
         }
 
         List<Reservation> active = reservations.stream()
-            .filter(r -> r.getStatus() == ReservationStatus.CONFIRMED
-                      || r.getStatus() == ReservationStatus.SEATED)
+            .filter(r -> r.getStatus() == ReservationStatus.CONFIRMED)
             .toList();
 
         ReservationsTable.getItems().setAll(active);
