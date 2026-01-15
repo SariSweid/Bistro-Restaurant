@@ -12,9 +12,13 @@ import java.util.concurrent.TimeUnit;
 
 import DAO.ReservationDAO;
 import DAO.TableDAO;
+import DAO.UserDAO;
 import DAO.WaitingListDAO;
+import Entities.Guest;
 import Entities.Reservation;
 import Entities.Table;
+import Entities.User;
+import enums.UserRole;
 import Entities.WaitingListEntry;
 import common.ServerResponse;
 import enums.ExitReason;
@@ -31,6 +35,7 @@ public class WaitingListController {
     private final TableDAO tableDAO;
     private final ReservationDAO reservationDAO;
     private final WaitingListDAO waitingListDAO;
+    private final UserDAO userDAO;
 
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
 
@@ -39,6 +44,7 @@ public class WaitingListController {
         this.tableDAO = new TableDAO();
         this.reservationDAO = new ReservationDAO();
         this.waitingListDAO = new WaitingListDAO();
+        this.userDAO = new UserDAO();
     }
 
     /**
@@ -53,110 +59,90 @@ public class WaitingListController {
      * @return ServerResponse containing status, reservation/waiting list entry, and a message
      */
     public ServerResponse addToWaitingList(Integer userID, String email, String phone,
-                                           int numOfGuests, LocalDate date, LocalTime time) {
+            int numOfGuests, LocalDate date, LocalTime time) {
 
-        List<Table> tables = tableDAO.GetAllTables();
-        
-        tables.sort(Comparator.comparingInt(Table::getCapacity));
-
-        int maxTableCapacity = tables.stream()
-                                     .mapToInt(Table::getCapacity)
-                                     .max()
-                                     .orElse(0);
-
-        if (numOfGuests > maxTableCapacity) {
-            return new ServerResponse(
-                    false,
-                    null,
-                    "Cannot accommodate group of this size. Max table size is " + maxTableCapacity
-            );
-        }
-
-
-        List<Reservation> reservations =
-                reservationDAO.getConfirmedReservationsAt(date, time);
-        
-     // Sort reservations by DESCENDING group size so big groups get matched first
-        reservations.sort((a, b) -> Integer.compare(b.getNumOfGuests(), a.getNumOfGuests()));
-
-
-        // Check if this new reservation can fit at this date/time
-        boolean tableAvailable = canFitReservation(date, time, numOfGuests);
-
-
-        if (tableAvailable) {
-            int confirmationCode = generateConfirmationCode();
-
-            Reservation reservation = new Reservation(
-                    0,
-                    userID,
-                    null,
-                    null,
-                    numOfGuests,
-                    confirmationCode,
-                    date,
-                    time,
-                    LocalDate.now(),
-                    LocalTime.now(),
-                    ReservationStatus.CONFIRMED
-            );
-
-            if (!reservationDAO.insertReservation(reservation)) {
-                return new ServerResponse(false, null, "Failed to create reservation");
+        if (userID == null) {
+        	Guest guest = new Guest(0, email, phone);
+            guest.setEmail(email);
+            guest.setPhone(phone);
+            guest.setRole(UserRole.GUEST);
+            userID = userDAO.insertGuestAndReturnId2(guest);
+            if (userID == -1) {
+                return new ServerResponse(false, null, "Failed to create guest user.");
             }
-
-            scheduleAutoCancel(reservation.getReservationID());
-
-            return new ServerResponse(
-                    true,
-                    reservation,
-                    "Table available! Your reservation is confirmed. Your confirmation code is: " + confirmationCode
-            );
         }
 
-        WaitingListEntry existing = null;
+    	List<Table> tables = tableDAO.GetAllTables();
+    	tables.sort(Comparator.comparingInt(Table::getCapacity));
+    	int maxTableCapacity = tables.stream().mapToInt(Table::getCapacity).max().orElse(0);
 
-        if (userID != null) {
-            existing = waitingListDAO.findExistingEntry(userID, date, time);
-        }
+    	if (numOfGuests > maxTableCapacity) {
+    		return new ServerResponse(false, null,
+    				"Cannot accommodate group of this size. Max table size is " + maxTableCapacity);
+    	}
 
-     // If guest uses email/phone (userID is null), also check by contact
-        if (existing == null && (email != null || phone != null)) {
-            existing = waitingListDAO.findExistingEntryByContact(email, phone, date, time);
-        }
-        
-        if (existing != null && existing.getExitReason() == null) {
-            return new ServerResponse(
-                    false,
-                    null,
-                    "You are already on the waiting list for this date and time."
-            );
-        }
+    	List<Reservation> reservations = reservationDAO.getConfirmedReservationsAt(date, time);
+    	reservations.sort((a, b) -> Integer.compare(b.getNumOfGuests(), a.getNumOfGuests()));
+    	boolean tableAvailable = canFitReservation(date, time, numOfGuests);
 
-        int confirmationCode = generateConfirmationCode();
+    	if (tableAvailable) {
+    		int confirmationCode = generateConfirmationCode();
 
-        WaitingListEntry entry = new WaitingListEntry(
-                userID,
-                email,
-                phone,
-                numOfGuests,
-                confirmationCode,
-                date,
-                time,
-                null,
-                WaitingStatus.WAITING
-        );
+    		Reservation reservation = new Reservation(
+    				0,
+    				userID,
+    				null,
+    				null,
+    				numOfGuests,
+    				confirmationCode,
+    				date,
+    				time,
+    				LocalDate.now(),
+    				LocalTime.now(),
+    				ReservationStatus.CONFIRMED
+    				);
 
-        boolean success = waitingListDAO.addToWitingList(entry);
-        if (!success) {
-            return new ServerResponse(false, null, "Failed to add to waiting list");
-        }
+    		if (!reservationDAO.insertReservation(reservation)) {
+    			return new ServerResponse(false, null, "Failed to create reservation");
+    		}
 
-        return new ServerResponse(
-                true,
-                entry,
-                "Added to waiting list. Your confirmation code: " + entry.getConfirmationCode()
-        );
+    		scheduleAutoCancel(reservation.getReservationID());
+
+    		return new ServerResponse(true, reservation,
+    				"Table available! Your reservation is confirmed. Your confirmation code is: " + confirmationCode);
+    	}
+
+    	WaitingListEntry existing = waitingListDAO.findExistingEntry(userID, date, time);
+    	if (existing == null && (email != null || phone != null)) {
+    		existing = waitingListDAO.findExistingEntryByContact(email, phone, date, time);
+    	}
+
+    	if (existing != null && existing.getExitReason() == null) {
+    		return new ServerResponse(false, null,
+    				"You are already on the waiting list for this date and time.");
+    	}
+
+    	int confirmationCode = generateConfirmationCode();
+
+	WaitingListEntry entry = new WaitingListEntry(
+		userID,
+	email,
+	phone,
+	numOfGuests,
+	confirmationCode,
+	date,
+	time,
+	null,
+	WaitingStatus.WAITING
+		);
+
+	boolean success = waitingListDAO.addToWitingList(entry);
+	if (!success) {
+		return new ServerResponse(false, null, "Failed to add to waiting list");
+	}
+
+	return new ServerResponse(true, entry,
+		"Added to waiting list. Your confirmation code: " + entry.getConfirmationCode());
     }
     
     private boolean canFitReservation(
@@ -299,6 +285,10 @@ public class WaitingListController {
             code = 100000 + random.nextInt(900000);
         } while (waitingListDAO.getByConfirmationCode(code) != null);
         return code;
+    }
+    
+    private int generateGuestId() {
+        return 100000 + new Random().nextInt(900000);
     }
 
 

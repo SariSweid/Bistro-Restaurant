@@ -9,6 +9,10 @@ import enums.UserRole;
  */
 public abstract class User implements Serializable {
 	
+	public void setRole(UserRole role) {
+		this.role = role;
+	}
+
 	//enum that represent each user role in the system, used to define when logging in to the system which screen each user will go
 	/**
 	 * 

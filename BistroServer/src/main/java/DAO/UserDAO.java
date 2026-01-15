@@ -3,6 +3,7 @@ package DAO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import DB.DBController;
 import Entities.*;
@@ -101,6 +102,58 @@ public class UserDAO extends DBController {
 	        return -1;
 	    }
 	}
+	
+	
+	public int insertGuestAndReturnId2(User g) {
+	    int newId = generateRandomUserId2(); 
+	    try (Connection con = getConnection();
+	         PreparedStatement pst =
+	             con.prepareStatement(
+	                 "INSERT INTO `user` (UserId, Phone, Email, Role) VALUES (?, ?, ?, ?)")) {
+
+	        pst.setInt(1, newId); 
+	        pst.setString(2, g.getPhone());
+	        pst.setString(3, g.getEmail());
+	        pst.setString(4, g.getRole().name());
+
+	        int rows = pst.executeUpdate();
+	        if (rows > 0) {
+	            return newId; 
+	        } else {
+	            return -1; 
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return -1;
+	    }
+	}
+
+
+	private int generateRandomUserId2() {
+	    Random random = new Random();
+	    int id;
+	    do {
+	        id = 100000 + random.nextInt(900000); 
+	    } while (userExists(id));
+	    return id;
+	}
+
+ 
+	private boolean userExists(int userId) {
+	    try (Connection con = getConnection();
+	         PreparedStatement ps = con.prepareStatement("SELECT 1 FROM `user` WHERE UserId = ?")) {
+	        ps.setInt(1, userId);
+	        ResultSet rs = ps.executeQuery();
+	        return rs.next();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return true;
+	}
+
+	
+	
 
 	// get Guest by phone number
 	public User getUserByPhone(String phone) {
