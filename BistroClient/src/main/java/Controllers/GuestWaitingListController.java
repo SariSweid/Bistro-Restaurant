@@ -24,7 +24,7 @@ import util.SceneManager;
  * Allows a guest to enter either an email or a phone number, specify the number of diners, 
  * and select a time for the reservation.
  */
-public class GuestWaitingListController extends  BaseDisplayController{
+public class GuestWaitingListController extends  BaseDisplayController implements AvailableTimesListener{
 
     @FXML
     private TextField numberOfDiners, emailOrPhone;
@@ -47,7 +47,7 @@ public class GuestWaitingListController extends  BaseDisplayController{
     @FXML
     public void initialize() {
 
-        ClientHandler.getClient().setActiveDisplayController(this);
+    	ClientHandler.getClient().setAvailableTimesListener(this);
 
         // Block past dates
         datePicker.setDayCellFactory(picker -> new DateCell() {
@@ -258,5 +258,10 @@ public class GuestWaitingListController extends  BaseDisplayController{
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    
+    @Override
+    public void updateAvailableTimes(List<LocalTime> times) {
+        loadTimes(times);
     }
 }

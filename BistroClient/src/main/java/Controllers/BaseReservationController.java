@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import Entities.Reservation;
 import enums.ReservationStatus;
+import handlers.ClientHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,9 +18,8 @@ import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import util.SceneManager;
-import handlers.ClientHandler;
 
-public abstract class BaseReservationController {
+public abstract class BaseReservationController implements AvailableTimesListener {
 
     @FXML
     protected ComboBox<LocalTime> timeComboBox;
@@ -35,7 +35,7 @@ public abstract class BaseReservationController {
 
     @FXML
     public void initialize() {
-        ClientHandler.getClient().setActiveReservationController(this);
+    	ClientHandler.getClient().setAvailableTimesListener(this);
 
         if (datePicker != null) {
             datePicker.valueProperty().addListener((obs, oldDate, newDate) -> hideTimeSelection());

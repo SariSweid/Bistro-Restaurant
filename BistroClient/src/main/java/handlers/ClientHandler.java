@@ -1,12 +1,12 @@
 package handlers;
 
 import java.io.IOException;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 
+import Controllers.AvailableTimesListener;
 import Controllers.BaseDisplayController;
 import Controllers.BaseReservationController;
 import Controllers.MainMenuController;
@@ -23,7 +23,36 @@ import enums.ActionType;
 import enums.ReportType;
 import enums.ReservationStatus;
 import enums.UserRole;
-import messages.*;
+import messages.AddReservationRequest;
+import messages.AddSpecialDateRequest;
+import messages.AddToWaitingListRequest;
+import messages.CancelReservationRequest;
+import messages.CancelWaitingRequest;
+import messages.CreateRegularOpeningHoursRequest;
+import messages.DeleteOpeningHoursRequest;
+import messages.DeleteSpecialDateRequest;
+import messages.DeleteTableRequest;
+import messages.ForgotCodeRequest;
+import messages.GetAllReservationsRequest;
+import messages.GetAvailableTimesRequest;
+import messages.GetNearestAvailableTimesRequest;
+import messages.GetRestaurantSettingsRequest;
+import messages.GetUserInformationRequest;
+import messages.GetUserReservationsRequest;
+import messages.GetWaitingListBetweenDatesRequest;
+import messages.InsertTableRequest;
+import messages.LoginRequest;
+import messages.LogoutRequest;
+import messages.PaymentRequest;
+import messages.RegisterRequest;
+import messages.ReportRequest;
+import messages.SeatCustomerRequest;
+import messages.UpdateReservationRequest;
+import messages.UpdateSpecialDateRequest;
+import messages.UpdateTableRequest;
+import messages.UpdateUserRequest;
+import messages.updateRegularClosingTimeRequest;
+import messages.updateRegularOpeningTimeRequest;
 import src.ocsf.client.AbstractClient;
 
 public class ClientHandler extends AbstractClient {
@@ -33,7 +62,6 @@ public class ClientHandler extends AbstractClient {
     private HashMap<ReportType, ReportHandler> reportHandlers = new HashMap<>();
     public static ClientHandler instance;
     private GuestUpdateReservationUI guestUI;
-    private BaseReservationController activeReservationController;
     private MainMenuController mainMenuController;
     private boolean cameFromHigherRole = false;
     private RestaurantSettingsController activeRestaurantSettingsController;
@@ -43,8 +71,18 @@ public class ClientHandler extends AbstractClient {
     private User currentUser;
     private TablesController tablesController;
     private List<Reservation> allReservations;
+    private AvailableTimesListener availableTimesListener;
+    private BaseReservationController activeReservationController;
 
-    private ClientHandler(String host, int port) throws IOException {
+    public BaseReservationController getActiveReservationController() {
+		return activeReservationController;
+	}
+
+	public void setActiveReservationController(BaseReservationController activeReservationController) {
+		this.activeReservationController = activeReservationController;
+	}
+
+	private ClientHandler(String host, int port) throws IOException {
         super(host, port);
         handlers = new HashMap<>();
         initializeHandlers();
@@ -124,13 +162,7 @@ public class ClientHandler extends AbstractClient {
         return mainMenuController;
     }
 
-    public void setActiveReservationController(BaseReservationController controller) {
-        this.activeReservationController = controller;
-    }
 
-    public BaseReservationController getActiveReservationController() {
-        return activeReservationController;
-    }
 
     private BaseDisplayController activeDisplayController;
 
@@ -419,4 +451,12 @@ public class ClientHandler extends AbstractClient {
     public void setHandler(ReportType type, ReportHandler handler) {
         reportHandlers.put(type, handler);
     }
+
+	public AvailableTimesListener getAvailableTimesListener() {
+		return availableTimesListener;
+	}
+
+	public void setAvailableTimesListener(AvailableTimesListener availableTimesListener) {
+		this.availableTimesListener = availableTimesListener;
+	}
 }
