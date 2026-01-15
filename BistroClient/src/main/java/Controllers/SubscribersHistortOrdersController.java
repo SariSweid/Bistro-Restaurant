@@ -4,6 +4,7 @@ import java.util.List;
 import Entities.Reservation;
 import Entities.User;
 import enums.ReservationStatus;
+import enums.UserRole;
 import handlers.ClientHandler;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -67,7 +68,10 @@ public class SubscribersHistortOrdersController extends BaseDisplayController {
     }
 
     public void refreshReservations() {
-        if (selectedUserId != 0) {
+        User currentUser = ClientHandler.getClient().getCurrentUser();
+        if (currentUser.getRole() == UserRole.SUBSCRIBER) {
+            ClientHandler.getClient().getUserReservations(currentUser.getUserId());
+        } else if (selectedUserId != 0) {
             ClientHandler.getClient().getUserReservations(selectedUserId);
         }
     }
