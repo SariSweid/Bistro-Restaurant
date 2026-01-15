@@ -5,10 +5,12 @@ import java.util.List;
 import Entities.Reservation;
 import enums.ReservationStatus;
 import handlers.ClientHandler;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import util.SceneManager;
 
 public class SubscribersHistortOrdersController extends BaseDisplayController {
@@ -18,6 +20,7 @@ public class SubscribersHistortOrdersController extends BaseDisplayController {
     @FXML private TableColumn<Reservation, String> dateColumn;
     @FXML private TableColumn<Reservation, Integer> guestsColumn;
     @FXML private TableColumn<Reservation, Integer> confirmationCodeColumn;
+    @FXML private TableColumn<Reservation, String> statusColumn;
 
     @FXML
     public void initialize() {
@@ -25,6 +28,27 @@ public class SubscribersHistortOrdersController extends BaseDisplayController {
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("reservationDate"));
         guestsColumn.setCellValueFactory(new PropertyValueFactory<>("numOfGuests"));
         confirmationCodeColumn.setCellValueFactory(new PropertyValueFactory<>("confirmationCode"));
+        statusColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getStatus().toString()));
+
+        
+        statusColumn.setCellFactory(column -> new TableCell<Reservation, String>() {
+            @Override
+            protected void updateItem(String status, boolean empty) {
+                super.updateItem(status, empty);
+                if (empty || status == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(status);
+                    switch (status) {
+                        case "COMPLETED" -> setTextFill(Color.GREEN);
+                        case "CANCELLED" -> setTextFill(Color.RED);
+                        case "NOT_SHOWED" -> setTextFill(Color.ORANGE);
+                        default -> setTextFill(Color.BLACK);
+                    }
+                }
+            }
+        });
 
         ClientHandler.getClient().setActiveDisplayController(this);
         refreshReservations();
@@ -32,15 +56,17 @@ public class SubscribersHistortOrdersController extends BaseDisplayController {
 
     @Override
     public void showReservations(List<Reservation> list) {
-    	System.out.println("the list is equal to:" + list);
-    	System.out.println();
+        System.out.println("the list is equal to:" + list);
+        System.out.println();
         if (list == null) {
             reservationsTable.setItems(FXCollections.observableArrayList());
             return;
         }
 
         List<Reservation> completed = list.stream()
-                .filter(r -> r.getStatus() == ReservationStatus.COMPLETED)
+                .filter(r -> r.getStatus() == ReservationStatus.COMPLETED
+                          || r.getStatus() == ReservationStatus.NOT_SHOWED
+                          || r.getStatus() == ReservationStatus.CANCELLED)
                 .toList();
 
         reservationsTable.setItems(FXCollections.observableArrayList(completed));
