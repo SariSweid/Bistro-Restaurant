@@ -313,16 +313,21 @@ public class WaitingListDAO extends DBController {
 
 	        ResultSet rs = pst.executeQuery();
 	        if (rs.next()) {
+	            ExitReason exitReason = null;
+	            String exitReasonStr = rs.getString("exitReason");
+	            if (exitReasonStr != null) {
+	                exitReason = ExitReason.valueOf(exitReasonStr);
+	            }
+
 	            return new WaitingListEntry(
-	                rs.getObject("userID", Integer.class),
+	                rs.getInt("userID"),
 	                rs.getString("Email"),
 	                rs.getString("Phone"),
 	                rs.getInt("numOfGuests"),
 	                rs.getInt("confirmationCode"),
 	                rs.getDate("WaitDate").toLocalDate(),
 	                rs.getTime("WaitTime").toLocalTime(),
-	                rs.getString("exitReason") == null ? null : ExitReason.valueOf(rs.getString("exitReason")),
-	                WaitingStatus.valueOf(rs.getString("status"))
+	                exitReason
 	            );
 	        }
 
@@ -335,18 +340,19 @@ public class WaitingListDAO extends DBController {
 	
 	public WaitingListEntry findExistingEntryByContact(String email, String phone, LocalDate date, LocalTime time) {
 	    String sql = "SELECT * FROM waitinglist WHERE WaitDate = ? AND WaitTime = ? AND exitReason IS NULL";
-	    List<String> params = new ArrayList<>();
 
-	    if (email != null && !email.isBlank()) {
+	    boolean hasEmail = email != null && !email.isBlank();
+	    boolean hasPhone = phone != null && !phone.isBlank();
+
+	    if (hasEmail && hasPhone) {
+	        sql += " AND (Email = ? OR Phone = ?)";
+	    } else if (hasEmail) {
 	        sql += " AND Email = ?";
-	        params.add(email);
-	    }
-	    if (phone != null && !phone.isBlank()) {
+	    } else if (hasPhone) {
 	        sql += " AND Phone = ?";
-	        params.add(phone);
+	    } else {
+	        return null; 
 	    }
-
-	    if (params.isEmpty()) return null;
 
 	    try (Connection con = getConnection();
 	         PreparedStatement pst = con.prepareStatement(sql)) {
@@ -354,22 +360,27 @@ public class WaitingListDAO extends DBController {
 	        pst.setDate(1, java.sql.Date.valueOf(date));
 	        pst.setTime(2, java.sql.Time.valueOf(time));
 
-	        for (int i = 0; i < params.size(); i++) {
-	            pst.setString(3 + i, params.get(i)); // 3rd param onwards
+	        int paramIndex = 3;
+	        if (hasEmail && hasPhone) {
+	            pst.setString(paramIndex++, email);
+	            pst.setString(paramIndex++, phone);
+	        } else if (hasEmail) {
+	            pst.setString(paramIndex++, email);
+	        } else if (hasPhone) {
+	            pst.setString(paramIndex++, phone);
 	        }
 
 	        ResultSet rs = pst.executeQuery();
 	        if (rs.next()) {
 	            return new WaitingListEntry(
-	                rs.getObject("userID", Integer.class),
+	                rs.getObject("userID", Integer.class),  
 	                rs.getString("Email"),
 	                rs.getString("Phone"),
 	                rs.getInt("numOfGuests"),
 	                rs.getInt("confirmationCode"),
 	                rs.getDate("WaitDate").toLocalDate(),
 	                rs.getTime("WaitTime").toLocalTime(),
-	                rs.getString("exitReason") == null ? null : ExitReason.valueOf(rs.getString("exitReason")),
-	                WaitingStatus.valueOf(rs.getString("status"))
+	                rs.getString("exitReason") == null ? null : ExitReason.valueOf(rs.getString("exitReason")) 
 	            );
 	        }
 	    } catch (SQLException e) {

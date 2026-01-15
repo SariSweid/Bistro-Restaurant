@@ -16,12 +16,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import util.SceneManager;
 
-/**
- * Controller for subscriber waiting list screen.
- * Handles adding and removing a subscriber from the waiting list
- * and displaying available times received from the server.
- */
-public class SubscriberWaitingListController extends BaseDisplayController implements AvailableTimesListener{
+public class SubscriberWaitingListController extends BaseDisplayController implements AvailableTimesListener {
 
     @FXML
     private TextField numberOfDiners;
@@ -36,39 +31,34 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     private TextField confirmationCodeField;
 
     /**
-     * Initializes the waiting list screen for subscribers.
-     * Sets date limits and requests available times when a date is selected.
+     * Initializes the subscriber waiting list controller.
+     * Sets up date picker limits, available times listener,
+     * and saves this controller as active in the ClientHandler.
      */
     @FXML
     public void initialize() {
-
-    	ClientHandler.getClient().setAvailableTimesListener(this);
+        ClientHandler.getClient().setAvailableTimesListener(this);
+        ClientHandler.getClient().setActiveDisplayController(this);
 
         datePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
-                setDisable(
-                        empty ||
-                        date.isBefore(LocalDate.now()) ||
-                        date.isAfter(LocalDate.now().plusMonths(1))
-                );
+                setDisable(empty || date.isBefore(LocalDate.now()) || date.isAfter(LocalDate.now().plusMonths(1)));
             }
         });
 
         datePicker.valueProperty().addListener((obs, oldDate, newDate) -> {
-            if (newDate != null) {
-                loadTimesForDate(newDate);
-            }
+            if (newDate != null) loadTimesForDate(newDate);
         });
 
         datePicker.setValue(LocalDate.now());
     }
 
     /**
-     * Requests available times from the server for a given date.
+     * Requests available times from the server for the given date.
      *
-     * @param date selected date
+     * @param date The date for which to retrieve available times.
      */
     private void loadTimesForDate(LocalDate date) {
         timeComboBox.getItems().clear();
@@ -78,7 +68,7 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     /**
      * Loads available times into the combo box.
      *
-     * @param times list of available times
+     * @param times List of LocalTime objects representing available slots.
      */
     public void loadTimes(List<LocalTime> times) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -96,11 +86,10 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     /**
      * Not used in this screen.
      *
-     * @param reservations list of reservations
+     * @param reservations List of reservations.
      */
     @Override
-    public void showReservations(List<Reservation> reservations) {
-    }
+    public void showReservations(List<Reservation> reservations) {}
 
     /**
      * Sends a request to add the subscriber to the waiting list.
@@ -152,7 +141,7 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     }
 
     /**
-     * Sends a request to remove the subscriber from the waiting list.
+     * Sends a request to remove the subscriber from the waiting list by confirmation code.
      */
     @FXML
     private void onRemoveFromWaitingList() {
@@ -165,14 +154,14 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     }
 
     /**
-     * Clears the confirmation code field.
+     * Clears the confirmation code input field.
      */
     public void clearConfirmationCodeField() {
         confirmationCodeField.clear();
     }
 
     /**
-     * Returns to the previous screen.
+     * Returns to the previous subscriber UI screen.
      */
     @FXML
     private void onPreviousPage() {
@@ -180,10 +169,10 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     }
 
     /**
-     * Displays an information alert.
+     * Shows an information alert dialog.
      *
-     * @param title alert title
-     * @param message alert message
+     * @param title   Title of the alert.
+     * @param message Message content of the alert.
      */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -196,13 +185,17 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     /**
      * Returns the confirmation code text field.
      *
-     * @return confirmation code field
+     * @return TextField used for entering confirmation code.
      */
     public TextField getConfirmationCodeField() {
         return confirmationCodeField;
     }
 
-    
+    /**
+     * Receives updated available times from the server.
+     *
+     * @param times List of available LocalTime slots.
+     */
     @Override
     public void updateAvailableTimes(List<LocalTime> times) {
         loadTimes(times);

@@ -6,9 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import Entities.Reservation;
-import enums.ActionType;
-import enums.UserRole;
-import handlers.AddWaitingHandler;
 import handlers.ClientHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -16,49 +13,30 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
-import messages.RegisterRequest;
 import util.SceneManager;
 
-/**
- * Controller for managing guest waiting list reservations.
- * Allows a guest to enter either an email or a phone number, specify the number of diners, 
- * and select a time for the reservation.
- */
-public class GuestWaitingListController extends  BaseDisplayController implements AvailableTimesListener{
+public class GuestWaitingListController extends BaseDisplayController implements AvailableTimesListener {
 
     @FXML
     private TextField numberOfDiners, emailOrPhone;
 
     @FXML
     private ComboBox<String> timeComboBox;
-    
-    
+
     @FXML
     private TextField confirmationCodeField;
-    
+
     @FXML
     private DatePicker datePicker;
-    
-    
-    /**
-     * Initializes the controller.
-     * Populates the timeComboBox with available time slots from 10:00 to 20:00 in 30-minute increments.
-     */
+
+    private ClientHandler client;
+
     @FXML
     public void initialize() {
+        client = ClientHandler.getClient();
+        client.setAvailableTimesListener(this);
+        client.setActiveDisplayController(this);
 
-    	ClientHandler.getClient().setAvailableTimesListener(this);
-
-        // Block past dates
-        datePicker.setDayCellFactory(picker -> new DateCell() {
-            @Override
-            public void updateItem(LocalDate date, boolean empty) {
-                super.updateItem(date, empty);
-                setDisable(empty || date.isBefore(LocalDate.now()));
-            }
-        });
-
-        // Block dates after 1 month
         datePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
@@ -67,62 +45,39 @@ public class GuestWaitingListController extends  BaseDisplayController implement
             }
         });
 
-        // When user picks a date → load times
         datePicker.valueProperty().addListener((obs, oldDate, newDate) -> {
-            if (newDate != null) {
-                loadTimesForDate(newDate);
-            }
+            if (newDate != null) loadTimesForDate(newDate);
         });
 
-     // Reload times whenever the number of diners changes
         numberOfDiners.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.isBlank()) {
                 LocalDate date = datePicker.getValue();
-                if (date != null) {
-                    loadTimesForDate(date);
-                }
+                if (date != null) loadTimesForDate(date);
             }
         });
 
-        
-        // Default: today
         datePicker.setValue(LocalDate.now());
     }
-    
+
     private void loadTimesForDate(LocalDate date) {
         timeComboBox.getItems().clear();
         int guests = 1;
         try {
             guests = Integer.parseInt(numberOfDiners.getText().trim());
         } catch (NumberFormatException ignored) {}
-        ClientHandler.getClient().getAvailableTimes(date, guests, true);
+        client.getAvailableTimes(date, guests, true);
     }
-
 
     public void loadTimes(List<LocalTime> times) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         timeComboBox.getItems().clear();
-
-        for (LocalTime t : times) {
-            timeComboBox.getItems().add(t.format(formatter));
-        }
-
-        if (!timeComboBox.getItems().isEmpty()) {
-            timeComboBox.getSelectionModel().selectFirst();
-        }
+        for (LocalTime t : times) timeComboBox.getItems().add(t.format(formatter));
+        if (!timeComboBox.getItems().isEmpty()) timeComboBox.getSelectionModel().selectFirst();
     }
 
-
-    
     @Override
-    public void showReservations(List<Reservation> reservations) {
-      
-    }
+    public void showReservations(List<Reservation> reservations) {}
 
-    /**
-     * Handles adding the guest to the waiting list.
-     * Determines if the input is an email or a phone number and sends the request to the server.
-     */
     @FXML
     private void ontakeplace() {
         try {
@@ -135,17 +90,14 @@ public class GuestWaitingListController extends  BaseDisplayController implement
                 showAlert("Invalid Input", "Please enter number of guests.");
                 return;
             }
-
             if (contactInfo == null || contactInfo.isBlank()) {
                 showAlert("Invalid Input", "Please enter an email or phone number.");
                 return;
             }
-
             if (selectedDate == null) {
                 showAlert("Invalid Input", "Please select a date.");
                 return;
             }
-
             if (timeText == null || timeText.isBlank()) {
                 showAlert("Invalid Input", "Please select a time.");
                 return;
@@ -156,19 +108,14 @@ public class GuestWaitingListController extends  BaseDisplayController implement
 
             String email = null;
             String phone = null;
-
-            if (isEmail(contactInfo)) {
-                email = contactInfo;
-            } else if (isPhoneNumber(contactInfo)) {
-                phone = contactInfo;
-            } else {
+            if (isEmail(contactInfo)) email = contactInfo;
+            else if (isPhoneNumber(contactInfo)) phone = contactInfo;
+            else {
                 showAlert("Invalid Input", "Please enter a valid email or phone number.");
                 return;
             }
 
-            ClientHandler.getClient().addWaitingList(
-                    null, email, phone, numOfGuests, selectedDate, selectedTime
-            );
+            client.addWaitingList(null, email, phone, numOfGuests, selectedDate, selectedTime);
 
         } catch (NumberFormatException e) {
             showAlert("Invalid Input", "Please enter a valid number of guests.");
@@ -177,81 +124,47 @@ public class GuestWaitingListController extends  BaseDisplayController implement
         }
     }
 
-
-
-    private int generateUniqueGuestId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@FXML
+    @FXML
     private void onRemoveFromWaitingList() {
         String codeText = confirmationCodeField.getText();
         if (codeText == null || codeText.isEmpty()) {
             showAlert("Error", "Please enter your confirmation code.");
             return;
         }
-
         try {
             int code = Integer.parseInt(codeText);
-
-          
-            ClientHandler.getClient().cancelWaiting(code);
-
+            client.cancelWaiting(code);
         } catch (NumberFormatException e) {
             showAlert("Error", "Invalid confirmation code.");
         }
     }
-    
+
     public void clearAddFields() {
         numberOfDiners.clear();
         emailOrPhone.clear();
     }
 
-    /**
-     * Returns to the main menu.
-     */
-    @FXML
-    private void onPreviousPage() {
-        SceneManager.switchTo("MainMenuUI.fxml");
-    }
-
-    /**
-     * Determines if the input string is a valid email.
-     * @param input the string to check
-     * @return true if input contains "@", false otherwise
-     */
-    private boolean isEmail(String input) {
-        return input.contains("@");
-    }
-    
-    
     public void clearConfirmationCodeField() {
         confirmationCodeField.clear();
     }
 
     public TextField getConfirmationCodeField() {
-		return confirmationCodeField;
-	}
+        return confirmationCodeField;
+    }
 
-	public void setConfirmationCodeField(TextField confirmationCodeField) {
-		this.confirmationCodeField = confirmationCodeField;
-	}
-	
-    /**
-     * Determines if the input string is a valid phone number.
-     * @param input the string to check
-     * @return true if input is digits optionally starting with "+", false otherwise
-     */
+    @FXML
+    private void onPreviousPage() {
+        SceneManager.switchTo("MainMenuUI.fxml");
+    }
+
+    private boolean isEmail(String input) {
+        return input.contains("@");
+    }
+
     private boolean isPhoneNumber(String input) {
         return input.matches("\\+?\\d+");
     }
 
-    /**
-     * Shows an alert dialog with a given title and message.
-     * @param title the title of the alert
-     * @param message the message to display
-     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -259,7 +172,7 @@ public class GuestWaitingListController extends  BaseDisplayController implement
         alert.setContentText(message);
         alert.showAndWait();
     }
-    
+
     @Override
     public void updateAvailableTimes(List<LocalTime> times) {
         loadTimes(times);

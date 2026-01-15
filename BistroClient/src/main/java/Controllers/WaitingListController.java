@@ -3,7 +3,9 @@ package Controllers;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
+import Entities.Reservation;
 import Entities.WaitingListEntry;
 import enums.ActionType;
 import handlers.ClientHandler;
@@ -15,7 +17,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import util.SceneManager;
 
-public class WaitingListController {
+public class WaitingListController extends BaseDisplayController {
 
     @FXML
     private TableColumn<WaitingListEntry, Integer> idColumn;
@@ -41,6 +43,7 @@ public class WaitingListController {
      */
     @FXML
     public void initialize() {
+    	ClientHandler.getClient().setActiveDisplayController(this);
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -84,4 +87,10 @@ public class WaitingListController {
     private void onPreviousPage() {
         SceneManager.switchTo("SupervisorUI.fxml");
     }
+
+	@Override
+	public void showReservations(List<Reservation> list) {
+		// TODO Auto-generated method stub
+		
+	}
 }
