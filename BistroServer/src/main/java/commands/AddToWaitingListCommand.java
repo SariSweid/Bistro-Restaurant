@@ -18,6 +18,7 @@ public class AddToWaitingListCommand implements Command {
     public void execute(Object data, ConnectionToClient client) {
         AddToWaitingListRequest req = (AddToWaitingListRequest) data;
 
+
         ServerResponse response = controller.addToWaitingList(
                 req.getUserID(),
                 req.getEmail(),

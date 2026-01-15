@@ -17,9 +17,6 @@ public class GuestCancelReservationController extends BaseDisplayController {
 
     @FXML
     private TextField confirmationCodeField;
-    
-    @FXML
-    private TableView<Reservation> reservationsTable;
 
 
     // guestId of this guest
@@ -72,7 +69,8 @@ public class GuestCancelReservationController extends BaseDisplayController {
 
 	@Override
 	public void showReservations(List<Reservation> list) {
-		reservationsTable.setItems(FXCollections.observableArrayList(list));
+		// TODO Auto-generated method stub
 		
 	}
+
 }

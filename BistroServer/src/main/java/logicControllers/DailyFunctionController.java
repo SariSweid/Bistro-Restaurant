@@ -69,6 +69,7 @@ public class DailyFunctionController implements Runnable {
         }
     }
 
+    
 
 
     private void handleNoShows() {
@@ -130,10 +131,12 @@ public class DailyFunctionController implements Runnable {
         }
 
         if (!canSeat) return;
+        
+        Integer uid = entry.getUserID();
 
         Reservation reservation = new Reservation(
                 0,
-                entry.getUserID(),
+                uid == null ? 0 : uid,
                 entry.getNumOfGuests(),
                 entry.getConfirmationCode(),
                 entry.getWaitDate(),

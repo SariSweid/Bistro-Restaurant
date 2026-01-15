@@ -2,6 +2,8 @@ package logicControllers;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Executors;
@@ -14,7 +16,6 @@ import DAO.WaitingListDAO;
 import Entities.Reservation;
 import Entities.Table;
 import Entities.WaitingListEntry;
-import Entities.WeeklyOpeningHours;
 import common.ServerResponse;
 import enums.ExitReason;
 import enums.ReservationStatus;
@@ -55,6 +56,8 @@ public class WaitingListController {
                                            int numOfGuests, LocalDate date, LocalTime time) {
 
         List<Table> tables = tableDAO.GetAllTables();
+        
+        tables.sort(Comparator.comparingInt(Table::getCapacity));
 
         int maxTableCapacity = tables.stream()
                                      .mapToInt(Table::getCapacity)
@@ -69,18 +72,17 @@ public class WaitingListController {
             );
         }
 
-        int tablesThatFit = (int) tables.stream()
-                                        .filter(t -> t.getCapacity() >= numOfGuests)
-                                        .count();
 
-        int overlapping = reservationDAO.countOverlappingReservations(
-                date,
-                time,
-                2,
-                numOfGuests
-        );
+        List<Reservation> reservations =
+                reservationDAO.getConfirmedReservationsAt(date, time);
+        
+     // Sort reservations by DESCENDING group size so big groups get matched first
+        reservations.sort((a, b) -> Integer.compare(b.getNumOfGuests(), a.getNumOfGuests()));
 
-        boolean tableAvailable = overlapping < tablesThatFit;
+
+        // Check if this new reservation can fit at this date/time
+        boolean tableAvailable = canFitReservation(date, time, numOfGuests);
+
 
         if (tableAvailable) {
             int confirmationCode = generateConfirmationCode();
@@ -112,7 +114,17 @@ public class WaitingListController {
             );
         }
 
-        WaitingListEntry existing = waitingListDAO.findExistingEntry(userID, date, time);
+        WaitingListEntry existing = null;
+
+        if (userID != null) {
+            existing = waitingListDAO.findExistingEntry(userID, date, time);
+        }
+
+     // If guest uses email/phone (userID is null), also check by contact
+        if (existing == null && (email != null || phone != null)) {
+            existing = waitingListDAO.findExistingEntryByContact(email, phone, date, time);
+        }
+        
         if (existing != null && existing.getExitReason() == null) {
             return new ServerResponse(
                     false,
@@ -146,6 +158,53 @@ public class WaitingListController {
                 "Added to waiting list. Your confirmation code: " + entry.getConfirmationCode()
         );
     }
+    
+    private boolean canFitReservation(
+            LocalDate date,
+            LocalTime time,
+            int newGroupSize
+    ) {
+        // 1. Get all tables
+        List<Table> tables = tableDAO.GetAllTables()
+                .stream()
+                .map(t -> new Table(t.getTableID(), t.getCapacity())) // copy
+                .sorted((a, b) -> b.getCapacity() - a.getCapacity()) 
+                .toList();
+
+        // Get existing reservations at this slot
+        List<Reservation> reservations =
+                reservationDAO.getReservationsAt(date, time);
+
+        // Add the new request
+        List<Integer> groups = new ArrayList<>();
+        for (Reservation r : reservations) {
+            groups.add(r.getNumOfGuests());
+        }
+        groups.add(newGroupSize);
+
+        // Sort groups DESC
+        groups.sort((a, b) -> b - a);
+
+        // Greedy assignment
+        boolean[] used = new boolean[tables.size()];
+
+        for (int groupSize : groups) {
+            boolean placed = false;
+
+            for (int i = 0; i < tables.size(); i++) {
+                if (!used[i] && tables.get(i).getCapacity() >= groupSize) {
+                    used[i] = true;
+                    placed = true;
+                    break;
+                }
+            }
+
+            if (!placed) return false; // cannot fit
+        }
+
+        return true; // all fit
+    }
+
 
     /**
      * Schedules automatic cancellation of a reservation after 15 minutes if the user does not arrive.
@@ -159,7 +218,6 @@ public class WaitingListController {
                 if (r != null && r.getStatus() == ReservationStatus.CONFIRMED) {
                     boolean cancelled = reservationDAO.cancelReservationInDB(reservationID);
                     if (cancelled) {
-                        tableDAO.updateTableIsAvailable(r.getTableID(), true);
                         System.out.println("Reservation " + reservationID +
                                            " cancelled automatically (user didn't arrive).");
                     } else {
@@ -231,12 +289,16 @@ public class WaitingListController {
     }
 
     /**
-     * Generates a random 6-digit confirmation code.
+     * Generates a unique random 6-digit confirmation code.
      *
      * @return Confirmation code
      */
     private int generateConfirmationCode() {
-        return 100000 + random.nextInt(900000);
+        int code;
+        do {
+            code = 100000 + random.nextInt(900000);
+        } while (waitingListDAO.getByConfirmationCode(code) != null);
+        return code;
     }
 
 

@@ -74,17 +74,30 @@ public class GuestWaitingListController extends  BaseDisplayController{
             }
         });
 
+     // Reload times whenever the number of diners changes
+        numberOfDiners.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.isBlank()) {
+                LocalDate date = datePicker.getValue();
+                if (date != null) {
+                    loadTimesForDate(date);
+                }
+            }
+        });
+
+        
         // Default: today
         datePicker.setValue(LocalDate.now());
     }
     
     private void loadTimesForDate(LocalDate date) {
-
         timeComboBox.getItems().clear();
-
-        // Ask server for available times
-        ClientHandler.getClient().getAvailableTimes(date, 1,true); // 1 guest just to get times
+        int guests = 1;
+        try {
+            guests = Integer.parseInt(numberOfDiners.getText().trim());
+        } catch (NumberFormatException ignored) {}
+        ClientHandler.getClient().getAvailableTimes(date, guests, true);
     }
+
 
     public void loadTimes(List<LocalTime> times) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -113,10 +126,33 @@ public class GuestWaitingListController extends  BaseDisplayController{
     @FXML
     private void ontakeplace() {
         try {
-            int numOfGuests = Integer.parseInt(numberOfDiners.getText().trim());
-            String contactInfo = emailOrPhone.getText().trim();
-            LocalTime selectedTime = LocalTime.parse(timeComboBox.getValue(), DateTimeFormatter.ofPattern("HH:mm"));
+            String dinersText = numberOfDiners.getText();
+            String contactInfo = emailOrPhone.getText();
+            String timeText = timeComboBox.getValue();
             LocalDate selectedDate = datePicker.getValue();
+
+            if (dinersText == null || dinersText.isBlank()) {
+                showAlert("Invalid Input", "Please enter number of guests.");
+                return;
+            }
+
+            if (contactInfo == null || contactInfo.isBlank()) {
+                showAlert("Invalid Input", "Please enter an email or phone number.");
+                return;
+            }
+
+            if (selectedDate == null) {
+                showAlert("Invalid Input", "Please select a date.");
+                return;
+            }
+
+            if (timeText == null || timeText.isBlank()) {
+                showAlert("Invalid Input", "Please select a time.");
+                return;
+            }
+
+            int numOfGuests = Integer.parseInt(dinersText.trim());
+            LocalTime selectedTime = LocalTime.parse(timeText, DateTimeFormatter.ofPattern("HH:mm"));
 
             String email = null;
             String phone = null;
@@ -130,16 +166,8 @@ public class GuestWaitingListController extends  BaseDisplayController{
                 return;
             }
 
-            // Generate guest ID and register guest
-            int guestId = generateUniqueGuestId();
-            RegisterRequest register = new RegisterRequest(
-                    guestId, null, email, phone, null, 0, UserRole.GUEST
-            );
-            ClientHandler.getClient().register(register);
-
-            // Use the real userID for waiting list
             ClientHandler.getClient().addWaitingList(
-                    guestId, email, phone, numOfGuests, selectedDate, selectedTime
+                    null, email, phone, numOfGuests, selectedDate, selectedTime
             );
 
         } catch (NumberFormatException e) {
@@ -149,12 +177,14 @@ public class GuestWaitingListController extends  BaseDisplayController{
         }
     }
 
+
+
     private int generateUniqueGuestId() {
-        return 10000 + (int)(Math.random() * 10000);
-    }
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-
-    @FXML
+	@FXML
     private void onRemoveFromWaitingList() {
         String codeText = confirmationCodeField.getText();
         if (codeText == null || codeText.isEmpty()) {

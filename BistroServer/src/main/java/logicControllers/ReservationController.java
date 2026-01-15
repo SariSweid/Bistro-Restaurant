@@ -84,22 +84,31 @@ public class ReservationController {
 	    LocalTime lastStart = closeTime.minusHours(reservationDuration);
 
 	    while (!time.isAfter(lastStart)) {
-		    	int tablesThatFit = (int) tables.stream()
-		    	        .filter(t -> t.getCapacity() >= guests)
-		    	        .count();
-	
-		    	int overlapping = resdb.countOverlappingReservations(
-		    	        date,
-		    	        time,
-		    	        reservationDuration,
-		    	        guests
-		    	);
-	
-		    	if (overlapping < tablesThatFit) {
-		    	    available.add(time);
-		    	}
-
+	        if (canFitReservation(date, time, guests, reservationDuration)) {
+	            available.add(time);
+	        }
 	        time = time.plusMinutes(30);
+	    }
+	    
+	    if (available.isEmpty()) {
+	        time = openTime;
+	        if (date.equals(LocalDate.now())) {
+	            LocalTime oneHourFromNow = LocalTime.now().plusHours(1).withSecond(0).withNano(0);
+	            int minute = oneHourFromNow.getMinute();
+	            if (minute > 0 && minute <= 30) oneHourFromNow = oneHourFromNow.withMinute(30);
+	            else if (minute > 30) oneHourFromNow = oneHourFromNow.plusHours(1).withMinute(0);
+	            else oneHourFromNow = oneHourFromNow.withMinute(0);
+
+	            if (oneHourFromNow.isAfter(time)) time = oneHourFromNow;
+	        }
+
+	        while (!time.isAfter(lastStart)) {
+	            if (canFitReservation(date, time, guests, reservationDuration)) {
+	                available.add(time); // only the first slot
+	                break;
+	            }
+	            time = time.plusMinutes(30);
+	        }
 	    }
 
 	    return available;
@@ -200,19 +209,11 @@ public class ReservationController {
         int maxTableCapacity = tables.stream().mapToInt(Table::getCapacity).max().orElse(0);
         if (r.getNumOfGuests() > maxTableCapacity) return false;
 
-        int tablesThatFit = (int) tables.stream()
-                .filter(t -> t.getCapacity() >= r.getNumOfGuests())
-                .count();
+        int reservationDuration = settings.getReservationDurationHours();
+        if (!canFitReservation(r.getReservationDate(), r.getReservationTime(), r.getNumOfGuests(), reservationDuration)) {
+            return false; // Cannot fit this group at this time
+        }
 
-        int overlapping = resdb.countOverlappingReservations(
-                r.getReservationDate(),
-                r.getReservationTime(),
-                settings.getReservationDurationHours(),
-                r.getNumOfGuests()
-        );
-
-        if (overlapping >= tablesThatFit)
-            return false;
 
 
         r.setTableID(null);
@@ -222,6 +223,51 @@ public class ReservationController {
         return resdb.insertReservation(r);
     }
 
+    private boolean canFitReservation(LocalDate date, LocalTime time, int newGroupSize, int durationHours) {
+        List<Table> tables = tabledb.GetAllTables()
+                .stream()
+                .map(t -> new Table(t.getTableID(), t.getCapacity())) 
+                .sorted((a, b) -> b.getCapacity() - a.getCapacity())
+                .toList();
+
+        List<Reservation> reservations = resdb.getReservationsAt(date, time);
+
+        // Filter reservations that overlap with the requested time slot
+        List<Reservation> overlapping = new ArrayList<>();
+        LocalTime newEnd = time.plusHours(durationHours);
+        for (Reservation r : reservations) {
+            LocalTime resStart = r.getReservationTime();
+            LocalTime resEnd = resStart.plusHours(settings.getReservationDurationHours());
+
+            // Check for overlap
+            if (!(newEnd.isBefore(resStart) || time.isAfter(resEnd))) {
+                overlapping.add(r);
+            }
+        }
+
+        List<Integer> groups = new ArrayList<>();
+        for (Reservation r : overlapping) groups.add(r.getNumOfGuests());
+        groups.add(newGroupSize);
+
+        groups.sort((a, b) -> b - a);
+
+        boolean[] used = new boolean[tables.size()];
+        for (int groupSize : groups) {
+            boolean placed = false;
+            for (int i = 0; i < tables.size(); i++) {
+                if (!used[i] && tables.get(i).getCapacity() >= groupSize) {
+                    used[i] = true;
+                    placed = true;
+                    break;
+                }
+            }
+            if (!placed) return false;
+        }
+
+        return true;
+    }
+
+    
     private int generateConfirmationCode() {
         return 100000 + new java.util.Random().nextInt(900000);
     }

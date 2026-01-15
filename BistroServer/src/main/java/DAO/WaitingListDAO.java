@@ -332,6 +332,53 @@ public class WaitingListDAO extends DBController {
 
 	    return null;
 	}
+	
+	public WaitingListEntry findExistingEntryByContact(String email, String phone, LocalDate date, LocalTime time) {
+	    String sql = "SELECT * FROM waitinglist WHERE WaitDate = ? AND WaitTime = ? AND exitReason IS NULL";
+	    List<String> params = new ArrayList<>();
+
+	    if (email != null && !email.isBlank()) {
+	        sql += " AND Email = ?";
+	        params.add(email);
+	    }
+	    if (phone != null && !phone.isBlank()) {
+	        sql += " AND Phone = ?";
+	        params.add(phone);
+	    }
+
+	    if (params.isEmpty()) return null;
+
+	    try (Connection con = getConnection();
+	         PreparedStatement pst = con.prepareStatement(sql)) {
+
+	        pst.setDate(1, java.sql.Date.valueOf(date));
+	        pst.setTime(2, java.sql.Time.valueOf(time));
+
+	        for (int i = 0; i < params.size(); i++) {
+	            pst.setString(3 + i, params.get(i)); // 3rd param onwards
+	        }
+
+	        ResultSet rs = pst.executeQuery();
+	        if (rs.next()) {
+	            return new WaitingListEntry(
+	                rs.getObject("userID", Integer.class),
+	                rs.getString("Email"),
+	                rs.getString("Phone"),
+	                rs.getInt("numOfGuests"),
+	                rs.getInt("confirmationCode"),
+	                rs.getDate("WaitDate").toLocalDate(),
+	                rs.getTime("WaitTime").toLocalTime(),
+	                rs.getString("exitReason") == null ? null : ExitReason.valueOf(rs.getString("exitReason")),
+	                WaitingStatus.valueOf(rs.getString("status"))
+	            );
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return null;
+	}
+
 
 
 
