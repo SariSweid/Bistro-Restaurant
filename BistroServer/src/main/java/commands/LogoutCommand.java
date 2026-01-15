@@ -1,4 +1,3 @@
-// LogoutCommand.java
 package commands;
 
 import common.ServerResponse;
@@ -7,16 +6,25 @@ import enums.ActionType;
 import server.Command;
 import src.ocsf.server.ConnectionToClient;
 
+import commands.LoginCommand;
+
 public class LogoutCommand implements Command {
+
     @Override
     public void execute(Object data, ConnectionToClient client) {
-        client.setInfo("user", null);
-        System.out.println("User logged out.");
-
         try {
-            
-            Message response = new Message(ActionType.LOGOUT, new ServerResponse(true, "Logout successful", null));
+            Integer userID = (Integer) client.getInfo("userID");
+            if (userID != null) {
+                LoginCommand.logoutUser(userID);
+                client.setInfo("user", null);
+                client.setInfo("userID", null);
+                System.out.println("DEBUG: User " + userID + " logged out");
+            }
+
+            Message response = new Message(ActionType.LOGOUT,
+                    new ServerResponse(true, "Logout successful", null));
             client.sendToClient(response);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

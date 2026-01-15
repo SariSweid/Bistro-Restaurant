@@ -1,6 +1,7 @@
 package Controllers;
 
 import handlers.ClientHandler;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import util.SceneManager;
@@ -63,6 +64,7 @@ public class SupervisorController {
   
   @FXML
   private void onLogOut() {
+	  ClientHandler.getClient().logout();
 	  ClientHandler.getClient().setCameFromHigherRole(false);
       SceneManager.switchTo("MainMenuUI.fxml");
   }

@@ -13,6 +13,7 @@ public class ManagerController {
 
     @FXML
     private void onLogOut() {
+    	ClientHandler.getClient().logout();
     		ClientHandler.getClient().setCameFromHigherRole(false);
         SceneManager.switchTo("MainMenuUI.fxml");
     }
