@@ -8,7 +8,6 @@ import logicControllers.RestaurantSettingsController;
 import messages.DeleteOpeningHoursRequest;
 import server.Command;
 import src.ocsf.server.ConnectionToClient;
-import Entities.WeeklyOpeningHours;
 
 public class RemoveOpeningHoursCommand implements Command {
     private final RestaurantSettingsController controller = new RestaurantSettingsController();

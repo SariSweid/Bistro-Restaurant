@@ -5,7 +5,6 @@ import messages.LoginRequest;
 import server.Command;
 import common.*;
 import enums.ActionType;
-import enums.UserRole;
 import Entities.Subscriber;
 import Entities.Supervisor;
 import Entities.User;

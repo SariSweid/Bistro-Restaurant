@@ -22,7 +22,8 @@ public class WeeklyWaitingListHandler implements ResponseHandler {
         if (data instanceof List<?>) {
         	
         	
-            List<WaitingListEntry> list = (List<WaitingListEntry>) data;
+            @SuppressWarnings("unchecked")
+			List<WaitingListEntry> list = (List<WaitingListEntry>) data;
 
             Platform.runLater(() -> {
                 controller.getWaitingListTable().getItems().clear();

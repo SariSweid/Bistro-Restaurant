@@ -1,36 +1,8 @@
 	package DB;
 	
 	import java.sql.Connection;
-	import java.sql.Date;
-	import java.sql.DriverManager;
-	import java.sql.PreparedStatement;
-	import java.sql.ResultSet;
-	import java.sql.SQLException;
-	import java.sql.Time;
-	import java.sql.Timestamp;
-	import java.time.LocalDate;
-	import java.time.LocalDateTime;
-	import java.time.LocalTime;
-	import java.util.ArrayList;
-	import java.util.List;
-	
-	import Entities.Bill;
-	import Entities.Guest;
-	import Entities.Manager;
-	import Entities.Report;
-	import Entities.Reservation;
-	import Entities.RestaurantSettings;
-	import Entities.SpecialDates;
-	import Entities.Table;
-import Entities.TimeData;
-import Entities.User;
-	import Entities.WaitingListEntry;
-	import Entities.WeeklyOpeningHours;
-	import enums.Day;
-import enums.ReservationStatus;
-import logicControllers.UserFactory;
-	import Entities.Subscriber;
-	import Entities.Supervisor;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 	
 	
 	
@@ -67,9 +39,9 @@ import logicControllers.UserFactory;
 		    	
 		    	
 		            if (conn == null || conn.isClosed()) {	                
-		              //conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020"); // sari -DB
+		              conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","sare1020"); // sari -DB
 	
-		              conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
+		             // conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
 		                //conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Vrek2logos@"); //tamer
 		                System.out.println("SQL connection initialized");	               	                	                
 		            }

@@ -1,6 +1,5 @@
 package handlers;
 
-import java.io.Serializable;
 
 import Controllers.RestaurantSettingsController;
 import Entities.RestaurantSettings;

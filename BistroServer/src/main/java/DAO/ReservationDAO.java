@@ -2,7 +2,6 @@ package DAO;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -335,6 +334,36 @@ public class ReservationDAO extends DBController {
 
 	    return list;
 	}
+	
+	
+	public List<Reservation> getReservationsOverlapping(LocalDate date, LocalTime startTime, int durationHours) {
+	    List<Reservation> overlapping = new ArrayList<>();
+
+	    // get all non-cancelled reservations for the date
+	    List<Reservation> all = getReservationsByDate(date);
+
+	    LocalTime newEnd = startTime.plusHours(durationHours);
+
+	    for (Reservation r : all) {
+	        if (r.getStatus() != ReservationStatus.CONFIRMED &&
+	            r.getStatus() != ReservationStatus.PENDING &&
+	            r.getStatus() != ReservationStatus.SEATED) {
+	            continue;
+	        }
+
+	        LocalTime existingStart = r.getReservationTime();
+	        LocalTime existingEnd = existingStart.plusHours(durationHours);
+
+	        // 🔥 OVERLAP CHECK (THIS IS THE KEY)
+	        if (existingStart.isBefore(newEnd) &&
+	            existingEnd.isAfter(startTime)) {
+	            overlapping.add(r);
+	        }
+	    }
+
+	    return overlapping;
+	}
+
 
     
 	// Retrieves all reservation for a specific customer

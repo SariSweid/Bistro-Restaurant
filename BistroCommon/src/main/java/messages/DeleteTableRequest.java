@@ -2,6 +2,7 @@ package messages;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class DeleteTableRequest implements Serializable {
     private int tableId;
 

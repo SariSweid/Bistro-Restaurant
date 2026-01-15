@@ -337,7 +337,8 @@ public class ClientHandler extends AbstractClient {
 
     public void getCurrentWeekWaitingList() {
         connect();
-        LocalDate today = LocalDate.now();
+        @SuppressWarnings("unused")
+		LocalDate today = LocalDate.now();
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = startDate.plusDays(7);
         GetWaitingListBetweenDatesRequest req = new GetWaitingListBetweenDatesRequest(startDate, endDate);

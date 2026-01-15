@@ -1,7 +1,6 @@
 package messages;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -11,6 +10,7 @@ import enums.ReservationStatus;
 
 
 
+@SuppressWarnings("serial")
 public class UpdateReservationRequest implements Serializable {
 
     private int reservationID;

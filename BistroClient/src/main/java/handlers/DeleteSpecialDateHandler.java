@@ -1,7 +1,6 @@
 package handlers;
 
 import Controllers.RestaurantSettingsController;
-import java.time.LocalDate;
 
 
 public class DeleteSpecialDateHandler implements ResponseHandler {

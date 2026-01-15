@@ -4,6 +4,7 @@ import enums.Day;
 import java.io.Serializable;
 import java.time.LocalTime;
 
+@SuppressWarnings("serial")
 public class updateRegularOpeningTimeRequest implements Serializable {
     private Day day;
     private LocalTime openingTime;

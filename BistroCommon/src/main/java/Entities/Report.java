@@ -7,6 +7,7 @@ import java.util.List;
 
 import enums.ReportType;
 
+@SuppressWarnings("serial")
 public class Report implements Serializable {
     private int reportID;
     private ReportType reportType;

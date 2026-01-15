@@ -16,7 +16,8 @@ public class InformationController {
     @FXML private TextField email;
     @FXML private TextField userName;
 
-    private User currentUser;
+    @SuppressWarnings("unused")
+	private User currentUser;
 
     @FXML
     public void initialize() {
@@ -41,6 +42,7 @@ public class InformationController {
                 name.setText(s.getName());
                 userName.setText(s.getUserName());
             }
+		default -> throw new IllegalArgumentException("Unexpected value: " + user.getRole());
         }
     }
 
@@ -68,6 +70,8 @@ public class InformationController {
                 s.setName(name.getText());
                 s.setUserName(userName.getText());
             }
+		case GUEST -> throw new IllegalArgumentException("Unexpected value: " + user.getRole());
+		default -> throw new IllegalArgumentException("Unexpected value: " + user.getRole());
         }
 
         ClientHandler.getClient().updateUser(user);

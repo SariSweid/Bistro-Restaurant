@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 import Entities.SpecialDates;
 
+@SuppressWarnings("serial")
 public class AddSpecialDateRequest implements Serializable {
 	private SpecialDates specialDate;
 	

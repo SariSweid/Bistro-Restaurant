@@ -24,7 +24,8 @@ public class GuestApp extends Application {
         //get ip address from args[0]
         Parameters parms = getParameters();
         List<String> list = parms.getUnnamed();
-        String host = "";
+        @SuppressWarnings("unused")
+		String host = "";
         
         // -- Create client --
         if (list != null && !list.isEmpty()) {

@@ -1,8 +1,5 @@
 package Controllers;
 
-import java.io.IOException;
-import common.Message;
-import enums.ActionType;
 import handlers.ClientHandler;
 
 import java.net.URL;
@@ -11,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import messages.LoginRequest;
 import util.SceneManager;
 
 public class LoginController implements Initializable {

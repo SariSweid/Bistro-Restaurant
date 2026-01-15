@@ -3,6 +3,7 @@ package messages;
 import java.io.Serializable;
 import java.time.LocalTime;
 
+@SuppressWarnings("serial")
 public class PaymentRequest implements Serializable {
 	private final int confirmationCode;
 	private LocalTime depatureTime;

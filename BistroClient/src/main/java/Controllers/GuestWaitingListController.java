@@ -37,7 +37,7 @@ public class GuestWaitingListController extends BaseDisplayController implements
         client.setAvailableTimesListener(this);
         client.setActiveDisplayController(this);
 
-        datePicker.setDayCellFactory(picker -> new DateCell() {
+        datePicker.setDayCellFactory(_ -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
@@ -45,11 +45,11 @@ public class GuestWaitingListController extends BaseDisplayController implements
             }
         });
 
-        datePicker.valueProperty().addListener((obs, oldDate, newDate) -> {
+        datePicker.valueProperty().addListener((_, _, newDate) -> {
             if (newDate != null) loadTimesForDate(newDate);
         });
 
-        numberOfDiners.textProperty().addListener((obs, oldVal, newVal) -> {
+        numberOfDiners.textProperty().addListener((_, _, newVal) -> {
             if (!newVal.isBlank()) {
                 LocalDate date = datePicker.getValue();
                 if (date != null) loadTimesForDate(date);

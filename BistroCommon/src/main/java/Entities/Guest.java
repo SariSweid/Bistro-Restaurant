@@ -6,6 +6,7 @@ import enums.UserRole;
 /**
  * Guest class represents a guest at the restaurant
  */
+@SuppressWarnings("serial")
 public class Guest extends User implements Serializable {
 	
 	/**

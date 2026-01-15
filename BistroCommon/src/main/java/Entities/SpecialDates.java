@@ -7,6 +7,7 @@ import java.time.LocalTime;
 /**
  * SpecialDates class represents a special date with different opening and closing hours for the restaurant
  */
+@SuppressWarnings("serial")
 public class SpecialDates extends OpeningHours implements Serializable {
 	private LocalDate date;
 	private String description;

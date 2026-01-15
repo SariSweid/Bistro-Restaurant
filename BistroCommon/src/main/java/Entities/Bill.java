@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 /**
  * Bill class represents the bill of the reservation
  */
+@SuppressWarnings("serial")
 public class Bill implements Serializable {
 	private int billID;
 	private int reservationID;

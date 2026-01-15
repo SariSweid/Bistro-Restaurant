@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 import Entities.Reservation;
 
+@SuppressWarnings("serial")
 public class AddReservationRequest implements Serializable {
     private Reservation reservation;
 

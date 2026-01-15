@@ -230,7 +230,8 @@ public class ReservationController {
                 .sorted((a, b) -> b.getCapacity() - a.getCapacity())
                 .toList();
 
-        List<Reservation> reservations = resdb.getReservationsAt(date, time);
+        List<Reservation> reservations = resdb.getReservationsByDate(date);
+
 
         // Filter reservations that overlap with the requested time slot
         List<Reservation> overlapping = new ArrayList<>();
@@ -240,9 +241,10 @@ public class ReservationController {
             LocalTime resEnd = resStart.plusHours(settings.getReservationDurationHours());
 
             // Check for overlap
-            if (!(newEnd.isBefore(resStart) || time.isAfter(resEnd))) {
+            if (resStart.isBefore(newEnd) && resEnd.isAfter(time)) {
                 overlapping.add(r);
             }
+
         }
 
         List<Integer> groups = new ArrayList<>();

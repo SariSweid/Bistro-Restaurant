@@ -5,6 +5,7 @@ import java.io.Serializable;
 /**
  * Table class represents a table in the restaurant
  */
+@SuppressWarnings("serial")
 public class Table implements Serializable {
 	private int tableID;
 	private int capacity;

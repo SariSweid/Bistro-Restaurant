@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+@SuppressWarnings("serial")
 public class AvailableDateTimes implements Serializable {
 
     private final LocalDate date;

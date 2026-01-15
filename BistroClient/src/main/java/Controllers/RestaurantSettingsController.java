@@ -18,7 +18,6 @@ import util.SceneManager;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 public class RestaurantSettingsController {
 
@@ -62,7 +61,7 @@ public class RestaurantSettingsController {
 
         dayComboBox.setItems(FXCollections.observableArrayList(Day.values()));
 
-        weeklyHoursTable.getSelectionModel().selectedItemProperty().addListener((obs, oldRow, row) -> {
+        weeklyHoursTable.getSelectionModel().selectedItemProperty().addListener((_, _, row) -> {
             if (row != null) {
                 openingTimeField.setText(row.getOpeningTime().toString());
                 closingTimeField.setText(row.getClosingTime().toString());

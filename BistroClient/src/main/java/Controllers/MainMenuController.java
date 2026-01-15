@@ -14,7 +14,8 @@ public class MainMenuController implements Initializable {
     @FXML
     private ImageView logoImageView;
 
-    private ClientHandler client;
+    @SuppressWarnings("unused")
+	private ClientHandler client;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {

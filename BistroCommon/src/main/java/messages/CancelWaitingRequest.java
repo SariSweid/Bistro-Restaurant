@@ -2,6 +2,7 @@ package messages;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class CancelWaitingRequest implements Serializable {
     private int confirmationCode;
     private Integer userId;

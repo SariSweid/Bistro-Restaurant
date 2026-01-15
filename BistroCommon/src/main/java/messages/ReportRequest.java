@@ -3,6 +3,7 @@ package messages;
 import enums.ReportType;
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class ReportRequest implements Serializable {
     private final ReportType reportType;
     private final int month;

@@ -33,7 +33,8 @@ public abstract class BaseReservationController implements AvailableTimesListene
     @FXML
     protected TextField numberOfDinersField;
 
-    @FXML
+    @SuppressWarnings("unused")
+	@FXML
     public void initialize() {
     	ClientHandler.getClient().setAvailableTimesListener(this);
 
@@ -187,7 +188,7 @@ public abstract class BaseReservationController implements AvailableTimesListene
         LocalDate today = LocalDate.now();
         LocalDate maxDate = today.plusMonths(1);
 
-        datePicker.setDayCellFactory(picker -> new DateCell() {
+        datePicker.setDayCellFactory(_ -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);

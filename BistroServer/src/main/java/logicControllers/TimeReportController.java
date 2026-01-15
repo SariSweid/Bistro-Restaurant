@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import DAO.ReservationDAO;
-import DB.DBController;
 import Entities.TimeData;
 
 public class TimeReportController {

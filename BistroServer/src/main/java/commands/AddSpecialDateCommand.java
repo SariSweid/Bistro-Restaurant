@@ -5,7 +5,6 @@ import server.Command;
 import src.ocsf.server.ConnectionToClient;
 import logicControllers.RestaurantSettingsController;
 import messages.AddSpecialDateRequest;
-import Entities.SpecialDates;
 import common.Message;
 import common.ServerResponse;
 import enums.ActionType;

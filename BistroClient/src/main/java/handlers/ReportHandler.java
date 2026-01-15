@@ -26,7 +26,8 @@ public class ReportHandler implements ResponseHandler {
         this.controller = controller;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void handle(Object data) {
         if (controller == null) return;
 
@@ -158,7 +159,7 @@ public class ReportHandler implements ResponseHandler {
 
     private void applySeriesColors(XYChart.Series<String, Number> series, String colorHex) {
         for (XYChart.Data<String, Number> data : series.getData()) {
-            data.nodeProperty().addListener((obs, oldNode, newNode) -> {
+            data.nodeProperty().addListener((_, _, newNode) -> {
                 if (newNode != null) {
                     newNode.setStyle("-fx-bar-fill: " + colorHex + ";");
                 }

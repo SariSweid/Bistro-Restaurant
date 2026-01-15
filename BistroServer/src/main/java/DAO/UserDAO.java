@@ -7,7 +7,6 @@ import java.util.Random;
 
 import DB.DBController;
 import Entities.*;
-import enums.ReservationStatus;
 import logicControllers.UserFactory;
 
 /**

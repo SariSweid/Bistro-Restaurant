@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+@SuppressWarnings("serial")
 public class AddToWaitingListRequest implements Serializable {
 
     private Integer userID;    

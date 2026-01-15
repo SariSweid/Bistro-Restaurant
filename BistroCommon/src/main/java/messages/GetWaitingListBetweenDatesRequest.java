@@ -3,6 +3,7 @@ package messages;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+@SuppressWarnings("serial")
 public class GetWaitingListBetweenDatesRequest implements Serializable {
 
     private LocalDate startDate;

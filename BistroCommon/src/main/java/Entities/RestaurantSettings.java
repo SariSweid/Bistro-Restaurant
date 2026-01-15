@@ -1,7 +1,6 @@
 package Entities;
 
 import java.io.Serializable;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import enums.Day;
  * RestaurantSettings class represents the restaurant configuration which include special dates, max tables and opening and closing hours
  * singleton - in order to create a single instance in the system
  */
+@SuppressWarnings("serial")
 public class RestaurantSettings implements Serializable {
 	private static RestaurantSettings instance;
 	private int maxTables;

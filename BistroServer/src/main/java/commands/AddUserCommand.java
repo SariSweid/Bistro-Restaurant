@@ -4,7 +4,6 @@ import Entities.User;
 import logicControllers.UserController;
 import messages.AddUserRequest;
 import server.Command;
-import server.ServerController;
 import src.ocsf.server.ConnectionToClient;
 
 public class AddUserCommand implements Command {

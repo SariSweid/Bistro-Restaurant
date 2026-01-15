@@ -3,6 +3,7 @@ package messages;
 import Entities.WeeklyOpeningHours;
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class CreateRegularOpeningHoursRequest implements Serializable {
     private WeeklyOpeningHours hours;
 

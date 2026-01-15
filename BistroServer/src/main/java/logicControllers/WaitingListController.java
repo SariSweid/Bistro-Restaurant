@@ -17,7 +17,6 @@ import DAO.WaitingListDAO;
 import Entities.Guest;
 import Entities.Reservation;
 import Entities.Table;
-import Entities.User;
 import enums.UserRole;
 import Entities.WaitingListEntry;
 import common.ServerResponse;
@@ -285,10 +284,6 @@ public class WaitingListController {
             code = 100000 + random.nextInt(900000);
         } while (waitingListDAO.getByConfirmationCode(code) != null);
         return code;
-    }
-    
-    private int generateGuestId() {
-        return 100000 + new Random().nextInt(900000);
     }
 
 

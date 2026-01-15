@@ -9,6 +9,7 @@ import enums.WaitingStatus;
 /**
  * WaitingListEntry class represents an entry in the waiting list
  */
+@SuppressWarnings("serial")
 public class WaitingListEntry implements Serializable {
 	private Integer userID; // null in case of guest
 	private String Email;// email/phone

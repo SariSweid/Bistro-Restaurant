@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import Entities.Reservation;
-import Entities.User;
 import enums.ReservationStatus;
 import handlers.ClientHandler;
 import javafx.application.Platform;

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 
+@SuppressWarnings("serial")
 public class UpdateSpecialDateRequest implements Serializable{
 	
 	private LocalDate oldDate; //the date of the selected

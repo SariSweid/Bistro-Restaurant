@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * WaitingList class represents a waiting list of a single day
  */
+@SuppressWarnings("serial")
 public class WaitingList implements Serializable {
 	private LocalDate waitingListDate;
 	private List<WaitingListEntry> waitingList;

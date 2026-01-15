@@ -2,6 +2,7 @@ package messages;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class CancelReservationRequest implements Serializable {
 	private Integer reservationId;       // For Subscriber
     private Integer confirmationCode;    // For Guest

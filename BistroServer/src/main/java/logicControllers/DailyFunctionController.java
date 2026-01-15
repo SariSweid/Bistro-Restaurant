@@ -25,7 +25,8 @@ public class DailyFunctionController implements Runnable {
 
     private final ReservationDAO reservationDAO = new ReservationDAO();
     private final TableDAO tableDAO = new TableDAO();
-    private final BillDAO billDAO = new BillDAO();
+    @SuppressWarnings("unused")
+	private final BillDAO billDAO = new BillDAO();
     private final WaitingListDAO waitingListDAO = new WaitingListDAO();
     private final PaymentController paymentController = new PaymentController();
     private final TableController tableController = new TableController();

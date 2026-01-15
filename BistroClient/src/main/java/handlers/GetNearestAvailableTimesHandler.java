@@ -22,7 +22,8 @@ public class GetNearestAvailableTimesHandler implements ResponseHandler {
             return;
         }
 
-        List<AvailableDateTimes> options = (List<AvailableDateTimes>) res.getData();
+        @SuppressWarnings("unchecked")
+		List<AvailableDateTimes> options = (List<AvailableDateTimes>) res.getData();
 
         BaseReservationController controller = ClientHandler.getClient().getActiveReservationController();
 

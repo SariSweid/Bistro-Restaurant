@@ -40,7 +40,7 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
         ClientHandler.getClient().setAvailableTimesListener(this);
         ClientHandler.getClient().setActiveDisplayController(this);
 
-        datePicker.setDayCellFactory(picker -> new DateCell() {
+        datePicker.setDayCellFactory(_ -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
@@ -48,7 +48,7 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
             }
         });
 
-        datePicker.valueProperty().addListener((obs, oldDate, newDate) -> {
+        datePicker.valueProperty().addListener((_, _, newDate) -> {
             if (newDate != null) loadTimesForDate(newDate);
         });
 

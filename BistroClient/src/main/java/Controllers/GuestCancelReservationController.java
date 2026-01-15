@@ -1,17 +1,13 @@
 package Controllers;
 
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.util.List;
 
 import Entities.Reservation;
-import enums.ReservationStatus;
 import handlers.ClientHandler;
-import util.SceneManager;
 
 public class GuestCancelReservationController extends BaseDisplayController {
 

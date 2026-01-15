@@ -7,6 +7,7 @@ import enums.Day;
 /**
  * WeeklyOpeningHours class represents the opening and closing hours in a normal weekday
  */
+@SuppressWarnings("serial")
 public class WeeklyOpeningHours extends OpeningHours implements Serializable {
 	private Day day;
 	

@@ -2,6 +2,7 @@ package messages;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class InsertTableRequest implements Serializable {
     private int tableId;
     private int seats;

@@ -4,13 +4,10 @@ import java.util.List;
 
 import Entities.Reservation;
 import Entities.User;
-import javafx.animation.PauseTransition;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Duration;
 import util.SceneManager;
 import handlers.ClientHandler;
 

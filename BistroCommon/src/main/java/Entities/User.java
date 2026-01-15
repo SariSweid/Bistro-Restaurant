@@ -7,6 +7,7 @@ import enums.UserRole;
 /**
  * User the base class for Subscriber, Guest, RestaurantSupervisor and RestaurantManager
  */
+@SuppressWarnings("serial")
 public abstract class User implements Serializable {
 	
 	public void setRole(UserRole role) {

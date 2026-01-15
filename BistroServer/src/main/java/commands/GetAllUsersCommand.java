@@ -2,7 +2,6 @@ package commands;
 
 import java.util.List;
 
-import Entities.Reservation;
 import Entities.User;
 import common.Message;
 import logicControllers.UserController;

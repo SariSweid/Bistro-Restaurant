@@ -3,6 +3,7 @@ package messages;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+@SuppressWarnings("serial")
 public class GetNearestAvailableTimesRequest implements Serializable {
 
     private final LocalDate date;

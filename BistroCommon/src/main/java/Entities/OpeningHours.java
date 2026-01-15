@@ -6,6 +6,7 @@ import java.time.LocalTime;
 /**
  * base class for opening hours, used for WeeklyOpeningHours and SpecialDates
  */
+@SuppressWarnings("serial")
 public abstract class OpeningHours implements Serializable {
 	private LocalTime openingTime;
 	private LocalTime closingTime;

@@ -57,7 +57,7 @@ public class ReservationsController {
         // --- LOAD DATA AFTER HANDLER STORES IT ---
         Platform.runLater(() -> {
             PauseTransition delay = new PauseTransition(Duration.millis(5));
-            delay.setOnFinished(e -> loadReservations());
+            delay.setOnFinished(_ -> loadReservations());
             delay.play();
         });
 

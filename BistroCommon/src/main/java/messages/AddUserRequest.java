@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import Entities.User;
 
+@SuppressWarnings("serial")
 public class AddUserRequest implements Serializable {
 	private User user;
 

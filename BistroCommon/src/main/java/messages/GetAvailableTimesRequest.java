@@ -3,6 +3,7 @@ package messages;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+@SuppressWarnings("serial")
 public class GetAvailableTimesRequest implements Serializable {
     private final LocalDate date;
     private final int guests;

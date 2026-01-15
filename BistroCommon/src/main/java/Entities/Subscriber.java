@@ -7,6 +7,7 @@ import enums.UserRole;
 /**
  * Subscriber class represents a subscriber in the restaurant
  */
+@SuppressWarnings("serial")
 public class Subscriber extends User implements Serializable {
 	private String name;
 	private String userName;

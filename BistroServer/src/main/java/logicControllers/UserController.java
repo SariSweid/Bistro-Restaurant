@@ -3,7 +3,6 @@ package logicControllers;
 import java.util.List;
 
 import DAO.UserDAO;
-import Entities.Guest;
 import Entities.User;
 
 /**

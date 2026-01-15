@@ -13,7 +13,8 @@ public class GetAllUsersHandler implements ResponseHandler {
 	public void handle(Object data) {
 	    if (!(data instanceof List<?> list)) return;
 
-	    List<User> users = (List<User>) list;
+	    @SuppressWarnings("unchecked")
+		List<User> users = (List<User>) list;
 
 	    Platform.runLater(() -> {
 	        var controller = ClientHandler.getClient().getActiveDisplayController();

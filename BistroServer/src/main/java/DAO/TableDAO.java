@@ -14,7 +14,6 @@ import java.util.List;
 import DB.DBController;
 import Entities.Reservation;
 import Entities.Table;
-import enums.ReservationStatus;
 
 /**
  * DAO for handling Tables in the restaurant.

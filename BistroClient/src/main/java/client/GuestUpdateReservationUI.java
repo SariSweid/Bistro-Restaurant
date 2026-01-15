@@ -106,7 +106,7 @@ public class GuestUpdateReservationUI {
             reservationsTable.setItems(reservations);
 
             // When user selects a row, copy data to the edit fields
-            reservationsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+            reservationsTable.getSelectionModel().selectedItemProperty().addListener((_, _, newSel) -> {
                         if (newSel != null) {
                             reservationIdField.setText(String.valueOf(newSel.getReservationID()));
                             dateField.setText(String.valueOf(newSel.getReservationDate()));

@@ -7,6 +7,7 @@ import enums.UserRole;
 /**
  * RestaurantSupervisor represents a Restaurant Supervisor
  */
+@SuppressWarnings("serial")
 public class Supervisor extends User implements Serializable {
 	private String name;
 	private String userName;

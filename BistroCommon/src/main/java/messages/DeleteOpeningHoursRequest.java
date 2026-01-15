@@ -3,6 +3,7 @@ package messages;
 import enums.Day;
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class DeleteOpeningHoursRequest implements Serializable {
     private final Day day;
 
