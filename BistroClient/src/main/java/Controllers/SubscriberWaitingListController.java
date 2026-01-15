@@ -16,7 +16,12 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import util.SceneManager;
 
-public class SubscriberWaitingListController extends  BaseDisplayController {
+/**
+ * Controller for subscriber waiting list screen.
+ * Handles adding and removing a subscriber from the waiting list
+ * and displaying available times received from the server.
+ */
+public class SubscriberWaitingListController extends BaseDisplayController implements AvailableTimesListener{
 
     @FXML
     private TextField numberOfDiners;
@@ -30,158 +35,156 @@ public class SubscriberWaitingListController extends  BaseDisplayController {
     @FXML
     private TextField confirmationCodeField;
 
+    /**
+     * Initializes the waiting list screen for subscribers.
+     * Sets date limits and requests available times when a date is selected.
+     */
     @FXML
     public void initialize() {
 
-    		ClientHandler.getClient().setActiveReservationController(null);
+    	ClientHandler.getClient().setAvailableTimesListener(this);
 
-        // Set this controller as the active display controller
-        ClientHandler.getClient().setActiveDisplayController(this);
-
-        // Block past dates
         datePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
-                setDisable(empty || date.isBefore(LocalDate.now()));
+                setDisable(
+                        empty ||
+                        date.isBefore(LocalDate.now()) ||
+                        date.isAfter(LocalDate.now().plusMonths(1))
+                );
             }
         });
 
-        // Block dates after 1 month
-        datePicker.setDayCellFactory(picker -> new DateCell() {
-            @Override
-            public void updateItem(LocalDate date, boolean empty) {
-                super.updateItem(date, empty);
-                setDisable(empty || date.isBefore(LocalDate.now()) || date.isAfter(LocalDate.now().plusMonths(1)));
-            }
-        });
-
-        // When user picks a date → load times
         datePicker.valueProperty().addListener((obs, oldDate, newDate) -> {
             if (newDate != null) {
                 loadTimesForDate(newDate);
             }
         });
 
-        // Default: today
         datePicker.setValue(LocalDate.now());
     }
-    
+
+    /**
+     * Requests available times from the server for a given date.
+     *
+     * @param date selected date
+     */
     private void loadTimesForDate(LocalDate date) {
-
         timeComboBox.getItems().clear();
-
-        // Ask server for available times
-        ClientHandler.getClient().getAvailableTimes(date, 1,true); // 1 guest just to get times
+        ClientHandler.getClient().getAvailableTimes(date, 1, true);
     }
 
+    /**
+     * Loads available times into the combo box.
+     *
+     * @param times list of available times
+     */
     public void loadTimes(List<LocalTime> times) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         timeComboBox.getItems().clear();
 
-        for (LocalTime t : times) {
-            timeComboBox.getItems().add(t.format(formatter));
+        for (LocalTime time : times) {
+            timeComboBox.getItems().add(time.format(formatter));
         }
 
         if (!timeComboBox.getItems().isEmpty()) {
             timeComboBox.getSelectionModel().selectFirst();
         }
     }
-    
-    
+
+    /**
+     * Not used in this screen.
+     *
+     * @param reservations list of reservations
+     */
     @Override
     public void showReservations(List<Reservation> reservations) {
-      
     }
 
+    /**
+     * Sends a request to add the subscriber to the waiting list.
+     */
     @FXML
     private void ontakeplace() {
         try {
-            int numOfGuests = Integer.parseInt(numberOfDiners.getText());
-            LocalDate selectedDate = datePicker.getValue();
+            int guests = Integer.parseInt(numberOfDiners.getText());
+            LocalDate date = datePicker.getValue();
             String timeStr = timeComboBox.getValue();
-            LocalTime selectedTime = LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm"));
 
-            if (selectedDate == null) {
-                showAlert("Invalid Input", "Please select a date.");
+            if (date == null || timeStr == null) {
+                showAlert("Invalid Input", "Please select date and time.");
                 return;
             }
-            if (numOfGuests <= 0) {
+
+            if (guests <= 0) {
                 showAlert("Invalid Input", "Number of diners must be greater than zero.");
                 return;
             }
 
-            // Get current user (Subscriber) from ClientHandler
-            User currentUser = ClientHandler.getClient().getCurrentUser();
-            if (currentUser == null) {
+            User user = ClientHandler.getClient().getCurrentUser();
+            if (user == null) {
                 showAlert("Error", "No logged-in user.");
                 return;
             }
 
-            Integer userID = currentUser.getUserId();
-            String email = currentUser.getEmail();
-            String phone = currentUser.getPhone();
+            LocalTime time = LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm"));
 
-            // Send request to server, handled by AddWaitingHandler
             ClientHandler.getClient().addWaitingList(
-                    userID,
-                    email,
-                    phone,
-                    numOfGuests,
-                    selectedDate,
-                    selectedTime
+                    user.getUserId(),
+                    user.getEmail(),
+                    user.getPhone(),
+                    guests,
+                    date,
+                    time
             );
 
         } catch (NumberFormatException e) {
             showAlert("Invalid Input", "Please enter a valid number of diners.");
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
-
-
-    
+    /**
+     * Clears input fields after adding to waiting list.
+     */
     public void clearAddFields() {
         numberOfDiners.clear();
-
     }
 
-
-
+    /**
+     * Sends a request to remove the subscriber from the waiting list.
+     */
     @FXML
     private void onRemoveFromWaitingList() {
-        String codeText = confirmationCodeField.getText();
-        if (codeText == null || codeText.isEmpty()) {
-            showAlert("Error", "Please enter your confirmation code.");
-            return;
-        }
-
         try {
-            int code = Integer.parseInt(codeText);
-
-          
+            int code = Integer.parseInt(confirmationCodeField.getText());
             ClientHandler.getClient().cancelWaiting(code);
-
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             showAlert("Error", "Invalid confirmation code.");
         }
     }
 
-    
+    /**
+     * Clears the confirmation code field.
+     */
     public void clearConfirmationCodeField() {
         confirmationCodeField.clear();
     }
 
-
-
-
-
+    /**
+     * Returns to the previous screen.
+     */
     @FXML
     private void onPreviousPage() {
         SceneManager.switchTo("SubscriberUI.fxml");
     }
 
+    /**
+     * Displays an information alert.
+     *
+     * @param title alert title
+     * @param message alert message
+     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -190,11 +193,18 @@ public class SubscriberWaitingListController extends  BaseDisplayController {
         alert.showAndWait();
     }
 
-	public TextField getConfirmationCodeField() {
-		return confirmationCodeField;
-	}
+    /**
+     * Returns the confirmation code text field.
+     *
+     * @return confirmation code field
+     */
+    public TextField getConfirmationCodeField() {
+        return confirmationCodeField;
+    }
 
-	public void setConfirmationCodeField(TextField confirmationCodeField) {
-		this.confirmationCodeField = confirmationCodeField;
-	}
+    
+    @Override
+    public void updateAvailableTimes(List<LocalTime> times) {
+        loadTimes(times);
+    }
 }
