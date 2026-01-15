@@ -26,6 +26,15 @@ public class RegisterCommand implements Command {
             User user = null;
 
             if (req.getRole() == UserRole.SUBSCRIBER) {
+
+                
+                if (userController.getUserByMembershipCode(req.getMembershipCode()) != null) {
+                    ServerResponse response = new ServerResponse(false, null,
+                            "Registration failed, membership code already exists");
+                    client.sendToClient(new Message(ActionType.ADD_USER, response));
+                    return; 
+                }
+
                 user = new Subscriber(
                         req.getUserID(),
                         req.getName(),
@@ -35,6 +44,7 @@ public class RegisterCommand implements Command {
                         req.getMembershipCode()
                 );
                 success = userController.addUser(user);
+
             } else if (req.getRole() == UserRole.GUEST) {
                 user = new Guest(
                         req.getUserID(),
@@ -58,5 +68,6 @@ public class RegisterCommand implements Command {
             } catch (Exception ignored) {}
         }
     }
+
 
 }

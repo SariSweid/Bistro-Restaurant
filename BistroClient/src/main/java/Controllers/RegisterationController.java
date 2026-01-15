@@ -55,19 +55,32 @@ public class RegisterationController implements Initializable {
 	        }
 		
 		// Membership code (only relevant if Subscriber)
-        int memCode = 0;
-        if (!membershipCode.getText().isBlank()) {
-            try {
-                memCode = Integer.parseInt(membershipCode.getText());
-            } catch (NumberFormatException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Registration");
-                alert.setHeaderText(null);
-                alert.setContentText("Membership code must be a number");
-                alert.showAndWait();
-                return;
-            }
-        }
+		int memCode = 0;
+		String text = membershipCode.getText().trim();
+
+		if (!text.isBlank()) {
+		    try {
+		        memCode = Integer.parseInt(text);
+
+		        
+		        if (memCode > 999999 || memCode < 0) {
+		            Alert alert = new Alert(Alert.AlertType.ERROR);
+		            alert.setTitle("Registration");
+		            alert.setHeaderText(null);
+		            alert.setContentText("Membership code must be a number with at most 6 digits");
+		            alert.showAndWait();
+		            return;
+		        }
+
+		    } catch (NumberFormatException e) {
+		        Alert alert = new Alert(Alert.AlertType.ERROR);
+		        alert.setTitle("Registration");
+		        alert.setHeaderText(null);
+		        alert.setContentText("Membership code must be a number");
+		        alert.showAndWait();
+		        return;
+		    }
+		}
         
         // Create RegisterRequest
         // Here we assume Supervisor registration
