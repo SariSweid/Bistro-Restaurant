@@ -45,7 +45,7 @@ public class SubscriberController extends BaseReservationController {
     
     @FXML
     private void onReceiveTable() {
-    	SceneManager.switchTo("TableReceivingUI.fxml");
+    	SceneManager.switchTo("TableReceivingSubscriberUI.fxml");
     }
     
     

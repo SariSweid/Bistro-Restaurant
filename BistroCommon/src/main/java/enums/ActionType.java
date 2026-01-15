@@ -19,7 +19,7 @@ public enum ActionType {
     ADD_USER,
     UPDATE_USER,
     CHECKUSERIDEXISTS,
-    FORGOT_CODE,
+    FORGOT_CODE,  
     SEAT_CUSTOMER,
     
     // Restaurant settings

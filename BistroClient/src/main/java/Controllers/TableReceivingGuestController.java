@@ -6,24 +6,18 @@ import util.SceneManager;
 
 import java.time.LocalTime;
 
+import enums.UserRole;
 import handlers.ClientHandler;
 
-public class TableReceivingController {
+public class TableReceivingGuestController {
 
     @FXML
     private TextField confirmationCode;
 
     @FXML
     private void onPreviousPage() {
-        enums.UserRole role = ClientHandler.getClient().getCurrentUserRole();
 
-        if (role != null && role != enums.UserRole.GUEST) {
-            // Non-guest users go back to Subscriber UI
-            SceneManager.switchTo("SubscriberUI.fxml");
-        } else {
-            // Guest or unknown goes to Main Menu
             SceneManager.switchTo("MainMenuUI.fxml");
-        }
     }
 
     /**
@@ -61,10 +55,9 @@ public class TableReceivingController {
     @FXML
     private void onForgot() {
 
-        int userId = ClientHandler.getClient().getCurrentUserId();
+            SceneManager.showInfo("Sent to your email or phone");
 
-        // Send request to server
-        ClientHandler.getClient().forgotCode(userId);
     }
+
 }
 
