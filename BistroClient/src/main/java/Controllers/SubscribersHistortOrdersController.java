@@ -1,8 +1,8 @@
 package Controllers;
 
 import java.util.List;
-
 import Entities.Reservation;
+import Entities.User;
 import enums.ReservationStatus;
 import handlers.ClientHandler;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,6 +14,9 @@ import javafx.scene.paint.Color;
 import util.SceneManager;
 
 public class SubscribersHistortOrdersController extends BaseDisplayController {
+
+    private static int selectedUserId = 0;
+    public static void setSelectedUserId(int id) { selectedUserId = id; }
 
     @FXML private TableView<Reservation> reservationsTable;
     @FXML private TableColumn<Reservation, Integer> idColumn;
@@ -29,16 +32,12 @@ public class SubscribersHistortOrdersController extends BaseDisplayController {
         guestsColumn.setCellValueFactory(new PropertyValueFactory<>("numOfGuests"));
         confirmationCodeColumn.setCellValueFactory(new PropertyValueFactory<>("confirmationCode"));
         statusColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getStatus().toString()));
-
-        
         statusColumn.setCellFactory(column -> new TableCell<Reservation, String>() {
             @Override
             protected void updateItem(String status, boolean empty) {
                 super.updateItem(status, empty);
-                if (empty || status == null) {
-                    setText(null);
-                    setStyle("");
-                } else {
+                if (empty || status == null) { setText(null); setStyle(""); }
+                else {
                     setText(status);
                     switch (status) {
                         case "COMPLETED" -> setTextFill(Color.GREEN);
@@ -49,38 +48,36 @@ public class SubscribersHistortOrdersController extends BaseDisplayController {
                 }
             }
         });
-
         ClientHandler.getClient().setActiveDisplayController(this);
         refreshReservations();
     }
 
     @Override
     public void showReservations(List<Reservation> list) {
-        System.out.println("the list is equal to:" + list);
-        System.out.println();
         if (list == null) {
             reservationsTable.setItems(FXCollections.observableArrayList());
             return;
         }
-
-        List<Reservation> completed = list.stream()
-                .filter(r -> r.getStatus() == ReservationStatus.COMPLETED
-                          || r.getStatus() == ReservationStatus.NOT_SHOWED
-                          || r.getStatus() == ReservationStatus.CANCELLED)
-                .toList();
-
-        reservationsTable.setItems(FXCollections.observableArrayList(completed));
+        List<Reservation> filtered = list.stream()
+            .filter(r -> r.getStatus() == ReservationStatus.COMPLETED
+                      || r.getStatus() == ReservationStatus.NOT_SHOWED
+                      || r.getStatus() == ReservationStatus.CANCELLED)
+            .toList();
+        reservationsTable.setItems(FXCollections.observableArrayList(filtered));
     }
 
     public void refreshReservations() {
-        int userId = ClientHandler.getClient().getCurrentUserId();
-        if (userId != 0) {
-            ClientHandler.getClient().getUserReservations(userId);
+        if (selectedUserId != 0) {
+            ClientHandler.getClient().getUserReservations(selectedUserId);
         }
     }
 
     @FXML
     private void onPreviousPage() {
-        SceneManager.switchTo("SubscriberUI.fxml");
+        User currentUser = ClientHandler.getClient().getCurrentUser();
+        switch (currentUser.getRole()) {
+            case SUBSCRIBER -> SceneManager.switchTo("SubscriberUI.fxml");
+            default -> SceneManager.switchTo("SubscribersInformationUI.fxml");
+        }
     }
 }
