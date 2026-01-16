@@ -26,7 +26,7 @@ public class GuestReservationController {
     private void onCancelOrder() {
     	    try {
     	        // Load FXML
-    	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui//GuestCancelReservationUI.fxml"));
+    	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GuestCancelReservationUI.fxml"));
     	        Parent root = loader.load();
 
     	        // Pass guestId to the popup controller

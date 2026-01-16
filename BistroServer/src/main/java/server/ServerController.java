@@ -48,12 +48,15 @@ public class ServerController extends AbstractServer {
 
     @Override
     protected void clientConnected(ConnectionToClient client) {
-        String info = client.getInetAddress().getHostAddress() + " (" + client.getInetAddress().getHostName() + ")";
-        
-        // Store the exact string used for this specific client object
+
+        String info =
+                client.getInetAddress().getHostAddress() +
+                " (" + client.getInetAddress().getHostName() + ")" +
+                " | connectionId=" + client.getId();
+
         connectedClients.put(client, info);
-        client.setInfo("Disconnected", null); 
-        
+        client.setInfo("Disconnected", null);
+
         System.out.println("Client connected: " + info);
         if (ui != null) ui.addClient(info);
     }

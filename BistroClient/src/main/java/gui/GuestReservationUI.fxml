@@ -13,7 +13,7 @@
       <Button layoutX="183.0" layoutY="101.0" mnemonicParsing="false" onAction="#onCancelOrder" style="-fx-background-radius: 15;" text="Cancel Order" />
       <ImageView fitHeight="116.0" fitWidth="119.0" layoutX="211.0" layoutY="190.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../../../../../../BistroLogo.png" />
+            <Image url="@/images/BistroLogo.png" />
          </image>
       </ImageView>
       <Label layoutX="21.0" layoutY="59.0" style="-fx-font-size: 15; -fx-font-weight: bold;" text="what you would like to do?" />
