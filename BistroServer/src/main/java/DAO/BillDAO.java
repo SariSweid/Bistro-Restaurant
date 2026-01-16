@@ -11,11 +11,18 @@ import DB.DBController;
 import Entities.Bill;
 
 /**
- * DAO for handling Bills.
+ * Data Access Object (DAO) for managing Bill entities in the database.
+ * This class provides methods to retrieve, insert, and link bills to reservations,
+ * extending DBController to handle database connectivity.
  */
 public class BillDAO extends DBController {
 	
-	
+    /**
+     * Retrieves a specific bill from the database using its unique bill ID.
+     *
+     * @param billId the unique identifier of the bill to retrieve
+     * @return a Bill object if found, otherwise null
+     */
     public Bill getBillById(int billId) {
     	Connection con = getConnection();
 
@@ -37,6 +44,12 @@ public class BillDAO extends DBController {
         return null;
     }
     
+    /**
+     * Retrieves the most recent bill associated with a specific reservation ID.
+     *
+     * @param reservationId the ID of the reservation linked to the bill
+     * @return the latest Bill found for the reservation, or null if none exists
+     */
 	public Bill getBillByReservationId(int reservationId) {
 	    Connection con = getConnection();
 	    Bill b = null;
@@ -62,9 +75,8 @@ public class BillDAO extends DBController {
 	}
 	
     /**
-     * Retrieves a specific bill by their ID.
-     *
-     * @param Billid the bill ID
+     * Retrieves a specific bill by its ID.
+     * * @param billId the bill ID
      * @return the Bill if found, or null if not found
      */
 	public Bill GetBill(int billId) {
@@ -97,16 +109,20 @@ public class BillDAO extends DBController {
 	}
 	
     /**
-     * Inserts a new bill into the database.
+     * Inserts a new bill into the database and links it to the corresponding reservation.
+     * This method first checks if a paid bill already exists for the given reservation
+     * to prevent double billing. If valid, it inserts the bill and updates the 
+     * reservation record with the new Bill ID.
      *
-     * @param b the bill to insert
-     * @return true if the insertion succeeded, false otherwise
+     * @param b the Bill entity to be inserted
+     * @return true if the bill was added and linked successfully, false otherwise
      */
 	public Boolean AddBill(Bill b) {
 
 	    Connection con = getConnection();
 
 	    try {
+	        // Check if the reservation already has a paid bill
 	        PreparedStatement checkPaid = con.prepareStatement(
 	                "SELECT paid FROM bill WHERE reservationID = ? ORDER BY BillId DESC LIMIT 1");
 	        checkPaid.setInt(1, b.getReservationID());
@@ -120,6 +136,7 @@ public class BillDAO extends DBController {
 	            }
 	        }
 
+	        // Insert the new bill record
 	        try (PreparedStatement pst = con.prepareStatement(
 	                "INSERT INTO bill (reservationID, Amount, issuedAt, paid) VALUES (?,?,?,?)")) {
 
@@ -131,6 +148,7 @@ public class BillDAO extends DBController {
 	            int updateStatus = pst.executeUpdate();
 
 	            if (updateStatus > 0) {
+	                // Retrieve the generated BillId to update the reservation table
 	                try (PreparedStatement pst2 = con.prepareStatement(
 	                        "SELECT BillId FROM bill WHERE reservationID = ? ORDER BY BillId DESC LIMIT 1")) {
 	                    pst2.setInt(1, b.getReservationID());
@@ -144,7 +162,6 @@ public class BillDAO extends DBController {
 	                    }
 	                }
 	            }
-
 	        }
 
 	        return false;
@@ -155,7 +172,13 @@ public class BillDAO extends DBController {
 	    }
 	}
 	
-	
+    /**
+     * Updates the reservation record to link it with a specific bill ID.
+     *
+     * @param reservationId the ID of the reservation to update
+     * @param billId the ID of the bill to link
+     * @return true if the reservation record was successfully updated, false otherwise
+     */
 	public boolean updateReservationBillId(int reservationId, int billId) {
 		
 	    Connection con = getConnection();
@@ -174,8 +197,4 @@ public class BillDAO extends DBController {
 	        return false;
 	    }
 	}
-	
-	
-
-
 }

@@ -10,16 +10,20 @@ import Entities.*;
 import logicControllers.UserFactory;
 
 /**
- * Data Access Object for Users (Subscriber, Guest, Manager, Supervisor)
+ * Data Access Object (DAO) for managing all user types in the system, including 
+ * Subscriber, Guest, Manager, and Supervisor.
+ * This class handles polymorphic database operations and integrates with UserFactory
+ * to instantiate the correct User subclasses based on their roles.
  */
 public class UserDAO extends DBController {
 	
-	
     /**
-     * Inserts a new user into the database.
+     * Inserts a new user into the database. 
+     * The method determines the user type through polymorphic checks (instanceof)
+     * to populate the correct columns, such as membership code for subscribers.
      *
-     * @param u the user to insert
-     * @return true if the insertion succeeded, false otherwise
+     * @param u the User entity to be inserted.
+     * @return true if the insertion was successful, false otherwise.
      */
     public Boolean InsertUser(User u) {
         Connection con = getConnection();
@@ -43,7 +47,7 @@ public class UserDAO extends DBController {
                 pst.setString(3, g.getPhone());  // phone
                 pst.setString(4, g.getEmail());  // email
                 pst.setString(5, null);          // username
-                pst.setNull(6, java.sql.Types.INTEGER);              // membershipCode
+                pst.setNull(6, java.sql.Types.INTEGER);
                 pst.setString(7, g.getRole().name()); // GUEST
             } 
             else if (u instanceof Manager m) {
@@ -73,10 +77,10 @@ public class UserDAO extends DBController {
     }
     
 	/**
-     * Inserts a new guest into the database.
+     * Registers a new guest and returns their database-generated unique ID.
      *
-     * @param g the guest to insert
-     * @return guest id if the insertion succeeded, -1 otherwise
+     * @param g the guest user to insert.
+     * @return the auto-generated integer ID if successful, -1 otherwise.
      */
 	public int insertGuestAndReturnId(User g) {
 
@@ -94,7 +98,7 @@ public class UserDAO extends DBController {
 
 	        ResultSet keys = pst.getGeneratedKeys();
 	        keys.next();
-	        return keys.getInt(1); // ← auto-generated UserId
+	        return keys.getInt(1); // Auto-generated UserId
 
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -102,7 +106,13 @@ public class UserDAO extends DBController {
 	    }
 	}
 	
-	
+    /**
+     * Alternative guest insertion that uses a custom random ID generator.
+     * Useful when the business logic requires IDs within a specific numeric range.
+     *
+     * @param g the guest user to insert.
+     * @return the manually generated random ID if successful, -1 otherwise.
+     */
 	public int insertGuestAndReturnId2(User g) {
 	    int newId = generateRandomUserId2(); 
 	    try (Connection con = getConnection();
@@ -128,7 +138,11 @@ public class UserDAO extends DBController {
 	    }
 	}
 
-
+    /**
+     * Generates a unique 6-digit user ID and verifies it doesn't already exist.
+     *
+     * @return a unique 6-digit integer.
+     */
 	private int generateRandomUserId2() {
 	    Random random = new Random();
 	    int id;
@@ -138,7 +152,11 @@ public class UserDAO extends DBController {
 	    return id;
 	}
 
- 
+    /**
+     * Checks if a specific User ID exists in the database.
+     * * @param userId the ID to check.
+     * @return true if the user exists, false otherwise.
+     */
 	private boolean userExists(int userId) {
 	    try (Connection con = getConnection();
 	         PreparedStatement ps = con.prepareStatement("SELECT 1 FROM `user` WHERE UserId = ?")) {
@@ -151,10 +169,12 @@ public class UserDAO extends DBController {
 	    return true;
 	}
 
-	
-	
-
-	// get Guest by phone number
+    /**
+     * Retrieves a user from the database based on their phone number.
+     *
+     * @param phone the phone number string.
+     * @return a User object if found, null otherwise.
+     */
 	public User getUserByPhone(String phone) {
 	    try (Connection con = getConnection();
 	         PreparedStatement pst =
@@ -170,7 +190,11 @@ public class UserDAO extends DBController {
 	    return null;
 	}
 
-	// get Guest by email
+    /**
+     * Retrieves a user from the database based on their email address.
+     * * @param email the email address to search for.
+     * @return a User object if found, null otherwise.
+     */
 	public User getUserByEmail(String email) {
 	    try (Connection con = getConnection();
 	         PreparedStatement pst =
@@ -187,10 +211,11 @@ public class UserDAO extends DBController {
 	}
 	
     /**
-     * Updates an existing user in the database.
+     * Updates an existing user's profile information.
+     * Supports updating names and usernames for roles that possess them.
      *
-     * @param u the user object containing updated data
-     * @return true if the update succeeded, false otherwise
+     * @param u the user object containing the updated fields.
+     * @return true if at least one row was updated.
      */
 	public Boolean UpdateUser(User u) {
 		Connection con = getConnection();
@@ -201,14 +226,12 @@ public class UserDAO extends DBController {
 			pst.setString(2, u.getPhone());  
             pst.setString(3, u.getEmail());
             pst.setString(4, null);
-	            pst.setInt(5, u.getUserId());
-	            
+	        pst.setInt(5, u.getUserId());
 	            
             if (u instanceof Subscriber s) {
                 pst.setString(1, s.getName());
                 pst.setString(4, s.getUserName());
             }
-            	            
             else if (u instanceof Manager m) {
                 pst.setString(1, m.getName());
                 pst.setString(4, m.getUserName());
@@ -229,9 +252,9 @@ public class UserDAO extends DBController {
 	}
 	
     /**
-     * Reads all users from the database.
+     * Retrieves all users registered in the system.
      *
-     * @return list of users
+     * @return a List of all User entities.
      */
 	public List<User> readAllUsers() {
 
@@ -256,10 +279,10 @@ public class UserDAO extends DBController {
 	}
 	
     /**
-     * Retrieves a specific user by their ID.
+     * Retrieves a specific user by their unique ID.
      *
-     * @param userId the user ID
-     * @return the User if found, or null if not found
+     * @param userId the ID to search for.
+     * @return the User object if found, null otherwise.
      */
     public User getUser(int userId) {
 
@@ -283,9 +306,12 @@ public class UserDAO extends DBController {
         return u;
     }
     
-	
-    // ---- ADDED - get User code----
-    // Fetch subscriber by membership code
+    /**
+     * Fetches a subscriber specifically by their unique membership code.
+     *
+     * @param code the membership integer code.
+     * @return the User (typically a Subscriber) if found, null otherwise.
+     */
     public User getUserByMembershipCode(int code) {
         try (Connection con = getConnection();
              PreparedStatement pst = con.prepareStatement(
@@ -296,6 +322,4 @@ public class UserDAO extends DBController {
         } catch (SQLException e) { e.printStackTrace(); }
         return null;
     }
-
- 
 }

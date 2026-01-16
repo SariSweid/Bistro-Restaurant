@@ -10,15 +10,21 @@ import DB.DBController;
 import Entities.Report;
 
 /**
- * DAO for managing reports.
+ * Data Access Object (DAO) for managing Report entities in the database.
+ * This class handles the persistence of various system reports (e.g., Activity, Revenue)
+ * and provides methods to store generated report metadata and content.
  */
 public class ReportDAO extends DBController {
 
     /**
-     * Inserts a new report into the database.
+     * Inserts a new report record into the database.
+     * This method maps the fields of a Report object, including its type, 
+     * date range, and the timestamp of generation, to the corresponding columns 
+     * in the report table.
      *
-     * @param r the report to insert
-     * @return true if the insertion succeeded, false otherwise
+     * @param r the Report entity to be inserted into the database.
+     * @return true if the insertion was successful (at least one row affected), 
+     * false otherwise or if an SQLException occurred.
      */
     public boolean addReport(Report r) {
         try (Connection con = getConnection();
@@ -41,27 +47,31 @@ public class ReportDAO extends DBController {
 
     /**
      * Retrieves all reports from the database.
+     * Note: This method is currently commented out in the source code. 
+     * When active, it fetches the full history of generated reports, converting 
+     * SQL types (Date, Timestamp) back to Java Time API types (LocalDate, LocalDateTime).
      *
-     * @return a list of reports
+     * @return a list of all Report objects stored in the system.
      */
-//    public List<Report> getAllReports() {
-//        List<Report> reports = new ArrayList<>();
-//        try (Connection con = getConnection();
-//             PreparedStatement pst = con.prepareStatement("SELECT * FROM `report`")) {
-//
-//            ResultSet rs = pst.executeQuery();
-//            while (rs.next()) {
-//                reports.add(new Report(
-//                        rs.getInt("Report_Id"),
-//                        ReportType.valueOf(rs.getString("Type")),
-//                        rs.getDate("From").toLocalDate(),
-//                        rs.getDate("To").toLocalDate(),
-//                        rs.getTimestamp("generatedAt").toLocalDateTime(),
-//                        rs.getString("content")
-//                ));
-//            }
-//
-//        } catch (SQLException e) { e.printStackTrace(); }
-//        return reports;
-//    }
+/* public List<Report> getAllReports() {
+        List<Report> reports = new ArrayList<>();
+        try (Connection con = getConnection();
+             PreparedStatement pst = con.prepareStatement("SELECT * FROM `report`")) {
+
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                reports.add(new Report(
+                        rs.getInt("Report_Id"),
+                        ReportType.valueOf(rs.getString("Type")),
+                        rs.getDate("From").toLocalDate(),
+                        rs.getDate("To").toLocalDate(),
+                        rs.getTimestamp("generatedAt").toLocalDateTime(),
+                        rs.getString("content")
+                ));
+            }
+
+        } catch (SQLException e) { e.printStackTrace(); }
+        return reports;
+    }
+*/
 }

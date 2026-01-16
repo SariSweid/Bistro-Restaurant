@@ -6,7 +6,7 @@ import enums.UserRole;
 /**
  * Represents a registration request message sent within the system.
  * This class encapsulates all necessary details required to register a new user.
- * It implements {@link Serializable} to allow objects to be transmitted over a network.
+ * It implements Serializable to allow objects to be transmitted over a network.
  */
 public class RegisterRequest implements Serializable {
     
@@ -36,13 +36,14 @@ public class RegisterRequest implements Serializable {
 
     /**
      * Constructs a new RegisterRequest with the specified details.
-     * * @param userID the unique ID of the user
-     * @param name the full name of the user
-     * @param email the user's email address
-     * @param phone the user's contact phone number
-     * @param username the username for system authentication
-     * @param membershipCode the code representing the user's membership level
-     * @param role the {@link UserRole} assigned to the user
+     *
+     * @param userID          the unique ID of the user
+     * @param name            the full name of the user
+     * @param email           the user's email address
+     * @param phone           the user's contact phone number
+     * @param username        the username for system authentication
+     * @param membershipCode  the code representing the user's membership level
+     * @param role            the UserRole assigned to the user
      */
     public RegisterRequest(int userID, String name, String email, String phone,
                            String username, int membershipCode, UserRole role) {
@@ -57,43 +58,43 @@ public class RegisterRequest implements Serializable {
 
     /**
      * Gets the user ID.
-     * @return the integer userID
+     * * @return the integer userID
      */
     public int getUserID() { return userID; }
 
     /**
      * Gets the user's full name.
-     * @return the name string
+     * * @return the name string
      */
     public String getName() { return name; }
 
     /**
      * Gets the user's email.
-     * @return the email string
+     * * @return the email string
      */
     public String getEmail() { return email; }
 
     /**
      * Gets the user's phone number.
-     * @return the phone number string
+     * * @return the phone number string
      */
     public String getPhone() { return phone; }
 
     /**
      * Gets the chosen username.
-     * @return the username string
+     * * @return the username string
      */
     public String getUsername() { return username; }
 
     /**
      * Gets the membership code.
-     * @return the integer membershipCode
+     * * @return the integer membershipCode
      */
     public int getMembershipCode() { return membershipCode; }
 
     /**
      * Gets the role assigned to the user.
-     * @return the {@link UserRole} constant
+     * * @return the UserRole constant
      */
     public UserRole getRole() { return role; }
     

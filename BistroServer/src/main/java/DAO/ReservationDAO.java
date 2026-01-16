@@ -12,11 +12,19 @@ import enums.Day;
 import enums.ReservationStatus;
 
 /**
- * DAO for handling Reservations
+ * Data Access Object (DAO) for managing restaurant reservations.
+ * This class handles all CRUD operations and specialized queries for reservations,
+ * including availability checks, status updates, and notification tracking.
  */
 public class ReservationDAO extends DBController {
 	
-	
+    /**
+     * Updates an existing reservation's details in the database.
+     * Handles null-safe updates for table IDs, arrival times, and departure times.
+     *
+     * @param reservation the Reservation object containing updated data.
+     * @return true if the update was successful, false otherwise.
+     */
     public boolean updateReservation(Reservation reservation) {
         Connection con = getConnection();
 
@@ -28,21 +36,18 @@ public class ReservationDAO extends DBController {
             pst.setInt(3, reservation.getNumOfGuests());
             pst.setString(4, reservation.getStatus().name());
 
-            // update tableID safely
             if (reservation.getTableID() != null) {
                 pst.setInt(5, reservation.getTableID());
             } else {
                 pst.setNull(5, java.sql.Types.INTEGER);
             }
 
-            // safely update actual arrival only if not null, else keep existing
             if (reservation.getActualArrivalTime() != null) {
                 pst.setTime(6, Time.valueOf(reservation.getActualArrivalTime()));
             } else {
-                pst.setNull(6, java.sql.Types.TIME); // COALESCE in SQL keeps existing
+                pst.setNull(6, java.sql.Types.TIME); 
             }
 
-            // update departure time normally
             if (reservation.getExpectedDepartureTime() != null) {
                 pst.setTime(7, Time.valueOf(reservation.getExpectedDepartureTime()));
             } else {
@@ -59,6 +64,13 @@ public class ReservationDAO extends DBController {
         }
     }
     
+    /**
+     * Filters confirmed reservations for a specific date and time.
+     *
+     * @param date the date to check.
+     * @param time the time to check.
+     * @return a list of confirmed reservations at that moment.
+     */
     public List<Reservation> getConfirmedReservationsAt(LocalDate date, LocalTime time) {
         List<Reservation> allReservations = readAllReservations(); 
         List<Reservation> result = new ArrayList<>();
@@ -74,7 +86,12 @@ public class ReservationDAO extends DBController {
         return result;
     }
     
-    
+    /**
+     * Retrieves all non-cancelled reservations for a given date.
+     *
+     * @param date the target date.
+     * @return a list of reservations for that day.
+     */
     public List<Reservation> getReservationsByDate(LocalDate date) {
         List<Reservation> reservations = new ArrayList<>();
         Connection con = getConnection();
@@ -103,11 +120,9 @@ public class ReservationDAO extends DBController {
                         notified
                     );
 
-       
                     if (rs.getTime("actualarrivaltime") != null) {
                         r.setActualArrivalTime(rs.getTime("actualarrivaltime").toLocalTime());
                     }
-
               
                     if (rs.getTime("departuretiime") != null) {
                         r.setExpectedDepartureTime(rs.getTime("departuretiime").toLocalTime());
@@ -124,7 +139,12 @@ public class ReservationDAO extends DBController {
         return reservations;
     }
 
-    
+    /**
+     * Retrieves reservations based on the day of the week.
+     *
+     * @param day the Day enum (e.g., SUNDAY).
+     * @return a list of reservations for all dates that fall on this day.
+     */
     public List<Reservation> getReservationsByDay(Day day) {
         List<Reservation> reservations = new ArrayList<>();
         Connection con = getConnection();
@@ -171,6 +191,9 @@ public class ReservationDAO extends DBController {
         return reservations;
     }
 
+    /**
+     * Converts the internal Day enum to the corresponding MySQL DAYOFWEEK integer.
+     */
     private int dayToMySQLDay(Day day) {
         switch (day) {
             case SUNDAY: return 1;
@@ -184,11 +207,13 @@ public class ReservationDAO extends DBController {
         }
     }
 
-
-
-
-    
-    
+    /**
+     * Extracts time-related data (arrival, departure) for reports within a date range.
+     *
+     * @param startDate the beginning of the range.
+     * @param endDate the end of the range.
+     * @return a list of TimeData objects for analysis.
+     */
     public List<TimeData> getTimeDataBetween(LocalDate startDate, LocalDate endDate) {
         Connection con = getConnection();
         List<TimeData> list = new ArrayList<>();
@@ -224,20 +249,22 @@ public class ReservationDAO extends DBController {
         return list;
     }
     
-    
+    /**
+     * Cancels a reservation in the database and sets the notification status.
+     *
+     * @param reservationID the ID of the reservation to cancel.
+     * @param needsNotification if true, marks the notification as pending (isNotified = 0).
+     * @return true if successful.
+     */
     public boolean cancelReservationInDB(int reservationID, boolean needsNotification) {
-        // needsNotification = true  -> isNotified becomes 0 (Show popup later)
-        // needsNotification = false -> isNotified becomes 1 (No popup needed)
         int notifiedValue = needsNotification ? 0 : 1;
-
-        // Updated SQL to include the isNotified column
         String sql = "UPDATE reservation SET status = ?, isNotified = ? WHERE reservationID = ?";
 
         try (Connection con = getConnection();
              PreparedStatement pst = con.prepareStatement(sql)) {
 
             pst.setString(1, enums.ReservationStatus.CANCELLED.name());
-            pst.setInt(2, notifiedValue); // This is the new part!
+            pst.setInt(2, notifiedValue);
             pst.setInt(3, reservationID);
 
             int rows = pst.executeUpdate();
@@ -250,16 +277,14 @@ public class ReservationDAO extends DBController {
         }
     }
     
-    
 	/**
-	 * Retrieves a reservation by its ID.
+	 * Retrieves a single reservation by its unique ID.
 	 *
-	 * @param ReservationId the reservation ID
-	 * @return the Reservation if found, or null if not found
+	 * @param ReservationId the reservation ID.
+	 * @return the Reservation object if found, null otherwise.
 	 */
 	public Reservation GetReservation(int ReservationId) {
-		
-		Connection con = getConnection(); //connect to DB
+		Connection con = getConnection();
 		Reservation r = null;
 		
 		try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE reservationID = ?")){
@@ -267,9 +292,7 @@ public class ReservationDAO extends DBController {
 			ResultSet rs = pst.executeQuery();
 			
 	        if (rs.next()) {
-	        	
 		        	boolean notified = rs.getInt("isNotified") == 1;
-		        	
 	    			int reservationID  = rs.getInt("reservationID");
 	    			Date reservationDate  = rs.getDate("reservationDate"); 
 	    			Time reservationTime  = rs.getTime("reservationTime");
@@ -282,36 +305,24 @@ public class ReservationDAO extends DBController {
 	    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
 	    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
 	
-	    			
-	    			//conver date and time to local
-	    			LocalDate resDate = reservationDate.toLocalDate();
-	    			LocalTime resTime = reservationTime.toLocalTime();
-	    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
-	    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
-		        
-	
-		            
-		            
 	    			r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
-	    											,resDate,resTime,placedDate,placedTime,status,notified);
+	    											,reservationDate.toLocalDate(),reservationTime.toLocalTime(),
+	    											reservationPlacedDate.toLocalDate(),reservationPlacedTime.toLocalTime(),status,notified);
 		        }
-		        	        
-		}
-					
-		 catch (SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		return r; // There isnt Res with this ID.
+		return r;
 	}
 	
-	
 	/**
-     * “Which tables are already taken at THIS exact time?”
-     *
-     * @return a list reservations at the specific date (input)
-     */
-	// ADDED:
+	 * Retrieves reservations that are active (CONFIRMED, PENDING, or SEATED) at a specific timestamp.
+	 * Used primarily for table assignment and real-time occupancy checks.
+	 *
+	 * @param date the reservation date.
+	 * @param time the reservation time.
+	 * @return a list of active reservations.
+	 */
 	public List<Reservation> getReservationsAt(LocalDate date, LocalTime time) {
 	    List<Reservation> list = new ArrayList<>();
 	    Connection con = getConnection();
@@ -345,17 +356,20 @@ public class ReservationDAO extends DBController {
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
-
 	    return list;
 	}
 	
-	
+    /**
+     * Checks for reservations that overlap with a proposed new booking period.
+     *
+     * @param date the date of the new booking.
+     * @param startTime the start time of the new booking.
+     * @param durationHours the expected duration of the stay.
+     * @return a list of existing reservations that conflict with the time slot.
+     */
 	public List<Reservation> getReservationsOverlapping(LocalDate date, LocalTime startTime, int durationHours) {
 	    List<Reservation> overlapping = new ArrayList<>();
-
-	    // get all non-cancelled reservations for the date
 	    List<Reservation> all = getReservationsByDate(date);
-
 	    LocalTime newEnd = startTime.plusHours(durationHours);
 
 	    for (Reservation r : all) {
@@ -368,19 +382,19 @@ public class ReservationDAO extends DBController {
 	        LocalTime existingStart = r.getReservationTime();
 	        LocalTime existingEnd = existingStart.plusHours(durationHours);
 
-	        // 🔥 OVERLAP CHECK (THIS IS THE KEY)
-	        if (existingStart.isBefore(newEnd) &&
-	            existingEnd.isAfter(startTime)) {
+	        if (existingStart.isBefore(newEnd) && existingEnd.isAfter(startTime)) {
 	            overlapping.add(r);
 	        }
 	    }
-
 	    return overlapping;
 	}
 
-
-    
-	// Retrieves all reservation for a specific customer
+	/**
+	 * Retrieves the full reservation history for a specific customer.
+	 *
+	 * @param customerId the ID of the customer.
+	 * @return a list of their past and future reservations.
+	 */
 	public List<Reservation> getReservationsByCustomer(int customerId) {
 	    List<Reservation> list = new ArrayList<>();
 	    String sql = "SELECT * FROM reservation " +
@@ -411,95 +425,60 @@ public class ReservationDAO extends DBController {
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
-	   
 	    return list;
 	}
 	
     /**
-     * Retrieves all reservations from the database.
+     * Reads every reservation record in the database.
      *
-     * @return a list of all reservations
+     * @return a comprehensive list of all reservations.
      */
 	public List<Reservation> readAllReservations() {
-
 	    List<Reservation> reservations = new ArrayList<>();
 	    Connection con = getConnection();
 
-	    try (PreparedStatement pst =
-	                 con.prepareStatement("SELECT * FROM `reservation`")) {
-
+	    try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation`")) {
 	        ResultSet rs = pst.executeQuery();
 
 	        while (rs.next()) {
 	        		boolean notified = rs.getInt("isNotified") == 1;
-
 	            int reservationID = rs.getInt("reservationID");
-
 	            Date reservationDate = rs.getDate("reservationDate");
 	            Time reservationTime = rs.getTime("reservationTime");
-
 	            int numOfGuests = rs.getInt("numOfGuests");
 	            int confirmation_code = rs.getInt("confirmationCode");
-
-	            enums.ReservationStatus status =
-	                    enums.ReservationStatus.valueOf(rs.getString("status"));
-
+	            enums.ReservationStatus status = enums.ReservationStatus.valueOf(rs.getString("status"));
 	            int customerID = rs.getInt("customerID");
 	            int tableID = rs.getInt("TableId");
-
 	            Integer billID = rs.getObject("BillId", Integer.class);
-
 	            Date reservationPlacedDate = rs.getDate("reservationPlacedDate");
 	            Time reservationPlacedTime = rs.getTime("reservationPlacedTime");
-
 	            Time actualArrivalTimeDB = rs.getTime("actualArrivalTime");
 
-	            LocalDate resDate = reservationDate.toLocalDate();
-	            LocalTime resTime = reservationTime.toLocalTime();
-
-	            LocalDate placedDate = reservationPlacedDate.toLocalDate();
-	            LocalTime placedTime = reservationPlacedTime.toLocalTime();
-
-	            LocalTime actualArrivalTime = null;
-	            if (actualArrivalTimeDB != null) {
-	                actualArrivalTime = actualArrivalTimeDB.toLocalTime();
-	            }
-
 	            Reservation r = new Reservation(
-	                    reservationID,
-	                    customerID,
-	                    tableID,
-	                    billID,
-	                    numOfGuests,
-	                    confirmation_code,
-	                    resDate,
-	                    resTime,
-	                    placedDate,
-	                    placedTime,
-	                    status,
-	                    notified
-	            );
+	                    reservationID, customerID, tableID, billID, numOfGuests, confirmation_code,
+	                    reservationDate.toLocalDate(), reservationTime.toLocalTime(),
+	                    reservationPlacedDate.toLocalDate(), reservationPlacedTime.toLocalTime(), status, notified);
 
-	            r.setActualArrivalTime(actualArrivalTime);
-
+	            if (actualArrivalTimeDB != null) {
+	                r.setActualArrivalTime(actualArrivalTimeDB.toLocalTime());
+	            }
 	            reservations.add(r);
 	        }
-
-	        for (Reservation r : reservations) {
-	            System.out.println(r);
-	        }
-
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
-
 	    return reservations;
 	}
 
+    /**
+     * Checks if the user associated with a reservation has the SUBSCRIBER role.
+     *
+     * @param reservationID the reservation to check.
+     * @return true if the customer is a subscriber.
+     */
     public boolean isSubscriberByReservationId(int reservationID) {
     	Connection con = getConnection();
-        boolean result = false;
-
         try (PreparedStatement pst = con.prepareStatement("SELECT u.Role FROM user u JOIN reservation r ON u.UserId = r.CustomerId WHERE r.ReservationId = ?")) {
             pst.setInt(1, reservationID);
             ResultSet rs = pst.executeQuery();
@@ -509,16 +488,15 @@ public class ReservationDAO extends DBController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return result;
+        return false;
     }
     
-    
+    /**
+     * Counts how many completed reservations were made by subscribers within a date range.
+     */
     public int getCompletedSubscriberReservationsBetween(LocalDate start, LocalDate end) {
-        
         Connection con = getConnection();
-
         try (PreparedStatement pst = con.prepareStatement("SELECT COUNT(*) FROM reservation r JOIN user u ON r.customerID = u.UserId WHERE u.Role = 'SUBSCRIBER' AND r.status = 'COMPLETED' AND r.reservationDate BETWEEN ? AND ?")) {
-
             pst.setDate(1, java.sql.Date.valueOf(start));
             pst.setDate(2, java.sql.Date.valueOf(end));
 
@@ -526,35 +504,24 @@ public class ReservationDAO extends DBController {
             if (rs.next()) {
                 return rs.getInt(1);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
     }
 
-    	    
-
-    
     /**
-     * Inserts a new reservation into the database.
-     * The database auto-generates reservationID.
-     * Updates the reservation object with the assigned ID.
+     * Inserts a new reservation and retrieves its auto-generated ID.
      *
-     * @param r the reservation to insert
-     * @return true if insertion succeeded, false otherwise
+     * @param r the reservation to insert.
+     * @return true if successful.
      */
     public boolean insertReservation(Reservation r) {
     		try (Connection con = getConnection();
-
     			PreparedStatement pst = con.prepareStatement(
-                "INSERT INTO `reservation` " + 
-                "(customerID, tableId, billId, numOfGuests, confirmationCode, reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime, status) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                java.sql.Statement.RETURN_GENERATED_KEYS // Allows us to retrieve auto-generated reservationID
-        )) {
+                "INSERT INTO `reservation` (customerID, tableId, billId, numOfGuests, confirmationCode, reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                java.sql.Statement.RETURN_GENERATED_KEYS)) {
 
-        	
 	        	if (r.getCustomerID() != null) {
 	        	    pst.setInt(1, r.getCustomerID());
 	        	} else {
@@ -572,28 +539,25 @@ public class ReservationDAO extends DBController {
             pst.setString(10, r.getStatus().name());
 
             int update_status = pst.executeUpdate();
-
-            // Retrieve the auto-generated reservationID
             try (ResultSet generatedKeys = pst.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     r.setReservationID(generatedKeys.getInt(1));
                 }
             }
-
             return update_status > 0;
-
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
-    
+
+    /**
+     * Creates a new reservation with a PENDING status for immediate seating/management.
+     */
     public int createPendingReservation(int userId, Integer tableId, int numGuests) {
         try (Connection con = getConnection();
              PreparedStatement pst = con.prepareStatement(
-                 "INSERT INTO reservation (customerID, TableId, numOfGuests, status, reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime) " +
-                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                 "INSERT INTO reservation (customerID, TableId, numOfGuests, status, reservationDate, reservationTime, reservationPlacedDate, reservationPlacedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                  PreparedStatement.RETURN_GENERATED_KEYS)) {
 
             LocalDate nowDate = LocalDate.now();
@@ -618,13 +582,8 @@ public class ReservationDAO extends DBController {
         }
     }
 
-    
     /**
-     * Retrieves the count of reservations between two dates.
-     *
-     * @param start the start date
-     * @param end the end date
-     * @return number of reservations
+     * Counts total reservations within a specific date period.
      */
     public int getReservationsCountBetween(LocalDate start, LocalDate end) {
         int count = 0;
@@ -639,90 +598,61 @@ public class ReservationDAO extends DBController {
         }
         return count;
     }
-    
-    
+
+    /**
+     * Links a bill ID to a specific reservation once payment processing begins.
+     */
 	public boolean updateReservationBillId(int reservationId, int billId) {
-		
 	    Connection con = getConnection();
-
-	    try (PreparedStatement pst = con.prepareStatement(
-	            "UPDATE reservation SET billID = ? WHERE reservationID = ?")) {
-
+	    try (PreparedStatement pst = con.prepareStatement("UPDATE reservation SET billID = ? WHERE reservationID = ?")) {
 	        pst.setInt(1, billId);
 	        pst.setInt(2, reservationId);
-
-	        int updateStatus = pst.executeUpdate();
-	        return updateStatus > 0;
-
+	        return pst.executeUpdate() > 0;
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	        return false;
 	    }
 	}
 	
-	
     /**
-     * Retrieves all reservations made by a specific user.
+     * Retrieves all reservations made by a specific User object.
      *
-     * @param user the user whose reservations are to be retrieved
-     * @return a list of reservations made by the user
+     * @param user the User entity.
+     * @return a list of their reservations.
      */
 	public List<Reservation> GetAllUserReservations(User user) {
-
 	    Connection con = getConnection();
 	    List<Reservation> reservations = new ArrayList<>();
 
 	    try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE customerID = ?")) {
-
 	        pst.setInt(1, user.getUserId());
 	        ResultSet rs = pst.executeQuery();
 
 	        while (rs.next()) {
 	        		boolean notified = rs.getInt("isNotified") == 1;	
-	            int reservationID = rs.getInt("reservationID");
-	            Date reservationDate = rs.getDate("reservationDate");
-	            Time reservationTime = rs.getTime("reservationTime");
-	            int numOfGuests = rs.getInt("numOfGuests");
-	            int confirmationCode = rs.getInt("confirmationCode");
-	            enums.ReservationStatus status = enums.ReservationStatus.valueOf(rs.getString("status"));
-	            int customerID = rs.getInt("customerID");
-	            int tableID = rs.getInt("TableId");
-	            int billID = rs.getInt("BillId");
-	            Date placedDate = rs.getDate("reservationPlacedDate");
-	            Time placedTime = rs.getTime("reservationPlacedTime");
-
-	            Reservation r = new Reservation(reservationID, customerID, tableID, billID, numOfGuests, confirmationCode, reservationDate.toLocalDate(), reservationTime.toLocalTime(), placedDate.toLocalDate(), placedTime.toLocalTime(), status, notified);
-
-
-	            reservations.add(r);
+	            reservations.add(new Reservation(rs.getInt("reservationID"), rs.getInt("customerID"), rs.getInt("TableId"), rs.getInt("BillId"), rs.getInt("numOfGuests"), rs.getInt("confirmationCode"), rs.getDate("reservationDate").toLocalDate(), rs.getTime("reservationTime").toLocalTime(), rs.getDate("reservationPlacedDate").toLocalDate(), rs.getTime("reservationPlacedTime").toLocalTime(), enums.ReservationStatus.valueOf(rs.getString("status")), notified));
 	        }
-
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
-
 	    return reservations;
 	}
 
-	
+    /**
+     * Updates the database to indicate that the customer has been notified about a change or cancellation.
+     *
+     * @param reservationID the ID of the reservation.
+     * @return true if updated.
+     */
 	public boolean markAsNotified(int reservationID) {
 	    String sql = "UPDATE reservation SET isNotified = 1 WHERE reservationID = ?";
-	    
 	    try (Connection con = getConnection();
 	         PreparedStatement pst = con.prepareStatement(sql)) {
-	        
 	        pst.setInt(1, reservationID);
-	        int rowsAffected = pst.executeUpdate();
-	        
-	        return rowsAffected > 0;
-	        
+	        return pst.executeUpdate() > 0;
 	    } catch (SQLException e) {
 	        System.err.println("SQL Exception during markAsNotified: " + e.getMessage());
 	        return false;
 	    }
 	}
-    
-    
-
-
 }

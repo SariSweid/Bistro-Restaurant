@@ -24,8 +24,8 @@ public class updateRegularClosingTimeRequest implements Serializable {
     /**
      * Constructs a new updateRegularClosingTimeRequest with the specified day and time.
      *
-     * @param day         the Day of the week to update
-     * @param closingTime the new LocalTime for closing
+     * @param day          the Day of the week to update
+     * @param closingTime  the new LocalTime for closing
      */
     public updateRegularClosingTimeRequest(Day day, LocalTime closingTime) {
         this.day = day;

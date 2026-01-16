@@ -16,16 +16,19 @@ import Entities.Reservation;
 import Entities.Table;
 
 /**
- * DAO for handling Tables in the restaurant.
+ * Data Access Object (DAO) for managing Table entities and their persistence logic.
+ * This class provides CRUD operations for physical tables in the restaurant and includes 
+ * advanced logic for finding available tables based on timestamps, seating capacity, 
+ * and existing reservation overlaps.
  */
 public class TableDAO extends DBController {
 
     /**
-     * Updates the availability status of a table.
+     * Updates the general availability status of a table in the database.
      *
-     * @param tableId the ID of the table to update
-     * @param isAvailable true if the table should be free, false if occupied
-     * @return true if the update succeeded, false otherwise
+     * @param tableId     the unique identifier of the table.
+     * @param isAvailable true to mark the table as free, false to mark it as occupied.
+     * @return true if the database update was successful, false otherwise.
      */
     public boolean updateTableIsAvailable(int tableId, boolean isAvailable) {
         try(Connection con = getConnection();
@@ -42,9 +45,13 @@ public class TableDAO extends DBController {
         }
     }
     
-
-    
-	
+    /**
+     * Inserts a new table record into the database.
+     *
+     * @param tableId the unique ID for the new table.
+     * @param seats   the seating capacity of the table.
+     * @return true if the table was successfully created, false otherwise.
+     */
 	public boolean insertTable(int tableId, int seats) {
 	    Connection con = getConnection();
 
@@ -63,6 +70,13 @@ public class TableDAO extends DBController {
 	    }
 	}
 	
+    /**
+     * Updates the seating capacity of an existing table.
+     *
+     * @param tableId the ID of the table to update.
+     * @param seats   the new seating capacity.
+     * @return true if the update was successful.
+     */
 	public boolean updateTable(int tableId, int seats) {
 	    Connection con = getConnection();
 
@@ -80,7 +94,12 @@ public class TableDAO extends DBController {
 	    }
 	}
 	
-	
+    /**
+     * Deletes a table record from the database by its ID.
+     *
+     * @param tableId the unique identifier of the table to be removed.
+     * @return true if the deletion was successful.
+     */
 	public boolean deleteTable(int tableId) {
 	    Connection con = getConnection();
 
@@ -96,16 +115,15 @@ public class TableDAO extends DBController {
 	    }
 	}
 	
-	
     /**
-     * Retrieves a specific table by their ID.
+     * Retrieves a specific table's details by its ID.
      *
-     * @param TableId the table ID
-     * @return the Table if found, or null if not found
+     * @param tableid the table ID to look for.
+     * @return the Table entity if found, or null otherwise.
      */
 	public Table GetTable(int tableid) {
 		
-		Connection con = getConnection(); //connect to DB
+		Connection con = getConnection();
 		Table t = null;
 		
 		try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `table` WHERE TableId = ?")){
@@ -116,8 +134,7 @@ public class TableDAO extends DBController {
 	        	int tableId = rs.getInt("TableId");
 	        	int capacity = rs.getInt("Capacity");
 	        	Boolean isAvailable = rs.getBoolean("IsAvailable");	        	
-	        	//wait for table class
-	        	t = new Table(tableId , capacity , isAvailable ); // not exist yet
+	        	t = new Table(tableId , capacity , isAvailable );
 		        }
     	        
 		}
@@ -126,36 +143,29 @@ public class TableDAO extends DBController {
 		e.printStackTrace();
 	}
 
-	return t; // There isnt Res with this ID.
+	return t;
 	}
-	
 
-			
-	
-
-	
-	
     /**
-     * Retrieves all Tables
+     * Retrieves a list of all tables registered in the restaurant database.
      *
-     * @return a list of Tables
+     * @return a List containing all Table entities.
      */
 	public List<Table> GetAllTables(){
 		
-		Connection con = getConnection(); //connect to DB
-    	List<Table> tables = new ArrayList<>(); // made new list to return
+		Connection con = getConnection();
+    	List<Table> tables = new ArrayList<>();
     	
-    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `table`")){ // ask from DB the all Orders
+    	try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `table`")){
     		
     		ResultSet rs = pst.executeQuery();
     		
-    		while(rs.next()) { // read from DB
+    		while(rs.next()) {
 			
     			int tableId  = rs.getInt("TableId");
     			int capacity  = rs.getInt("Capacity"); 
     			Boolean isavailable = rs.getBoolean("IsAvailable");
-    			//wait for table class
-    			Table t = new Table(tableId , capacity , isavailable ); // not exist yet
+    			Table t = new Table(tableId , capacity , isavailable );
     			tables.add(t);
     		
     	}
@@ -166,26 +176,20 @@ public class TableDAO extends DBController {
     	 return tables;		
 	}
 
-	
-	
-	
-	
-	
     /**
-     * Updates an existing table in the database.
+     * Updates an existing table's availability status using a Table object.
      *
-     * @param t the table object containing updated data
-     * @return true if the update succeeded, false otherwise
+     * @param t the Table object containing updated availability.
+     * @return true if the update succeeded, false otherwise.
      */
 	public Boolean UpdateTable(Table t) {
 		
-		Connection con = getConnection(); //connect to DB
+		Connection con = getConnection();
 		
 		try (PreparedStatement pst = con.prepareStatement("UPDATE `table` SET IsAvailable = ?   WHERE TableId = ? ")){
 			
 			pst.setBoolean(1, t.isAvailable()); 
 			pst.setInt(2, t.getTableID()); 
-			
 			
             int rows = pst.executeUpdate();
 
@@ -198,18 +202,15 @@ public class TableDAO extends DBController {
         }			
 	}
 		
-
-		
     /**
-     * Remove an existing table from the database.
+     * Removes an existing table from the database using a Table object reference.
      *
-     * @param t the table object containing updated data
-     * @return true if the Remove succeeded, false otherwise
+     * @param t the Table object to be deleted.
+     * @return true if the deletion succeeded, false otherwise.
      */
 	public Boolean DeleteTable(Table t) {
 		
-
-		Connection con = getConnection(); //connect to DB
+		Connection con = getConnection();
 		
 		try (PreparedStatement pst = con.prepareStatement("DELETE FROM `table` WHERE TableId = ? ")){
 			
@@ -226,10 +227,15 @@ public class TableDAO extends DBController {
         }			
 	}
 
-	
 	/**
-	 * Finds an available table for a given number of guests at a specific date and time.
-	 * Considers overlapping reservations and table availability.
+	 * Finds the best available table for a specific date, time, and guest count.
+	 * The logic ensures the table has sufficient capacity and is not currently reserved 
+	 * within a 2-hour window (120 minutes) of the requested time.
+	 *
+	 * @param numOfGuests the number of guests in the party.
+	 * @param date        the requested date for the reservation.
+	 * @param time        the requested time for the reservation.
+	 * @return the smallest suitable Table if available, or null if fully booked.
 	 */
 	public Table getAvailableTableAtTime(int numOfGuests, LocalDate date, LocalTime time) {
 	    Connection con = getConnection();
@@ -244,7 +250,7 @@ public class TableDAO extends DBController {
 	        "        FROM reservation r " +
 	        "        WHERE r.reservationDate = ? " +
 	        "          AND r.status IN ('PENDING','CONFIRMED','SEATED') " +
-	        "          AND ABS(TIMESTAMPDIFF(MINUTE, r.reservationTime, ?)) < 120 " +  // 2-hour duration
+	        "          AND ABS(TIMESTAMPDIFF(MINUTE, r.reservationTime, ?)) < 120 " +
 	        "  ) " +
 	        "ORDER BY t.Capacity ASC " +
 	        "LIMIT 1"
@@ -269,15 +275,12 @@ public class TableDAO extends DBController {
 	    return null;
 	}
 
-
-
-
-	
 	/**
-	 * Frees the table assigned to a reservation and updates the reservation status to COMPLETED.
+	 * Frees a table assigned to a specific reservation and completes the reservation status.
+	 * This is typically called when a customer pays or leaves the restaurant.
 	 *
-	 * @param reservationId the ID of the reservation whose table should be freed
-	 * @return true if the table and reservation were successfully updated, false otherwise
+	 * @param reservationId the ID of the reservation whose table should be released.
+	 * @return true if the table was freed and reservation status updated successfully.
 	 */
 	public boolean updateTableIsFree(int reservationId) {
 	    Connection con = getConnection();
@@ -306,7 +309,13 @@ public class TableDAO extends DBController {
 	    }
 	}
 	
-
+    /**
+     * Finds a currently available table in the restaurant that best fits the guest count.
+     * "Best fit" refers to the table with the smallest capacity that can still hold the party.
+     *
+     * @param guests the number of guests.
+     * @return a Table object if one is found, otherwise null.
+     */
     public Table findAvailableTable(int guests) {
         Table bestFit = null;
         try {
@@ -329,14 +338,15 @@ public class TableDAO extends DBController {
     }
 	
 	/**
-	 * Retrieves a reservation by its ID.
+	 * Retrieves a full Reservation entity by its unique ID.
+	 * Includes conversion of SQL Date/Time types to LocalDate and LocalTime.
 	 *
-	 * @param ReservationId the reservation ID
-	 * @return the Reservation if found, or null if not found
+	 * @param ReservationId the unique identifier of the reservation.
+	 * @return the Reservation object if found, otherwise null.
 	 */
 	public Reservation GetReservation(int ReservationId) {
 		
-		Connection con = getConnection(); //connect to DB
+		Connection con = getConnection();
 		Reservation r = null;
 		
 		try (PreparedStatement pst = con.prepareStatement("SELECT * FROM `reservation` WHERE reservationID = ?")){
@@ -359,15 +369,12 @@ public class TableDAO extends DBController {
     			boolean isNotified = rs.getInt("isNotified") == 1;
 
     			
-    			//conver date and time to local
+    			//convert date and time to local
     			LocalDate resDate = reservationDate.toLocalDate();
     			LocalTime resTime = reservationTime.toLocalTime();
     			LocalDate placedDate = reservationPlacedDate.toLocalDate();
     			LocalTime placedTime = reservationPlacedTime.toLocalTime();
 	        
-
-	            
-	            
     			r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
     											,resDate,resTime,placedDate,placedTime,status, isNotified);
 	        }
@@ -378,8 +385,6 @@ public class TableDAO extends DBController {
 			e.printStackTrace();
 		}
 		
-		return r; // There isnt Res with this ID.
+		return r; 
 	}
-
-
 }

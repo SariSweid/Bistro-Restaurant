@@ -11,12 +11,17 @@ import Entities.Reservation;
 import Entities.Table;
 import enums.ReservationStatus;
 
+/**
+ * Controller responsible for physical table management within the restaurant.
+ * It handles the assignment of specific tables to groups, occupancy updates,
+ * and calculations of remaining capacity.
+ */
 public class TableController {
 	private final TableDAO TabledbController;
 	private final ReservationDAO Resdb;
 	
 	/**
-	 * constructor to create new TableController
+	 * Initializes the controller with the necessary Data Access Objects.
 	 */
 	public TableController() {
 		this.TabledbController = new TableDAO();
@@ -24,46 +29,51 @@ public class TableController {
 	}
 	
 	/**
-	 * returns all the tables
-	 * @return all tables in the restaurant
+	 * Retrieves a full list of all physical tables in the restaurant.
+	 * @return List of Table entities.
 	 */
 	public List<Table> getAllTables(){
 		return this.TabledbController.GetAllTables();
 	}
 	
 	/**
-	 * finds a table by its id
-	 * @param tableID
-	 * @return table found by tableID
+	 * Retrieves a specific table's details by its unique identifier.
+	 * @param tableID The primary key of the table.
+	 * @return The Table entity, or null if not found.
 	 */
 	public Table getTableByID(int tableID) {
 		return this.TabledbController.GetTable(tableID);
 	}
 	
 	/**
-	 * finds the optimal available table for num of guests at given time and date
-	 * @param numOfGuests
-	 * @param date
-	 * @param time
-	 * @return the optimal available table
+	 * Finds the "Best Fit" table for a group of a specific size at a specific time.
+	 * * Logic:
+	 * 1. Filters out tables that are too small.
+	 * 2. Filters out tables already assigned to a confirmed reservation.
+	 * 3. Selects the smallest possible table that fits the group (to optimize space).
+	 * * @param numOfGuests Size of the party.
+	 * @param date Requested date.
+	 * @param time Requested time.
+	 * @return An Optional containing the optimal Table, or empty if none are available.
 	 */
 	public Optional<Table> findAvailableTable(int numOfGuests, LocalDate date, LocalTime time){
-		//Tables that are reserved at this date and time
 		List<Reservation> reservations = this.Resdb.getReservationsAt(date, time);
-		
-		//all the restaurant tables
 		List<Table> allTables = this.getAllTables();
 		
-		//filter the restaurant tables by:
-		//t -> t.canSeat(numOfGuests) - is the table big enough for the given num of guests
-		//t -> reservations.stream().noneMatch(r -> r.getTableID() == t.getTableID()) - the table is not taken already
-		//min((t1, t2) -> Integer.compare(t1.getCapacity(), t2.getCapacity())) - after all the filtering of the tables, 
-		//choose the table with the minimum capacity that is still big enough to hold the num of guests
-        return allTables.stream().filter(t -> t.canSeat(numOfGuests)).filter(t -> 
-        		reservations.stream().noneMatch(r -> r.getTableID() == t.getTableID())).min((t1, t2) -> 
-        		Integer.compare(t1.getCapacity(), t2.getCapacity()));
+        return allTables.stream()
+                .filter(t -> t.canSeat(numOfGuests)) // Is it big enough?
+                .filter(t -> reservations.stream()
+                        .noneMatch(r -> r.getTableID() == t.getTableID())) // Is it unreserved?
+                .min((t1, t2) -> Integer.compare(t1.getCapacity(), t2.getCapacity())); // Best fit
 	}
 	
+	/**
+	 * Calculates the number of remaining seats available in the restaurant 
+	 * for a given time slot by subtracting confirmed guests from total capacity.
+	 * * @param date The date to check.
+	 * @param time The time slot to check.
+	 * @return The count of unoccupied seats.
+	 */
 	public int getTotalAvailableSeats(LocalDate date, LocalTime time) {
 	    List<Table> allTables = getAllTables();
 	    List<Reservation> reservations = Resdb.getReservationsAt(date, time);
@@ -80,11 +90,11 @@ public class TableController {
 	    return totalCapacity - usedSeats;
 	}
 
-	
 	/**
-	 * marks table as occupied and update its status in db
-	 * @param tableID
-	 * @return true if the update succeeded
+	 * Updates a table's state to 'Occupied' in the database.
+	 * This is typically called when a guest is seated.
+	 * * @param tableID The ID of the table to occupy.
+	 * @return true if the database update was successful.
 	 */
 	public boolean occupyTable(int tableID) {
 		Table table = this.getTableByID(tableID);
@@ -96,13 +106,14 @@ public class TableController {
 	}
 	
 	/**
-	 * marks table as available and update its status in db
-	 * @param tableID
-	 * @return true if the update succeeded
+	 * Updates a table's state to 'Available' in the database.
+	 * This is typically called when a guest pays and leaves.
+	 * * @param tableID The ID of the table to release.
+	 * @return true if the database update was successful.
 	 */
 	public boolean releaseTable(int tableID) {
 		Table table = this.getTableByID(tableID);
-		if(table == null || !table.isAvailable()) {
+		if(table == null) {
 			return false;
 		}
 		table.release();
