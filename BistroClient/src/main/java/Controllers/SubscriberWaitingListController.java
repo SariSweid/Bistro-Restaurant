@@ -16,24 +16,42 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import util.SceneManager;
 
+/**
+ * Controller for managing a subscriber's waiting list.
+ * Allows a subscriber to add themselves to a waiting list for a specific date and time,
+ * remove themselves by confirmation code, and view available times.
+ * Implements {@link AvailableTimesListener} to receive updates of available time slots from the server.
+ */
 public class SubscriberWaitingListController extends BaseDisplayController implements AvailableTimesListener {
 
+    /**
+     * Text field for entering the number of diners.
+     */
     @FXML
     private TextField numberOfDiners;
 
+    /**
+     * Combo box for selecting an available time slot.
+     */
     @FXML
     private ComboBox<String> timeComboBox;
 
+    /**
+     * Date picker for selecting the reservation date.
+     */
     @FXML
     private DatePicker datePicker;
 
+    /**
+     * Text field for entering the confirmation code when removing from the waiting list.
+     */
     @FXML
     private TextField confirmationCodeField;
 
     /**
      * Initializes the subscriber waiting list controller.
-     * Sets up date picker limits, available times listener,
-     * and saves this controller as active in the ClientHandler.
+     * Sets up date picker limits, registers available times listener,
+     * and saves this controller as active in {@link ClientHandler}.
      */
     @FXML
     public void initialize() {
@@ -58,7 +76,7 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     /**
      * Requests available times from the server for the given date.
      *
-     * @param date The date for which to retrieve available times.
+     * @param date the date for which to retrieve available times
      */
     private void loadTimesForDate(LocalDate date) {
         timeComboBox.getItems().clear();
@@ -68,7 +86,7 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     /**
      * Loads available times into the combo box.
      *
-     * @param times List of LocalTime objects representing available slots.
+     * @param times list of {@link LocalTime} objects representing available slots
      */
     public void loadTimes(List<LocalTime> times) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -86,13 +104,14 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     /**
      * Not used in this screen.
      *
-     * @param reservations List of reservations.
+     * @param reservations list of {@link Reservation} objects
      */
     @Override
     public void showReservations(List<Reservation> reservations) {}
 
     /**
-     * Sends a request to add the subscriber to the waiting list.
+     * Sends a request to add the subscriber to the waiting list
+     * with the selected date, time, and number of diners.
      */
     @FXML
     private void ontakeplace() {
@@ -134,14 +153,14 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     }
 
     /**
-     * Clears input fields after adding to waiting list.
+     * Clears the number of diners input field after adding to the waiting list.
      */
     public void clearAddFields() {
         numberOfDiners.clear();
     }
 
     /**
-     * Sends a request to remove the subscriber from the waiting list by confirmation code.
+     * Sends a request to remove the subscriber from the waiting list using the confirmation code.
      */
     @FXML
     private void onRemoveFromWaitingList() {
@@ -161,7 +180,7 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     }
 
     /**
-     * Returns to the previous subscriber UI screen.
+     * Navigates back to the previous subscriber UI screen.
      */
     @FXML
     private void onPreviousPage() {
@@ -171,8 +190,8 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     /**
      * Shows an information alert dialog.
      *
-     * @param title   Title of the alert.
-     * @param message Message content of the alert.
+     * @param title   the title of the alert
+     * @param message the message content of the alert
      */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -185,16 +204,16 @@ public class SubscriberWaitingListController extends BaseDisplayController imple
     /**
      * Returns the confirmation code text field.
      *
-     * @return TextField used for entering confirmation code.
+     * @return {@link TextField} used for entering confirmation code
      */
     public TextField getConfirmationCodeField() {
         return confirmationCodeField;
     }
 
     /**
-     * Receives updated available times from the server.
+     * Receives updated available times from the server and loads them into the combo box.
      *
-     * @param times List of available LocalTime slots.
+     * @param times list of available {@link LocalTime} slots
      */
     @Override
     public void updateAvailableTimes(List<LocalTime> times) {

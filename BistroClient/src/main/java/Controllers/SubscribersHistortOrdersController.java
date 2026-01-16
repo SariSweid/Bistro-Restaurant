@@ -14,9 +14,22 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import util.SceneManager;
 
+/**
+ * Controller for displaying the historical orders of subscribers.
+ * Shows a table of reservations filtered by COMPLETED, CANCELLED, or NOT_SHOWED statuses.
+ * Handles highlighting reservation statuses with different colors and fetching data from the server.
+ */
 public class SubscribersHistortOrdersController extends BaseDisplayController {
 
+    /**
+     * The user ID for which to show reservations if the current user is not a subscriber.
+     */
     private static int selectedUserId = 0;
+
+    /**
+     * Sets the selected user ID for displaying historical reservations.
+     * @param id the user ID to display
+     */
     public static void setSelectedUserId(int id) { selectedUserId = id; }
 
     @FXML private TableView<Reservation> reservationsTable;
@@ -26,6 +39,11 @@ public class SubscribersHistortOrdersController extends BaseDisplayController {
     @FXML private TableColumn<Reservation, Integer> confirmationCodeColumn;
     @FXML private TableColumn<Reservation, String> statusColumn;
 
+    /**
+     * Initializes the controller.
+     * Sets up table columns, cell formatting, color coding for reservation statuses,
+     * registers this controller as active, and fetches the reservations.
+     */
     @FXML
     public void initialize() {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("reservationID"));
@@ -33,12 +51,16 @@ public class SubscribersHistortOrdersController extends BaseDisplayController {
         guestsColumn.setCellValueFactory(new PropertyValueFactory<>("numOfGuests"));
         confirmationCodeColumn.setCellValueFactory(new PropertyValueFactory<>("confirmationCode"));
         statusColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getStatus().toString()));
+
+        // Color-code status cells
         statusColumn.setCellFactory(_ -> new TableCell<Reservation, String>() {
             @Override
             protected void updateItem(String status, boolean empty) {
                 super.updateItem(status, empty);
-                if (empty || status == null) { setText(null); setStyle(""); }
-                else {
+                if (empty || status == null) { 
+                    setText(null); 
+                    setStyle(""); 
+                } else {
                     setText(status);
                     switch (status) {
                         case "COMPLETED" -> setTextFill(Color.GREEN);
@@ -49,10 +71,17 @@ public class SubscribersHistortOrdersController extends BaseDisplayController {
                 }
             }
         });
+
         ClientHandler.getClient().setActiveDisplayController(this);
         refreshReservations();
     }
 
+    /**
+     * Updates the table with a list of reservations.
+     * Filters reservations to only include COMPLETED, CANCELLED, or NOT_SHOWED statuses.
+     * 
+     * @param list the list of reservations received from the server
+     */
     @Override
     public void showReservations(List<Reservation> list) {
         if (list == null) {
@@ -67,6 +96,11 @@ public class SubscribersHistortOrdersController extends BaseDisplayController {
         reservationsTable.setItems(FXCollections.observableArrayList(filtered));
     }
 
+    /**
+     * Refreshes reservations in the table.
+     * If the current user is a subscriber, fetches their reservations.
+     * If the current user is higher role and selectedUserId is set, fetches that user's reservations.
+     */
     public void refreshReservations() {
         User currentUser = ClientHandler.getClient().getCurrentUser();
         if (currentUser.getRole() == UserRole.SUBSCRIBER) {
@@ -76,12 +110,11 @@ public class SubscribersHistortOrdersController extends BaseDisplayController {
         }
     }
 
+    /**
+     * Navigates back to the previous page in the scene history.
+     */
     @FXML
     private void onPreviousPage() {
-        User currentUser = ClientHandler.getClient().getCurrentUser();
-        switch (currentUser.getRole()) {
-            case SUBSCRIBER -> SceneManager.switchTo("SubscriberUI.fxml");
-            default -> SceneManager.switchTo("SubscribersInformationUI.fxml");
-        }
+        SceneManager.switchToPrevious();
     }
 }

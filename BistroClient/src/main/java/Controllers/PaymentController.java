@@ -15,22 +15,40 @@ import handlers.PaymentHandler;
 import common.ServerResponse;
 import enums.ActionType;
 
-public class PaymentController  {
-	
+/**
+ * Controller for handling payments in the UI.
+ * Allows users to enter a confirmation code and process payment.
+ * Displays the payment status and amount.
+ */
+public class PaymentController {
 
+    /**
+     * Label displaying the payment amount.
+     */
+    @FXML
+    private Label amountLabel;
 
-	@FXML
-	private Label amountLabel;
-
+    /**
+     * Label displaying the payment status messages.
+     */
     @FXML
     private Label statusLabel;
-    
+
+    /**
+     * Initializes the controller.
+     * Sets the PaymentHandler for handling payment responses from the server.
+     */
     @FXML
     public void initialize() {
         ClientHandler.getClient()
             .setHandler(ActionType.PAY, new PaymentHandler(statusLabel, amountLabel));
     }
 
+    /**
+     * Handles the payment process.
+     * Prompts the user for a confirmation code, sends a PaymentRequest,
+     * and updates the statusLabel with progress or errors.
+     */
     @FXML
     private void onPay() {
         TextInputDialog dialog = new TextInputDialog();
@@ -52,7 +70,6 @@ public class PaymentController  {
                 statusLabel.setText("Processing payment...");
                 statusLabel.setStyle("-fx-text-fill: black;");
 
-                
                 ClientHandler.getClient().Pay(request);
 
             } catch (NumberFormatException e) {
@@ -62,7 +79,12 @@ public class PaymentController  {
         }
     }
 
-
+    /**
+     * Handles the response from the server after a payment request.
+     * Updates the statusLabel with success or error messages on the JavaFX thread.
+     *
+     * @param response the ServerResponse containing success status and message
+     */
     public void handlePaymentResponse(ServerResponse response) {
         Platform.runLater(() -> {
             if (response.isSuccess()) {
@@ -75,6 +97,9 @@ public class PaymentController  {
         });
     }
 
+    /**
+     * Navigates back to the main menu UI.
+     */
     @FXML
     private void onPreviousPage() {
         SceneManager.switchTo("MainMenuUI.fxml");

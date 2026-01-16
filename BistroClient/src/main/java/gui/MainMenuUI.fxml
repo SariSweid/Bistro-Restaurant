@@ -8,36 +8,41 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="14.0" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.MainMenuController">
+<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="400.0" spacing="20.0" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.MainMenuController">
 
     <padding>
-        <Insets bottom="30" left="40" right="40" top="30" />
+        <Insets bottom="40" left="40" right="40" top="40" />
     </padding>
-   <ImageView fx:id="logoImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-      <image>
-         <Image url="@/images/BistroLogo.png" />
-      </image>
-   </ImageView>
 
-    <Label text="Bistro - Main Menu">
+    <!-- Logo -->
+    <ImageView fx:id="logoImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+        <image>
+            <Image url="@/images/BistroLogo.png" />
+        </image>
+    </ImageView>
+
+    <!-- Title -->
+    <Label style="-fx-text-fill: #5d4037; -fx-font-weight: bold;" text="Bistro - Main Menu">
         <font>
             <Font size="26.0" />
         </font>
     </Label>
 
-<!-- <<<<<<< Upstream, based on branch 'main' of https://github.com/yarin8294/Project -->
-    <Button onAction="#onLogin" prefWidth="260" style="-fx-background-radius: 12;" text="Login" textFill="#06fc43" />
-    <Button onAction="#onGuestReservation" prefWidth="260" style="-fx-background-radius: 15;" text="Guest Reservation" />
-   <Button onAction="#onwaitinglist" prefWidth="260" style="-fx-background-radius: 15;" text="Waiting List" />
-   <Button onAction="#onReceiveTable" prefWidth="260" style="-fx-background-radius: 15;" text="Receive Table" />
-    <Button onAction="#onPayment" prefWidth="260" style="-fx-background-radius: 15;" text="Payment" />
-    <Button onAction="#onExit" prefWidth="260" text="Exit" textFill="#e40909" />
+    <!-- Buttons -->
+    <VBox alignment="CENTER" spacing="15">
 
-<!--     <Button text="Login" prefWidth="260" onAction="#onLogin"/> -->
-<!--     <Button text="Register" prefWidth="260" onAction="#onRegister"/> -->
-<!--     <Button text="Guest Reservation" prefWidth="260" onAction="#onGuestReservation"/> -->
-<!--     <Button text="Payment" prefWidth="260" onAction="#onPayment"/> -->
-<!--     <Button text="Exit" prefWidth="100" onAction="#onExit"/> -->
-<!-- >>>>>>> 254295c added initial UI's and it is now complete, yet to implement controllers -->
+        <Button onAction="#onLogin" prefHeight="60" prefWidth="280" style="-fx-background-radius: 25; -fx-background-color: #ffffff; -fx-border-color: #d7ccc8; -fx-font-weight: bold; -fx-cursor: hand;" text="🔑 Login" />
+
+		<Button onAction="#onGuestReservation" prefHeight="60" prefWidth="280" style="-fx-background-radius: 25; -fx-background-color: #ffffff; -fx-border-color: #d7ccc8; -fx-font-weight: bold; -fx-cursor: hand;" text="📝 Guest Reservation" />
+
+
+        <Button onAction="#onwaitinglist" prefHeight="60" prefWidth="280" style="-fx-background-radius: 25; -fx-background-color: #ffffff; -fx-border-color: #d7ccc8; -fx-font-weight: bold; -fx-cursor: hand;" text="⏳ Waiting List" />
+
+        <Button onAction="#onReceiveTable" prefHeight="60" prefWidth="280" style="-fx-background-radius: 25; -fx-background-color: #ffffff; -fx-border-color: #d7ccc8; -fx-font-weight: bold; -fx-cursor: hand;" text="🍽 Receive Table" />
+
+        <Button onAction="#onPayment" prefHeight="60" prefWidth="280" style="-fx-background-radius: 25; -fx-background-color: #ffffff; -fx-border-color: #d7ccc8; -fx-font-weight: bold; -fx-cursor: hand;" text="💳 Payment" />
+
+        <Button onAction="#onExit" prefHeight="60" prefWidth="280" style="-fx-background-radius: 25; -fx-background-color: #ffffff; -fx-border-color: #d7ccc8; -fx-font-weight: bold; -fx-text-fill: #e40909; -fx-cursor: hand;" text="❌ Exit" />
+    </VBox>
 
 </VBox>

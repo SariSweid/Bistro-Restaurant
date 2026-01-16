@@ -15,6 +15,10 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import util.SceneManager;
 
+/**
+ * Controller for the guest waiting list UI.
+ * Handles adding guests to the waiting list, removing them, and displaying available times.
+ */
 public class GuestWaitingListController extends BaseDisplayController implements AvailableTimesListener {
 
     @FXML
@@ -31,6 +35,10 @@ public class GuestWaitingListController extends BaseDisplayController implements
 
     private ClientHandler client;
 
+    /**
+     * Initializes the controller.
+     * Sets up the date picker, listeners for number of diners, and registers this controller as the active display controller.
+     */
     @FXML
     public void initialize() {
         client = ClientHandler.getClient();
@@ -59,6 +67,10 @@ public class GuestWaitingListController extends BaseDisplayController implements
         datePicker.setValue(LocalDate.now());
     }
 
+    /**
+     * Loads available times for a specific date and number of guests.
+     * @param date the selected date
+     */
     private void loadTimesForDate(LocalDate date) {
         timeComboBox.getItems().clear();
         int guests = 1;
@@ -68,6 +80,10 @@ public class GuestWaitingListController extends BaseDisplayController implements
         client.getAvailableTimes(date, guests, true);
     }
 
+    /**
+     * Loads a list of available times into the timeComboBox.
+     * @param times a list of available LocalTime objects
+     */
     public void loadTimes(List<LocalTime> times) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         timeComboBox.getItems().clear();
@@ -78,6 +94,10 @@ public class GuestWaitingListController extends BaseDisplayController implements
     @Override
     public void showReservations(List<Reservation> reservations) {}
 
+    /**
+     * Handles adding a guest to the waiting list.
+     * Validates input fields and sends the request to the client handler.
+     */
     @FXML
     private void ontakeplace() {
         try {
@@ -124,6 +144,9 @@ public class GuestWaitingListController extends BaseDisplayController implements
         }
     }
 
+    /**
+     * Handles removing a guest from the waiting list using a confirmation code.
+     */
     @FXML
     private void onRemoveFromWaitingList() {
         String codeText = confirmationCodeField.getText();
@@ -139,32 +162,60 @@ public class GuestWaitingListController extends BaseDisplayController implements
         }
     }
 
+    /**
+     * Clears the input fields for adding a guest.
+     */
     public void clearAddFields() {
         numberOfDiners.clear();
         emailOrPhone.clear();
     }
 
+    /**
+     * Clears the confirmation code field.
+     */
     public void clearConfirmationCodeField() {
         confirmationCodeField.clear();
     }
 
+    /**
+     * Returns the confirmation code TextField.
+     * @return the TextField for confirmation code
+     */
     public TextField getConfirmationCodeField() {
         return confirmationCodeField;
     }
 
+    /**
+     * Navigates back to the main menu UI.
+     */
     @FXML
     private void onPreviousPage() {
         SceneManager.switchTo("MainMenuUI.fxml");
     }
 
+    /**
+     * Simple check to see if input is an email.
+     * @param input the input string
+     * @return true if it contains "@", false otherwise
+     */
     private boolean isEmail(String input) {
         return input.contains("@");
     }
 
+    /**
+     * Simple check to see if input is a phone number.
+     * @param input the input string
+     * @return true if it contains only digits (and optional +), false otherwise
+     */
     private boolean isPhoneNumber(String input) {
         return input.matches("\\+?\\d+");
     }
 
+    /**
+     * Shows an alert dialog with the given title and message.
+     * @param title the title of the alert
+     * @param message the message content
+     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -173,6 +224,10 @@ public class GuestWaitingListController extends BaseDisplayController implements
         alert.showAndWait();
     }
 
+    /**
+     * Called when available times are updated by the client.
+     * @param times list of available LocalTime objects
+     */
     @Override
     public void updateAvailableTimes(List<LocalTime> times) {
         loadTimes(times);

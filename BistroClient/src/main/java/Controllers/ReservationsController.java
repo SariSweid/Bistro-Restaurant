@@ -15,18 +15,58 @@ import javafx.scene.control.TableView;
 import javafx.util.Duration;
 import util.SceneManager;
 
+/**
+ * Controller for displaying all reservations in a table view.
+ * Handles loading reservation data from the server and filtering for confirmed reservations.
+ */
 public class ReservationsController {
 
+    /**
+     * Table view for displaying reservations.
+     */
     @FXML
     private TableView<Reservation> ReservationsTable;
-    
-    @FXML private TableColumn<Reservation, Number> idColumn;
-    @FXML private TableColumn<Reservation, String> dateColumn;
-    @FXML private TableColumn<Reservation, String> dayColumn;
-    @FXML private TableColumn<Reservation, String> TimeColumn;
-    @FXML private TableColumn<Reservation, Number> guestsColumn;
-    @FXML private TableColumn<Reservation, Number> confirmationCodeColumn;
 
+    /**
+     * Table column for reservation ID.
+     */
+    @FXML
+    private TableColumn<Reservation, Number> idColumn;
+
+    /**
+     * Table column for reservation date.
+     */
+    @FXML
+    private TableColumn<Reservation, String> dateColumn;
+
+    /**
+     * Table column for day of the week of the reservation.
+     */
+    @FXML
+    private TableColumn<Reservation, String> dayColumn;
+
+    /**
+     * Table column for reservation time.
+     */
+    @FXML
+    private TableColumn<Reservation, String> TimeColumn;
+
+    /**
+     * Table column for number of guests.
+     */
+    @FXML
+    private TableColumn<Reservation, Number> guestsColumn;
+
+    /**
+     * Table column for the reservation confirmation code.
+     */
+    @FXML
+    private TableColumn<Reservation, Number> confirmationCodeColumn;
+
+    /**
+     * Initializes the controller.
+     * Sets up table columns, requests reservation data from the server, and loads it into the table.
+     */
     @FXML
     public void initialize() {
 
@@ -60,9 +100,12 @@ public class ReservationsController {
             delay.setOnFinished(_ -> loadReservations());
             delay.play();
         });
-
     }
 
+    /**
+     * Loads all reservations from the client handler and filters only confirmed reservations
+     * to display them in the table.
+     */
     private void loadReservations() {
         List<Reservation> reservations = ClientHandler.getClient().getAllReservationsList();
 
@@ -77,10 +120,12 @@ public class ReservationsController {
 
         ReservationsTable.getItems().setAll(active);
     }
-    
+
+    /**
+     * Navigates back to the supervisor UI screen.
+     */
     @FXML
     private void onPreviousPage() {
         SceneManager.switchTo("SupervisorUI.fxml");
     }
-
 }

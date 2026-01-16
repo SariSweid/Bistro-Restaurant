@@ -8,11 +8,22 @@ import common.ServerResponse;
 import javafx.application.Platform;
 
 /**
- * Handles server responses for available reservation times.
- * Notifies the currently active AvailableTimesListener.
+ * Handles the server response for available reservation times.
+ * 
+ * Extracts the list of available LocalTime slots from the server response
+ * and notifies the currently active AvailableTimesListener on the JavaFX
+ * application thread.
  */
 public class GetAvailableTimesHandler implements ResponseHandler {
 
+    /**
+     * Processes the server response containing available reservation times.
+     * 
+     * If the response is successful and a listener is registered, the listener
+     * is updated with the received list of available times.
+     *
+     * @param data the response object received from the server; expected to be a ServerResponse
+     */
     @Override
     public void handle(Object data) {
 

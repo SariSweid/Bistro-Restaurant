@@ -19,6 +19,11 @@ import util.SceneManager;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Controller for managing restaurant settings in the UI.
+ * Handles weekly opening hours, special dates, and navigation to the supervisor UI.
+ * Communicates with the server via ClientHandler to update, add, or delete settings.
+ */
 public class RestaurantSettingsController {
 
     @FXML private TextField openingTimeField;
@@ -46,6 +51,10 @@ public class RestaurantSettingsController {
     private ObservableList<WeeklyOpeningHours> weeklyHoursList = FXCollections.observableArrayList();
     private boolean loadedOnce = false;
 
+    /**
+     * Initializes the controller.
+     * Sets up table views, combo boxes, and loads restaurant settings from the server.
+     */
     @FXML
     public void initialize() {
         specialDatesTable.setItems(specialDatesList);
@@ -81,6 +90,11 @@ public class RestaurantSettingsController {
         }
     }
 
+    /**
+     * Loads restaurant settings into the tables.
+     *
+     * @param settings the RestaurantSettings object to load
+     */
     public void loadRestaurantSettings(RestaurantSettings settings) {
         if (settings == null) return;
         specialDatesList.clear();
@@ -93,6 +107,9 @@ public class RestaurantSettingsController {
         weeklyHoursTable.refresh();
     }
 
+    /**
+     * Removes the selected day from weekly opening hours and updates the server.
+     */
     @FXML
     public void removeDay() {
         Day selectedDay = dayComboBox.getValue();
@@ -112,6 +129,9 @@ public class RestaurantSettingsController {
         dayComboBox.setValue(null);
     }
 
+    /**
+     * Adds a new day to weekly opening hours and updates the server.
+     */
     @FXML
     private void addDay() {
         Day selectedDay = dayComboBox.getValue();
@@ -135,6 +155,9 @@ public class RestaurantSettingsController {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Updates the opening hours for the selected day.
+     */
     @FXML
     public void updateOpeningHours() {
         Day selectedDay = dayComboBox.getValue();
@@ -168,6 +191,9 @@ public class RestaurantSettingsController {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Updates the closing hours for the selected day.
+     */
     @FXML
     public void updateClosingHours() {
         Day selectedDay = dayComboBox.getValue();
@@ -193,6 +219,9 @@ public class RestaurantSettingsController {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Adds a special date to the table and server.
+     */
     @FXML
     public void addSpecialDates() {
         try {
@@ -208,6 +237,9 @@ public class RestaurantSettingsController {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Updates the selected special date and sends the update to the server.
+     */
     @FXML
     public void updateSpecialDates() {
         SpecialDates selected = specialDatesTable.getSelectionModel().getSelectedItem();
@@ -233,6 +265,9 @@ public class RestaurantSettingsController {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Deletes the selected special date and updates the server.
+     */
     @FXML
     public void deleteSpecialDate() {
         SpecialDates selected = specialDatesTable.getSelectionModel().getSelectedItem();
@@ -243,6 +278,9 @@ public class RestaurantSettingsController {
         ClientHandler.getClient().deleteSpecialDate(selected.getDate());
     }
 
+    /**
+     * Navigates back to the supervisor UI.
+     */
     @FXML
     public void previousPage() {
         SceneManager.switchTo("SupervisorUI.fxml");

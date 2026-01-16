@@ -6,8 +6,27 @@ import Controllers.SubscriberController;
 import Entities.Reservation;
 import javafx.application.Platform;
 
+/**
+ * Handles responses that contain a list of reservations for a user.
+ * 
+ * This handler is responsible for updating UI controllers that display
+ * reservation data, including general display controllers and the
+ * subscriber dashboard controller.
+ */
 public class GetUserReservationsHandler implements ResponseHandler {
 
+    /**
+     * Processes the response data received from the server.
+     * 
+     * If the data is a list of reservations, the method forwards it to:
+     * - The active display controller to show reservations in the UI.
+     * - The subscriber controller, if active, to trigger reservation-related logic
+     *   such as notifications or popups.
+     * 
+     * All UI updates are executed on the JavaFX Application Thread.
+     *
+     * @param data the response object expected to contain a list of Reservation objects
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void handle(Object data) {

@@ -324,7 +324,7 @@ public class ReservationController {
 
     public boolean hasConfirmedReservation(int userId) {
         List<Reservation> all = resdb.readAllReservations();
-        return all.stream().anyMatch(r -> r.getCustomerId() == userId && r.getStatus() == ReservationStatus.CONFIRMED);
+        return all.stream().anyMatch(r -> r.getCustomerID() == userId && r.getStatus() == ReservationStatus.CONFIRMED);
     }
 
     private Table findFreeTable(int groupSize) {

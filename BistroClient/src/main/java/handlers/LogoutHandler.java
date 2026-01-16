@@ -1,7 +1,19 @@
 package handlers;
 
+/**
+ * Handles the logout process for the client.
+ * When invoked, it clears the current user's session information
+ * on the client side, effectively logging the user out.
+ */
 public class LogoutHandler implements ResponseHandler {
 
+    /**
+     * Handles the server response for a logout action.
+     * This method clears the current user's ID and role in the
+     * ClientHandler and prints a confirmation message.
+     *
+     * @param data the response object from the server (ignored in this handler)
+     */
     @Override
     public void handle(Object data) {
 

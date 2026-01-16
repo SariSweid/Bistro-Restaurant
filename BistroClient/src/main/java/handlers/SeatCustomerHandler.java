@@ -7,8 +7,22 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import util.SceneManager;
 
+/**
+ * Handles server responses related to seating a customer.
+ * Updates the UI based on the success or failure of the seating operation.
+ * Also handles silent cancellations for reservations by notifying the guest.
+ */
 public class SeatCustomerHandler implements ResponseHandler {
 
+    /**
+     * Processes the server response for seating a customer.
+     * If the operation was successful, displays an informational message with the table number.
+     * If the operation failed, displays an error message.
+     * If the reservation was silently cancelled, shows a warning popup to the guest.
+     * All UI updates are executed on the JavaFX application thread.
+     *
+     * @param data the server response object containing the result of the seating operation
+     */
     @Override
     public void handle(Object data) {
         if (!(data instanceof ServerResponse response)) {
@@ -17,16 +31,13 @@ public class SeatCustomerHandler implements ResponseHandler {
         }
 
         Platform.runLater(() -> {
-        	
-        		// --- GUEST NOTIFICATION CHECK ---
-        		// If the data returned is a Reservation object, check if it's a silent cancellation
             if (response.getData() instanceof Reservation res) {
                 if (res.getStatus() == ReservationStatus.CANCELLED && !res.isNotified()) {
                     showGuestPopup(res);
                     return;
                 }
             }
-            
+
             if (response.isSuccess()) {
                 Integer table = (Integer) response.getData();
                 SceneManager.showInfo(response.getMessage() + " Table #" + table);
@@ -35,8 +46,13 @@ public class SeatCustomerHandler implements ResponseHandler {
             }
         });
     }
-    
-    // Helper method to show the notification
+
+    /**
+     * Displays a popup to notify the guest about a reservation that was silently cancelled.
+     * Marks the reservation as notified to prevent repeated notifications.
+     *
+     * @param res the reservation that was cancelled
+     */
     private void showGuestPopup(Reservation res) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Reservation Status");
@@ -45,7 +61,7 @@ public class SeatCustomerHandler implements ResponseHandler {
                              " was cancelled due to restaurant schedule changes.");
         alert.showAndWait();
 
-        // Mark as notified so they don't see this again
         ClientHandler.getClient().markReservationAsNotified(res.getReservationID());
     }
 }
+

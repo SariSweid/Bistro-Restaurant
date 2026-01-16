@@ -6,144 +6,145 @@ import java.time.LocalTime;
 
 import enums.ExitReason;
 import enums.WaitingStatus;
+
 /**
- * WaitingListEntry class represents an entry in the waiting list
+ * Represents an entry in the restaurant waiting list.
+ * 
+ * Contains information about the user or guest, contact details, 
+ * number of guests, confirmation code, waiting date and time, 
+ * exit reason, and current waiting status.
  */
 @SuppressWarnings("serial")
 public class WaitingListEntry implements Serializable {
-	private Integer userID; // null in case of guest
-	private String Email;// email/phone
-	private String phone;
-	private int numOfGuests;
-	private int confirmationCode;
-	private LocalDate WaitDate;
-	private LocalTime WaitTime;
-	private ExitReason exitReason; // why the customer left the waiting list
-	private WaitingStatus status;   // WAITING / NOTIFIED / SEATED
-	
-	
-	public WaitingListEntry(Integer userID, String email, String phone, int numOfGuests, int confirmationCode,
-			LocalDate waitDate, LocalTime waitTime, ExitReason exitReason, WaitingStatus status) {
-		
-		
-		this.userID = userID;
-		Email = email;
-		this.phone = phone;
-		this.numOfGuests = numOfGuests;
-		this.confirmationCode = confirmationCode;
-		WaitDate = waitDate;
-		WaitTime = waitTime;
-		this.exitReason = exitReason;
-		this.status = status;
-	}
-	
-	public WaitingListEntry(Integer userID, String email, String phone, int numOfGuests, int confirmationCode,
-			LocalDate waitDate, LocalTime waitTime, ExitReason exitReason) {
-		
-		
-		this.userID = userID;
-		Email = email;
-		this.phone = phone;
-		this.numOfGuests = numOfGuests;
-		this.confirmationCode = confirmationCode;
-		WaitDate = waitDate;
-		WaitTime = waitTime;
-		this.exitReason = exitReason;
-	}
 
-	
-	//getters
-	
-	public Integer getUserID() {
-		return userID;
-	}
+    /** The user ID, null if the entry belongs to a guest. */
+    private Integer userID;
 
+    /** Email of the user or phone as a fallback. */
+    private String Email;
 
-	public void setUserID(Integer userID) {
-		this.userID = userID;
-	}
+    /** Phone number of the user or guest. */
+    private String phone;
 
+    /** Number of guests in this reservation. */
+    private int numOfGuests;
 
-	public String getEmail() {
-		return Email;
-	}
+    /** Confirmation code for this entry. */
+    private int confirmationCode;
 
+    /** Date the user is waiting for. */
+    private LocalDate WaitDate;
 
-	public void setEmail(String email) {
-		Email = email;
-	}
+    /** Time the user is waiting for. */
+    private LocalTime WaitTime;
 
-	public String getPhone() {
-		return phone;
-	}
+    /** Reason why the customer left the waiting list. */
+    private ExitReason exitReason;
 
+    /** Current waiting status (WAITING, NOTIFIED, SEATED). */
+    private WaitingStatus status;
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    /**
+     * Constructs a waiting list entry with all fields.
+     *
+     * @param userID the ID of the user, null for guests
+     * @param email the user's email
+     * @param phone the user's phone
+     * @param numOfGuests number of guests
+     * @param confirmationCode the confirmation code
+     * @param waitDate the date the user is waiting for
+     * @param waitTime the time the user is waiting for
+     * @param exitReason reason why the customer left
+     * @param status current waiting status
+     */
+    public WaitingListEntry(Integer userID, String email, String phone, int numOfGuests, int confirmationCode,
+                            LocalDate waitDate, LocalTime waitTime, ExitReason exitReason, WaitingStatus status) {
+        this.userID = userID;
+        Email = email;
+        this.phone = phone;
+        this.numOfGuests = numOfGuests;
+        this.confirmationCode = confirmationCode;
+        WaitDate = waitDate;
+        WaitTime = waitTime;
+        this.exitReason = exitReason;
+        this.status = status;
+    }
 
+    /**
+     * Constructs a waiting list entry without specifying the status.
+     *
+     * @param userID the ID of the user, null for guests
+     * @param email the user's email
+     * @param phone the user's phone
+     * @param numOfGuests number of guests
+     * @param confirmationCode the confirmation code
+     * @param waitDate the date the user is waiting for
+     * @param waitTime the time the user is waiting for
+     * @param exitReason reason why the customer left
+     */
+    public WaitingListEntry(Integer userID, String email, String phone, int numOfGuests, int confirmationCode,
+                            LocalDate waitDate, LocalTime waitTime, ExitReason exitReason) {
+        this(userID, email, phone, numOfGuests, confirmationCode, waitDate, waitTime, exitReason, null);
+    }
 
-	public LocalDate getWaitDate() {
-		return WaitDate;
-	}
+    /** Returns the user ID. */
+    public Integer getUserID() { return userID; }
 
+    /** Sets the user ID. */
+    public void setUserID(Integer userID) { this.userID = userID; }
 
-	public void setWaitDate(LocalDate waitDate) {
-		WaitDate = waitDate;
-	}
+    /** Returns the email of the user. */
+    public String getEmail() { return Email; }
 
+    /** Sets the email of the user. */
+    public void setEmail(String email) { Email = email; }
 
-	public LocalTime getWaitTime() {
-		return WaitTime;
-	}
+    /** Returns the phone number of the user. */
+    public String getPhone() { return phone; }
 
-	public void setWaitTime(LocalTime waitTime) {
-		WaitTime = waitTime;
-	}
+    /** Sets the phone number of the user. */
+    public void setPhone(String phone) { this.phone = phone; }
 
+    /** Returns the date the user is waiting for. */
+    public LocalDate getWaitDate() { return WaitDate; }
 
-	public void setNumOfGuests(int numOfGuests) {
-		this.numOfGuests = numOfGuests;
-	}
+    /** Sets the date the user is waiting for. */
+    public void setWaitDate(LocalDate waitDate) { WaitDate = waitDate; }
 
+    /** Returns the time the user is waiting for. */
+    public LocalTime getWaitTime() { return WaitTime; }
 
-	public void setConfirmationCode(int confirmationCode) {
-		this.confirmationCode = confirmationCode;
-	}
+    /** Sets the time the user is waiting for. */
+    public void setWaitTime(LocalTime waitTime) { WaitTime = waitTime; }
 
+    /** Returns the number of guests. */
+    public int getNumOfGuests() { return this.numOfGuests; }
 
-	public void setExitReason(ExitReason exitReason) {
-		this.exitReason = exitReason;
-	}
+    /** Sets the number of guests. */
+    public void setNumOfGuests(int numOfGuests) { this.numOfGuests = numOfGuests; }
 
-	
+    /** Returns the confirmation code. */
+    public int getConfirmationCode() { return this.confirmationCode; }
 
-	public int getNumOfGuests() {
-		return this.numOfGuests;
-	}
-	
-	public int getConfirmationCode() {
-		return this.confirmationCode;
-	}
-	
-	
-	public ExitReason getExitReason() {
-		return this.exitReason;
-	}
+    /** Sets the confirmation code. */
+    public void setConfirmationCode(int confirmationCode) { this.confirmationCode = confirmationCode; }
 
-	public void exit(ExitReason exitReason) {
-		this.exitReason = exitReason;
-	}
+    /** Returns the exit reason. */
+    public ExitReason getExitReason() { return this.exitReason; }
 
+    /** Sets the exit reason. */
+    public void setExitReason(ExitReason exitReason) { this.exitReason = exitReason; }
 
-	public void setStatus(WaitingStatus status) {
-	    this.status = status;
-	}
-	
-	public WaitingStatus getStatus() {
-		return status;
-	}
+    /**
+     * Marks the entry as exited for the given reason.
+     *
+     * @param exitReason the reason the customer left
+     */
+    public void exit(ExitReason exitReason) { this.exitReason = exitReason; }
 
+    /** Returns the current waiting status. */
+    public WaitingStatus getStatus() { return status; }
 
-
+    /** Sets the current waiting status. */
+    public void setStatus(WaitingStatus status) { this.status = status; }
 }

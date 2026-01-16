@@ -9,6 +9,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import util.SceneManager;
 
+/**
+ * Controller for managing and displaying user information.
+ * Handles the initialization of user data in the form fields,
+ * submission of changes, and navigation back to the previous page.
+ */
 public class InformationController {
 
     @FXML private TextField name;
@@ -17,8 +22,12 @@ public class InformationController {
     @FXML private TextField userName;
 
     @SuppressWarnings("unused")
-	private User currentUser;
+    private User currentUser;
 
+    /**
+     * Initializes the form with the current user's information.
+     * Populates the text fields based on the user's role.
+     */
     @FXML
     public void initialize() {
         User user = ClientHandler.getClient().getCurrentUser();
@@ -42,11 +51,15 @@ public class InformationController {
                 name.setText(s.getName());
                 userName.setText(s.getUserName());
             }
-		default -> throw new IllegalArgumentException("Unexpected value: " + user.getRole());
+            default -> throw new IllegalArgumentException("Unexpected value: " + user.getRole());
         }
     }
 
-
+    /**
+     * Submits any changes made to the user's information.
+     * Updates the current user's email, phone, name, and username.
+     * Calls the client handler to persist the updated user data.
+     */
     @FXML
     private void onSubmitChanges() {
         User user = ClientHandler.getClient().getCurrentUser();
@@ -70,14 +83,17 @@ public class InformationController {
                 s.setName(name.getText());
                 s.setUserName(userName.getText());
             }
-		case GUEST -> throw new IllegalArgumentException("Unexpected value: " + user.getRole());
-		default -> throw new IllegalArgumentException("Unexpected value: " + user.getRole());
+            case GUEST -> throw new IllegalArgumentException("Unexpected value: " + user.getRole());
+            default -> throw new IllegalArgumentException("Unexpected value: " + user.getRole());
         }
 
         ClientHandler.getClient().updateUser(user);
     }
 
-
+    /**
+     * Navigates back to the previous page.
+     * Switches the scene to the Subscriber UI.
+     */
     @FXML
     private void onPreviousPage() {
         SceneManager.switchTo("SubscriberUI.fxml");

@@ -15,6 +15,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import util.SceneManager;
 
+/**
+ * Controller for the Waiting List UI.
+ * Displays the current week's waiting list in a table with columns for user info,
+ * reservation details, and exit reasons.
+ * Handles loading the waiting list from the server and navigation.
+ */
 public class WaitingListController extends BaseDisplayController {
 
     @FXML
@@ -37,11 +43,13 @@ public class WaitingListController extends BaseDisplayController {
     private TableView<WaitingListEntry> waitingListTable;
 
     /**
-     * Initializes the table columns and loads the current week's waiting list.
+     * Initializes the controller.
+     * Sets up the table columns, formats dates and times, registers a handler for
+     * weekly waiting list updates, and loads the current week's waiting list.
      */
     @FXML
     public void initialize() {
-    	ClientHandler.getClient().setActiveDisplayController(this);
+        ClientHandler.getClient().setActiveDisplayController(this);
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -56,9 +64,11 @@ public class WaitingListController extends BaseDisplayController {
             data.getValue().getExitReason() == null ? "Active" : data.getValue().getExitReason().name())
         );
 
+        // Register handler for server response
         ClientHandler.getClient().setHandler(ActionType.GET_WAITING_LIST_BETWEEN_DATES,
                 new WeeklyWaitingListHandler(this));
 
+        // Load current week's waiting list
         loadCurrentWeekWaitingList();
     }
 
@@ -70,8 +80,8 @@ public class WaitingListController extends BaseDisplayController {
     }
 
     /**
-     * Returns the TableView containing the waiting list entries.
-     *
+     * Returns the TableView containing waiting list entries.
+     * 
      * @return the TableView of WaitingListEntry
      */
     public TableView<WaitingListEntry> getWaitingListTable() {
@@ -79,16 +89,21 @@ public class WaitingListController extends BaseDisplayController {
     }
 
     /**
-     * Handles the action of returning to the previous page.
+     * Handles navigation back to the previous page (Supervisor UI).
      */
     @FXML
     private void onPreviousPage() {
         SceneManager.switchTo("SupervisorUI.fxml");
     }
 
-	@Override
-	public void showReservations(List<Reservation> list) {
-		// TODO Auto-generated method stub
-		
-	}
+    /**
+     * Overrides the method from BaseDisplayController.
+     * Currently not used for waiting list but required by superclass.
+     * 
+     * @param list the list of reservations (unused)
+     */
+    @Override
+    public void showReservations(List<Reservation> list) {
+        // No implementation needed for waiting list
+    }
 }

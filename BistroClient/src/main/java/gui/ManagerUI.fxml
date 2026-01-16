@@ -4,25 +4,53 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
-<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="14.0"
+<VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="400.0" spacing="20.0"
       style="-fx-background-color: #f5f5dc;"
       xmlns="http://javafx.com/javafx/25"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="Controllers.ManagerController">
+      
+      
+      
+          <!-- Logo -->
+    <ImageView fx:id="logoImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+        <image>
+            <Image url="@/images/BistroLogo.png" />
+        </image>
+    </ImageView>
 
     <padding>
-        <Insets bottom="30" left="40" right="40" top="30" />
+        <Insets top="40" right="40" bottom="40" left="40"/>
     </padding>
 
-    <Label text="Welcome!">
-        <font>
-            <Font size="26.0"/>
-        </font>
-    </Label>
+<!-- Title -->
+<Label text=" Welcome, Manager! 👨‍💼" style="-fx-text-fill: #5d4037; -fx-font-weight: bold;">
+    <font>
+        <Font size="26.0"/>
+    </font>
+</Label>
 
-    <Button onAction="#onReports" prefWidth="260" style="-fx-background-radius: 15;" text="Reports" />
-    <Button onAction="#onsupervisorscreen" prefWidth="260" style="-fx-background-radius: 15;" text="Supervisor Screen" />
-    <Button onAction="#onsubscriberscreen" prefWidth="260" style="-fx-background-radius: 15;" text="Subscriber Screen" />
-    <Button onAction="#onLogOut" prefWidth="100" text="Log Out" />
+    <!-- Buttons -->
+    <VBox alignment="CENTER" spacing="15">
+
+        <Button onAction="#onReports" prefWidth="280" prefHeight="60"
+                style="-fx-background-radius: 25; -fx-background-color: #ffffff; -fx-border-color: #d7ccc8; -fx-font-weight: bold; -fx-cursor: hand;"
+                text="📊 Reports" />
+
+        <Button onAction="#onsupervisorscreen" prefWidth="280" prefHeight="60"
+                style="-fx-background-radius: 25; -fx-background-color: #ffffff; -fx-border-color: #d7ccc8; -fx-font-weight: bold; -fx-cursor: hand;"
+                text="👔 Supervisor Screen" />
+
+        <Button onAction="#onsubscriberscreen" prefWidth="280" prefHeight="60"
+                style="-fx-background-radius: 25; -fx-background-color: #ffffff; -fx-border-color: #d7ccc8; -fx-font-weight: bold; -fx-cursor: hand;"
+                text="📱 Subscriber Screen" />
+
+        <Button onAction="#onLogOut" prefWidth="280" prefHeight="60"
+                style="-fx-background-radius: 25; -fx-background-color: #ffffff; -fx-border-color: #d7ccc8; -fx-font-weight: bold; -fx-text-fill: #e40909; -fx-cursor: hand;"
+                text="❌ Log Out" />
+
+    </VBox>
 </VBox>

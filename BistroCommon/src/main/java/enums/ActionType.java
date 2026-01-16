@@ -1,7 +1,14 @@
 package enums;
 
+/**
+ * Represents the different types of actions that can be performed
+ * in the restaurant management system. 
+ * Actions are categorized by their functionality such as reservations,
+ * users, restaurant settings, tables, payments, reports, and waiting list management.
+ */
 public enum ActionType {
-	// Reservation
+
+    // Reservation actions
     GET_ALL_RESERVATIONS,
     GET_USER_RESERVATIONS,
     ADD_RESERVATION,
@@ -10,8 +17,8 @@ public enum ActionType {
     GET_NEAREST_TIMES,
     CANCEL_RESERVATION,
     MARK_NOTIFIED,
-    
-    // User
+
+    // User actions
     LOGIN,
     LOGOUT,
     GET_USER,
@@ -20,34 +27,32 @@ public enum ActionType {
     ADD_USER,
     UPDATE_USER,
     CHECKUSERIDEXISTS,
-    FORGOT_CODE,  
+    FORGOT_CODE,
     SEAT_CUSTOMER,
-    
-    // Restaurant settings
+
+    // Restaurant settings actions
     GET_RESTAURANT_SETTINGS,
     ADD_SPECIAL_DATE,
     UPDATE_SPECIAL_DATE,
     UPDATE_OPENING_TIME,
     UPDATE_CLOSING_TIME,
     CREATE_OPENING_HOURS,
-    REMOVE_OPENING_HOURS,    
+    REMOVE_OPENING_HOURS,
     DELETE_SPECIAL_DATE,
-    
 
-    // Tables
+    // Table actions
     INSERT_TABLE,
     UPDATE_TABLE,
     DELETE_TABLE,
     GET_ALL_TABLES,
-    
-    
-    // Payment
+
+    // Payment actions
     PAY,
-    
-    // Reports
+
+    // Report actions
     GET_REPORT,
-    
-    //Waiting List
+
+    // Waiting list actions
     ADD_TO_WAITING_LIST,
     CANCEL_WAITING,
     GET_WAITING_LIST_BETWEEN_DATES

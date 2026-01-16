@@ -9,6 +9,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import util.SceneManager;
 
+/**
+ * Controller for managing restaurant tables.
+ * Handles displaying tables in a TableView, inserting, updating, deleting tables,
+ * and navigation to the previous page.
+ * Interacts with ClientHandler to perform server-side operations.
+ */
 public class TablesController {
 
     @FXML private TableView<Table> tablesTable;
@@ -18,27 +24,31 @@ public class TablesController {
     @FXML private TextField tableIdField;
     @FXML private TextField seatsField;
 
+    /**
+     * Initializes the controller.
+     * Sets up TableView columns, registers this controller in ClientHandler,
+     * and loads the current list of tables from the server.
+     */
     @FXML
     public void initialize() {
-
-        // Setup table columns
         tableIdColumn.setCellValueFactory(new PropertyValueFactory<>("tableID"));
         seatsColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
 
-        // Register this controller in ClientHandler
         ClientHandler.getClient().setTablesController(this);
-
-        // Load tables from server
         reloadTables();
     }
 
+    /**
+     * Handles inserting a new table.
+     * Validates input fields, checks for duplicate table IDs,
+     * and calls ClientHandler to insert the table.
+     */
     @FXML
     private void onInsert() {
         Integer id = parseIntegerField(tableIdField, "Table ID");
         Integer seats = parseIntegerField(seatsField, "Seats");
         if (id == null || seats == null) return;
 
-        // Check if ID already exists in table list
         boolean exists = tablesTable.getItems().stream()
             .anyMatch(t -> t.getTableID() == id);
 
@@ -56,13 +66,17 @@ public class TablesController {
         }
     }
 
+    /**
+     * Handles updating an existing table.
+     * Validates input fields, checks if the table exists,
+     * and calls ClientHandler to update the table.
+     */
     @FXML
     private void onUpdate() {
         Integer id = parseIntegerField(tableIdField, "Table ID");
         Integer seats = parseIntegerField(seatsField, "Seats");
         if (id == null || seats == null) return;
 
-        // Check if the table exists
         boolean exists = tablesTable.getItems().stream()
             .anyMatch(t -> t.getTableID() == id);
 
@@ -80,12 +94,16 @@ public class TablesController {
         }
     }
 
+    /**
+     * Handles deleting a table.
+     * Validates the table ID field, checks if the table exists,
+     * and calls ClientHandler to delete the table.
+     */
     @FXML
     private void onDelete() {
         Integer id = parseIntegerField(tableIdField, "Table ID");
         if (id == null) return;
 
-        // Check if the table exists
         boolean exists = tablesTable.getItems().stream()
             .anyMatch(t -> t.getTableID() == id);
 
@@ -103,16 +121,26 @@ public class TablesController {
         }
     }
 
+    /**
+     * Navigates back to the Supervisor UI.
+     */
     @FXML
     private void onPreviousPage() {
         SceneManager.switchTo("SupervisorUI.fxml");
     }
 
-    // Called by handlers
+    /**
+     * Updates the TableView with the provided list of tables.
+     * Called by ClientHandler after fetching tables from the server.
+     * @param tables the list of tables to display
+     */
     public void updateTableList(List<Table> tables) {
         tablesTable.getItems().setAll(tables);
     }
 
+    /**
+     * Reloads the list of tables from the server via ClientHandler.
+     */
     public void reloadTables() {
         try {
             ClientHandler.getClient().getAllTables();
@@ -121,7 +149,13 @@ public class TablesController {
         }
     }
 
-    // Parse integer fields safely
+    /**
+     * Parses an integer value from a TextField.
+     * Shows an error alert if the field is empty or not a valid number.
+     * @param field the TextField to parse
+     * @param fieldName the name of the field for error messages
+     * @return the parsed integer, or null if invalid
+     */
     private Integer parseIntegerField(TextField field, String fieldName) {
         String text = field.getText().trim();
         if (text.isEmpty()) {
@@ -136,7 +170,10 @@ public class TablesController {
         }
     }
 
-    // Alerts
+    /**
+     * Displays an error alert with the provided message.
+     * @param msg the message to display
+     */
     public void showError(String msg) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText(null);
@@ -144,6 +181,10 @@ public class TablesController {
         alert.showAndWait();
     }
 
+    /**
+     * Displays an information alert with the provided message.
+     * @param msg the message to display
+     */
     public void showInfo(String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);

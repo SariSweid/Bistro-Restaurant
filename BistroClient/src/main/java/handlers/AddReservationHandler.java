@@ -10,10 +10,21 @@ import javafx.application.Platform;
 
 /**
  * Handles server responses for adding a new reservation.
- * Updates the active reservation controller and refreshes the display if needed.
+ * 
+ * When the server responds to an add-reservation request, this handler:
+ * - Validates the response object.
+ * - Notifies the active BaseReservationController of success or failure.
+ * - Updates the active BaseDisplayController to display the newly added reservation if available.
  */
 public class AddReservationHandler implements ResponseHandler {
 
+    /**
+     * Processes the server response data for adding a reservation.
+     * Displays a confirmation message if the reservation was added successfully,
+     * or an error message if the operation failed.
+     *
+     * @param data the response object received from the server; expected to be a ServerResponse
+     */
     @Override
     public void handle(Object data) {
 

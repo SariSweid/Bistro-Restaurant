@@ -555,8 +555,8 @@ public class ReservationDAO extends DBController {
         )) {
 
         	
-	        	if (r.getCustomerId() != null) {
-	        	    pst.setInt(1, r.getCustomerId());
+	        	if (r.getCustomerID() != null) {
+	        	    pst.setInt(1, r.getCustomerID());
 	        	} else {
 	        	    pst.setNull(1, java.sql.Types.INTEGER);
 	        	}

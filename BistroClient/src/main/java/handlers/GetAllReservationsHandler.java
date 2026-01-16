@@ -6,8 +6,19 @@ import Controllers.BaseDisplayController;
 import Entities.Reservation;
 import javafx.application.Platform;
 
+/**
+ * Handles the server response for retrieving all reservations.
+ * 
+ * Updates the ClientHandler with the latest list of reservations and notifies
+ * the active BaseDisplayController to display the updated reservations if one exists.
+ */
 public class GetAllReservationsHandler implements ResponseHandler {
 
+    /**
+     * Processes the server response containing the list of reservations.
+     * 
+     * @param data the response object received from the server; expected to be a List of Reservation objects
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void handle(Object data) {
@@ -34,4 +45,3 @@ public class GetAllReservationsHandler implements ResponseHandler {
         });
     }
 }
-

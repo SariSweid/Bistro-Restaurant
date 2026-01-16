@@ -11,8 +11,19 @@ import Controllers.MainMenuController;
 
 import java.util.List;
 
+/**
+ * Main JavaFX application class for the main menu.
+ * Initializes the client connection and loads the main menu UI.
+ */
 public class MainMenuApp extends Application {
 
+    /**
+     * Starts the JavaFX application.
+     * Sets up the main menu scene, initializes the client, and opens the connection.
+     *
+     * @param primaryStage the primary stage for this application
+     * @throws Exception if the FXML file cannot be loaded or other initialization fails
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -39,13 +50,13 @@ public class MainMenuApp extends Application {
         primaryStage.setOnCloseRequest(_ -> {
             try {
                 if (client != null && client.isConnected()) {
-                    client.closeConnection(); // Explicitly signal the server
+                    client.closeConnection();
                     System.out.println("Closing connection before exit...");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                System.exit(0); // Ensure the process actually dies
+                System.exit(0);
             }
         });
 
@@ -54,10 +65,15 @@ public class MainMenuApp extends Application {
         primaryStage.show();
     }
     
+    /**
+     * Stops the JavaFX application.
+     * Ensures that the client connection is properly closed when the application exits.
+     *
+     * @throws Exception if closing the client connection fails
+     */
     @Override
     public void stop() throws Exception {
         super.stop();
-        // Properly close the client connection when app exits
         ClientHandler client = ClientHandler.getClient();
         if (client != null && client.isConnected()) {
             try {
@@ -69,6 +85,11 @@ public class MainMenuApp extends Application {
         }
     }
 
+    /**
+     * Main entry point for the application.
+     *
+     * @param args command-line arguments; the first argument can be the host to connect to
+     */
     public static void main(String[] args) {
         launch(args);
     }

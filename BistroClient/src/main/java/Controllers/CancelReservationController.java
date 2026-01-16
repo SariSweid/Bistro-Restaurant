@@ -15,14 +15,30 @@ import util.SceneManager;
 
 import java.util.List;
 
+/**
+ * Controller for displaying and canceling user reservations.
+ * Extends {@link BaseDisplayController} to show reservations in a table.
+ * Provides functionality to select and cancel confirmed reservations.
+ */
 public class CancelReservationController extends BaseDisplayController {
 
-    @FXML private TableView<Reservation> reservationsTable;
-    @FXML private TableColumn<Reservation, Integer> idCol, guestsCol;
-    @FXML private TableColumn<Reservation, String> dateCol, timeCol;
+    @FXML
+    private TableView<Reservation> reservationsTable;
 
-    @FXML private Button cancelButton, previousButton;
+    @FXML
+    private TableColumn<Reservation, Integer> idCol, guestsCol;
 
+    @FXML
+    private TableColumn<Reservation, String> dateCol, timeCol;
+
+    @FXML
+    private Button cancelButton, previousButton;
+
+    /**
+     * Initializes the controller.
+     * Sets this controller as the active display controller,
+     * configures table columns, and refreshes the list of reservations.
+     */
     @FXML
     public void initialize() {
         ClientHandler.getClient().setActiveDisplayController(this);
@@ -35,6 +51,11 @@ public class CancelReservationController extends BaseDisplayController {
         refreshReservations();
     }
 
+    /**
+     * Displays a list of confirmed reservations in the table.
+     *
+     * @param list the list of {@link Reservation} objects to display
+     */
     @Override
     public void showReservations(List<Reservation> list) {
         if (list == null || list.isEmpty()) {
@@ -49,6 +70,10 @@ public class CancelReservationController extends BaseDisplayController {
         reservationsTable.setItems(FXCollections.observableArrayList(confirmed));
     }
 
+    /**
+     * Refreshes the reservations table by requesting the current user's reservations
+     * from the client handler.
+     */
     public void refreshReservations() {
         int userId = ClientHandler.getClient().getCurrentUserId();
         if (userId != 0) {
@@ -56,6 +81,10 @@ public class CancelReservationController extends BaseDisplayController {
         }
     }
 
+    /**
+     * Handles the cancellation of the selected reservation.
+     * Displays a confirmation dialog before sending the cancellation request to the client.
+     */
     @FXML
     private void onCancelSelected() {
         Reservation selected = reservationsTable.getSelectionModel().getSelectedItem();
@@ -74,6 +103,9 @@ public class CancelReservationController extends BaseDisplayController {
         }
     }
 
+    /**
+     * Navigates back to the subscriber UI and refreshes all reservations.
+     */
     @FXML
     private void onPreviousPage() {
         SceneManager.switchTo("SubscriberUI.fxml");

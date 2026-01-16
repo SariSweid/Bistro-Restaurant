@@ -19,6 +19,12 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import util.SceneManager;
 
+/**
+ * Abstract base controller for reservation management.
+ * Provides common functionality for reservation creation, availability checking,
+ * date picker limits, and displaying errors or confirmations.
+ * Implements {@link AvailableTimesListener} to receive updates for available times.
+ */
 public abstract class BaseReservationController implements AvailableTimesListener {
 
     @FXML
@@ -32,20 +38,31 @@ public abstract class BaseReservationController implements AvailableTimesListene
 
     @FXML
     protected TextField numberOfDinersField;
-    
+
     protected int diners = 0;
 
+    /**
+     * Initializes the controller.
+     * Sets this controller as the active reservation controller and available times listener in the client.
+     * Adds a listener to the date picker to hide time selection when the date changes.
+     */
     @SuppressWarnings("unused")
-	@FXML
+    @FXML
     public void initialize() {
-	    	ClientHandler.getClient().setActiveReservationController(this);
-	    	ClientHandler.getClient().setAvailableTimesListener(this);
+        ClientHandler.getClient().setActiveReservationController(this);
+        ClientHandler.getClient().setAvailableTimesListener(this);
 
         if (datePicker != null) {
             datePicker.valueProperty().addListener((obs, oldDate, newDate) -> hideTimeSelection());
         }
     }
 
+    /**
+     * Retrieves the number of diners entered by the user.
+     *
+     * @return the number of diners as an integer
+     * @throws NumberFormatException if the input is invalid or less than 1
+     */
     protected int getNumberOfDiners() throws NumberFormatException {
         String text = numberOfDinersField.getText();
         if (text == null || text.trim().isEmpty()) {
@@ -56,6 +73,10 @@ public abstract class BaseReservationController implements AvailableTimesListene
         return diners;
     }
 
+    /**
+     * Checks the availability of reservations for the selected date and number of diners.
+     * Sends a request to the client to fetch available times.
+     */
     protected void checkAvailability() {
         LocalDate resDate = datePicker.getValue();
 
@@ -65,7 +86,7 @@ public abstract class BaseReservationController implements AvailableTimesListene
         }
 
         try {
-        		this.diners = getNumberOfDiners();
+            this.diners = getNumberOfDiners();
         } catch (NumberFormatException e) {
             showError("Please enter a valid number of diners");
             return;
@@ -74,6 +95,12 @@ public abstract class BaseReservationController implements AvailableTimesListene
         ClientHandler.getClient().getAvailableTimes(resDate, diners, false);
     }
 
+    /**
+     * Updates the available times in the UI when notified by the client.
+     *
+     * @param times a list of available {@link LocalTime} objects
+     */
+    @Override
     public void updateAvailableTimes(List<LocalTime> times) {
         Platform.runLater(() -> {
             int diners;
@@ -105,7 +132,12 @@ public abstract class BaseReservationController implements AvailableTimesListene
         });
     }
 
-
+    /**
+     * Displays the nearest available times when the requested date is fully booked.
+     * Opens a dialog allowing the user to choose an alternative date and time.
+     *
+     * @param alternatives a list of {@link messages.AvailableDateTimes} containing alternative options
+     */
     public void showNearestAvailableTimes(List<messages.AvailableDateTimes> alternatives) {
         if (alternatives == null || alternatives.isEmpty()) {
             showError("No available reservations on the selected date or nearby dates.");
@@ -139,6 +171,10 @@ public abstract class BaseReservationController implements AvailableTimesListene
         submitAlternativeReservation(chosenDate, chosenTime, diners);
     }
 
+    /**
+     * Submits a reservation for the selected date, time, and number of diners.
+     * Validates input and sends the reservation to the client.
+     */
     protected void submitReservation() {
         LocalTime selectedTime = timeComboBox.getValue();
         if (selectedTime == null) {
@@ -162,6 +198,13 @@ public abstract class BaseReservationController implements AvailableTimesListene
         resetForm();
     }
 
+    /**
+     * Submits an alternative reservation for a chosen date and time.
+     *
+     * @param date the selected reservation date
+     * @param time the selected reservation time
+     * @param diners the number of diners for the reservation
+     */
     protected void submitAlternativeReservation(LocalDate date, LocalTime time, int diners) {
         int customerId = ClientHandler.getClient().getCurrentUserId();
         Reservation r = new Reservation(0, customerId, diners, 0, date, time, ReservationStatus.CONFIRMED, true);
@@ -170,14 +213,27 @@ public abstract class BaseReservationController implements AvailableTimesListene
         resetForm();
     }
 
+    /**
+     * Displays an error message using the {@link SceneManager}.
+     *
+     * @param msg the error message to show
+     */
     public void showError(String msg) {
         SceneManager.showError(msg);
     }
 
+    /**
+     * Displays a confirmation message using the {@link SceneManager}.
+     *
+     * @param msg the confirmation message to show
+     */
     public void showConfirmation(String msg) {
         SceneManager.showInfo(msg);
     }
 
+    /**
+     * Configures the date picker to allow only dates from today up to one month in the future.
+     */
     protected void setupDatePickerLimits() {
         LocalDate today = LocalDate.now();
         LocalDate maxDate = today.plusMonths(1);
@@ -199,6 +255,9 @@ public abstract class BaseReservationController implements AvailableTimesListene
         });
     }
 
+    /**
+     * Resets the reservation form fields and hides the time selection.
+     */
     protected void resetForm() {
         datePicker.setValue(null);
         numberOfDinersField.clear();
@@ -209,6 +268,9 @@ public abstract class BaseReservationController implements AvailableTimesListene
         confirmButton.setManaged(false);
     }
 
+    /**
+     * Hides the time selection and confirmation button.
+     */
     protected void hideTimeSelection() {
         timeComboBox.getItems().clear();
         timeComboBox.setVisible(false);
