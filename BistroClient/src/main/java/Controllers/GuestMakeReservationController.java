@@ -126,4 +126,37 @@ public class GuestMakeReservationController extends BaseReservationController {
         
         resetForm();
     }
+    
+    @Override
+    protected void submitAlternativeReservation(LocalDate date, LocalTime time, int diners) {
+        String input = emailOrPhone.getText().trim();
+        String guestEmail = "";
+        String guestPhone = "";
+
+        if (isEmail(input)) guestEmail = input;
+        else if (isPhone(input)) guestPhone = input;
+        else {
+            showError("Cannot create guest: invalid email or phone.");
+            return;
+        }
+
+        int newGuestId = createGuestUser(guestEmail, guestPhone);
+        ClientHandler.getClient().setCurrentUserId(newGuestId);
+
+        Reservation r = new Reservation(
+                0,
+                newGuestId,
+                diners,
+                0,
+                date,
+                time,
+                ReservationStatus.CONFIRMED,
+                true
+        );
+
+        ClientHandler.getClient().addReservation(r);
+        resetForm();
+    }
+
+
 }

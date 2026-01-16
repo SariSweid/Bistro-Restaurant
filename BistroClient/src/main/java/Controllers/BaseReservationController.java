@@ -32,11 +32,14 @@ public abstract class BaseReservationController implements AvailableTimesListene
 
     @FXML
     protected TextField numberOfDinersField;
+    
+    protected int diners = 0;
 
     @SuppressWarnings("unused")
 	@FXML
     public void initialize() {
-    	ClientHandler.getClient().setAvailableTimesListener(this);
+	    	ClientHandler.getClient().setActiveReservationController(this);
+	    	ClientHandler.getClient().setAvailableTimesListener(this);
 
         if (datePicker != null) {
             datePicker.valueProperty().addListener((obs, oldDate, newDate) -> hideTimeSelection());
@@ -54,7 +57,6 @@ public abstract class BaseReservationController implements AvailableTimesListene
     }
 
     protected void checkAvailability() {
-        int diners;
         LocalDate resDate = datePicker.getValue();
 
         if (resDate == null) {
@@ -63,7 +65,7 @@ public abstract class BaseReservationController implements AvailableTimesListene
         }
 
         try {
-            diners = getNumberOfDiners();
+        		this.diners = getNumberOfDiners();
         } catch (NumberFormatException e) {
             showError("Please enter a valid number of diners");
             return;
@@ -134,7 +136,7 @@ public abstract class BaseReservationController implements AvailableTimesListene
         LocalDate chosenDate = dates.get(index);
         LocalTime chosenTime = times.get(index);
 
-        submitAlternativeReservation(chosenDate, chosenTime);
+        submitAlternativeReservation(chosenDate, chosenTime, diners);
     }
 
     protected void submitReservation() {
@@ -160,15 +162,7 @@ public abstract class BaseReservationController implements AvailableTimesListene
         resetForm();
     }
 
-    protected void submitAlternativeReservation(LocalDate date, LocalTime time) {
-        int diners;
-        try {
-            diners = getNumberOfDiners();
-        } catch (NumberFormatException e) {
-            showError("Please enter a valid number of diners");
-            return;
-        }
-
+    protected void submitAlternativeReservation(LocalDate date, LocalTime time, int diners) {
         int customerId = ClientHandler.getClient().getCurrentUserId();
         Reservation r = new Reservation(0, customerId, diners, 0, date, time, ReservationStatus.CONFIRMED, true);
         ClientHandler.getClient().addReservation(r);
