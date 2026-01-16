@@ -44,28 +44,46 @@ public class ServerController extends AbstractServer {
     }
 
     // ===== CLIENT CONNECT EVENT =====
+    private java.util.Map<ConnectionToClient, String> connectedClients = new java.util.concurrent.ConcurrentHashMap<>();
+
     @Override
     protected void clientConnected(ConnectionToClient client) {
-        String ip   = client.getInetAddress().getHostAddress();
-        String host = client.getInetAddress().getHostName();
-
-        String info = ip + " (" + host + ")";
-        System.out.println("Client connected: " +info); //changed (tamer)
+        String info = client.getInetAddress().getHostAddress() + " (" + client.getInetAddress().getHostName() + ")";
         
-        if(ui!=null)
-        	ui.addClient(info);
+        // Store the exact string used for this specific client object
+        connectedClients.put(client, info);
+        client.setInfo("Disconnected", null); 
+        
+        System.out.println("Client connected: " + info);
+        if (ui != null) ui.addClient(info);
     }
-    
-    @Override
-    protected void clientDisconnected(ConnectionToClient client) { //changed (tamer)
-        String info = client.getInetAddress().getHostAddress() + " (" 
-                    + client.getInetAddress().getHostName() + ")";
-        System.out.println("Client disconnected: " + info);
 
-        if (ui != null) {
-            ui.removeClient(info);
+    @Override
+    protected synchronized void clientDisconnected(ConnectionToClient client) {
+        handleDisconnection(client, "Clean Disconnect");
+    }
+
+    @Override
+    protected synchronized void clientException(ConnectionToClient client, Throwable exception) {
+        handleDisconnection(client, "Abrupt Disconnect");
+    }
+
+    private void handleDisconnection(ConnectionToClient client, String type) {
+        if (client.getInfo("Disconnected") == null) {
+            client.setInfo("Disconnected", true);
+            
+            // Retrieve the exact string we stored when they connected
+            String info = connectedClients.remove(client);
+            
+            if (info != null) {
+                System.out.println("Server: " + type + " for " + info);
+                if (ui != null) {
+                    ui.removeClient(info);
+                }
+            }
         }
     }
+
 
     
     /**

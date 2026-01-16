@@ -36,7 +36,7 @@ public class ServerApp extends Application {
         DailyFunctionController DailyFunction = new DailyFunctionController();
         DailyFunction.start();   
 
-        // 4. Show the window
+        // Show the window
         Scene scene = new Scene(root);
         primaryStage.setTitle("Server UI");
         primaryStage.setScene(scene);

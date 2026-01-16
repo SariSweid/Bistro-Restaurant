@@ -35,10 +35,38 @@ public class MainMenuApp extends Application {
         client.openConnection();
 
         controller.setClient(client);
+        
+        primaryStage.setOnCloseRequest(_ -> {
+            try {
+                if (client != null && client.isConnected()) {
+                    client.closeConnection(); // Explicitly signal the server
+                    System.out.println("Closing connection before exit...");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                System.exit(0); // Ensure the process actually dies
+            }
+        });
 
         primaryStage.setTitle("Main Menu");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+    }
+    
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        // Properly close the client connection when app exits
+        ClientHandler client = ClientHandler.getClient();
+        if (client != null && client.isConnected()) {
+            try {
+                client.closeConnection();
+                System.out.println("Client connection closed on app exit.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void main(String[] args) {
