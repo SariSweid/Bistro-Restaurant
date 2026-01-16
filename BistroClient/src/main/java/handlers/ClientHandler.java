@@ -230,6 +230,7 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.CANCEL_WAITING, new CancelWaitingHandler());
         handlers.put(ActionType.CREATE_OPENING_HOURS, new CreateOpeningHoursHandler());
         handlers.put(ActionType.REMOVE_OPENING_HOURS, new DeleteOpeningHoursHandler());
+        handlers.put(ActionType.MARK_NOTIFIED, new MarkNotifiedHandler());
     
     }
 
@@ -379,6 +380,13 @@ public class ClientHandler extends AbstractClient {
         }
         sendRequest(new Message(ActionType.GET_REPORT, new ReportRequest(reportType, month, year)));
     }
+    
+    
+    public void markReservationAsNotified(int reservationId) {
+        sendRequest(new Message(ActionType.MARK_NOTIFIED, reservationId));
+    }
+    
+    
 
     @Override
     protected void handleMessageFromServer(Object msg) {

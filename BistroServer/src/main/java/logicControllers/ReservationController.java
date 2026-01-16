@@ -274,6 +274,7 @@ public class ReservationController {
         return 100000 + new java.util.Random().nextInt(900000);
     }
 
+    
     public boolean cancelReservation(User user, Integer reservationId, Integer confirmationCode, Integer guestId) {
         Reservation r = null;
 
@@ -301,7 +302,7 @@ public class ReservationController {
 
         r.setStatus(ReservationStatus.CANCELLED);
 
-        boolean cancelled = resdb.cancelReservationInDB(r.getReservationID());
+        boolean cancelled = resdb.cancelReservationInDB(r.getReservationID(), false);
 
         if (cancelled) {
             tabledb.updateTableIsAvailable(r.getTableID(), true);
@@ -346,6 +347,10 @@ public class ReservationController {
     public ServerResponse seatCustomerByCode(int confirmationCode, int userId, LocalTime actualArrivalTime) {
         Reservation r = getReservationByCode(confirmationCode);
         if (r == null) return new ServerResponse(false, null, "Confirmation code is incorrect.");
+        if (r.getStatus() == ReservationStatus.CANCELLED && !r.isNotified()) {
+            // We return the reservation object 'r' so the Client Handler triggers the Alert
+            return new ServerResponse(false, r, "This reservation was cancelled by the system.");
+        }
         if (r.getStatus() == ReservationStatus.CANCELLED)
             return new ServerResponse(false, null, "This reservation has been cancelled.");
         if (r.getStatus() == ReservationStatus.SEATED)
@@ -367,4 +372,10 @@ public class ReservationController {
 
         return new ServerResponse(false, null, "All tables are currently occupied. Please wait nearby — we will notify you as soon as a table becomes available.");
     }
+    
+    public boolean markReservationAsNotified(int reservationID) {
+        // Use DAO to perform the SQL update
+        return resdb.markAsNotified(reservationID);
+    }
+    
 }

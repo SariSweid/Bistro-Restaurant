@@ -174,7 +174,7 @@ public class ServerController extends AbstractServer {
         commands.put(ActionType.CREATE_OPENING_HOURS, new CreateOpeningHoursCommand());
         commands.put(ActionType.REMOVE_OPENING_HOURS, new RemoveOpeningHoursCommand());
         
-        
+        commands.put(ActionType.MARK_NOTIFIED, new MarkNotifiedCommand());
         
     }
     

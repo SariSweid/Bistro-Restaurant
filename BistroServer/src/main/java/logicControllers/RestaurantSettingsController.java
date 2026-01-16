@@ -1,6 +1,7 @@
 package logicControllers;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,6 +120,11 @@ public class RestaurantSettingsController {
             restaurantSettings.addWeeklyOpeningHour(hours);
             success = dao.insertWeeklyOpeningHours(hours);
         }
+        
+        if (success) {
+            System.out.println("Hours updated successfully for " + hours.getDay() + " Checking for conflicts...");
+            cancelConflictingReservations(hours);
+        }
 
         return success;
     }
@@ -136,7 +142,7 @@ public class RestaurantSettingsController {
 
             List<Reservation> reservations = reservationDAO.getReservationsByDay(day);
             for (Reservation r : reservations) {
-                reservationDAO.cancelReservationInDB(r.getReservationID());
+                reservationDAO.cancelReservationInDB(r.getReservationID(), true);
             }
 
             return true;
@@ -182,7 +188,7 @@ public class RestaurantSettingsController {
 	        
 	        List<Reservation> reservations = this.reservationDAO.getReservationsByDate(date);
 	        for (Reservation r : reservations) {
-	            reservationDAO.cancelReservationInDB(r.getReservationID());
+	            reservationDAO.cancelReservationInDB(r.getReservationID(), true);
 	        }
 	    }
 	    return flag;
@@ -205,5 +211,26 @@ public class RestaurantSettingsController {
 		return flag;
 	}
 	
+	
+	public void cancelConflictingReservations(WeeklyOpeningHours newHours) {
+	    // Get all future reservations for this specific day of the week
+	    List<Reservation> reservations = reservationDAO.getReservationsByDay(newHours.getDay());
+	    
+	    for (Reservation res : reservations) {
+	        // Only check active reservations
+	        if (res.isReservationActive()) {
+	            LocalTime time = res.getReservationTime();
+	            
+	            // If the reservation is now outside the new hours
+	            if (time.isBefore(newHours.getOpeningTime()) || time.isAfter(newHours.getClosingTime())) {
+	                System.out.println("SIMULATION: Reservation " + res.getReservationID() + " is now out of bounds. Cancelling.");
+	                
+	                // Pass 'true' to indicate this was a system cancellation 
+	                // and the user needs to be notified.
+	                reservationDAO.cancelReservationInDB(res.getReservationID(), true);
+	            }
+	        }
+	    }
+	}
 	
 }

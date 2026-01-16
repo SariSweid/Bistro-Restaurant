@@ -98,7 +98,8 @@ public class WaitingListController {
     				time,
     				LocalDate.now(),
     				LocalTime.now(),
-    				ReservationStatus.CONFIRMED
+    				ReservationStatus.CONFIRMED,
+    				true
     				);
 
     		if (!reservationDAO.insertReservation(reservation)) {
@@ -201,7 +202,7 @@ public class WaitingListController {
             try {
                 Reservation r = reservationDAO.GetReservation(reservationID);
                 if (r != null && r.getStatus() == ReservationStatus.CONFIRMED) {
-                    boolean cancelled = reservationDAO.cancelReservationInDB(reservationID);
+                    boolean cancelled = reservationDAO.cancelReservationInDB(reservationID, false);
                     if (cancelled) {
                         System.out.println("Reservation " + reservationID +
                                            " cancelled automatically (user didn't arrive).");

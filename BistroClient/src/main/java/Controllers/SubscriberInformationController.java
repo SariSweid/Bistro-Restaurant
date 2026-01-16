@@ -32,7 +32,7 @@ public class SubscriberInformationController extends BaseDisplayController {
         CodeColumn.setCellValueFactory(new PropertyValueFactory<>("membershipCode"));
         ClientHandler.getClient().getAllUsers();
         showHistoryButton.setDisable(true);
-        SubscribersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+        SubscribersTable.getSelectionModel().selectedItemProperty().addListener((_, _, newSel) -> {
             showHistoryButton.setDisable(newSel == null);
         });
     }
@@ -55,5 +55,5 @@ public class SubscriberInformationController extends BaseDisplayController {
     }
 
     @Override
-    public void showReservations(List list) {}
+    public void showReservations(@SuppressWarnings("rawtypes") List list) {}
 }

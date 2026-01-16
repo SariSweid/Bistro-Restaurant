@@ -87,6 +87,7 @@ public class ReservationDAO extends DBController {
 
             try (ResultSet rs = pst.executeQuery()) {
                 while (rs.next()) {
+                		boolean notified = rs.getInt("isNotified") == 1;
                     Reservation r = new Reservation(
                         rs.getInt("reservationID"),
                         rs.getInt("customerID"),
@@ -98,7 +99,8 @@ public class ReservationDAO extends DBController {
                         rs.getTime("reservationTime").toLocalTime(),
                         rs.getDate("reservationPlacedDate").toLocalDate(),
                         rs.getTime("reservationPlacedTime").toLocalTime(),
-                        ReservationStatus.valueOf(rs.getString("status"))
+                        ReservationStatus.valueOf(rs.getString("status")),
+                        notified
                     );
 
        
@@ -135,6 +137,7 @@ public class ReservationDAO extends DBController {
 
             try (ResultSet rs = pst.executeQuery()) {
                 while (rs.next()) {
+                		boolean notified = rs.getInt("isNotified") == 1;
                     Reservation r = new Reservation(
                         rs.getInt("reservationID"),
                         rs.getInt("customerID"),
@@ -146,7 +149,8 @@ public class ReservationDAO extends DBController {
                         rs.getTime("reservationTime").toLocalTime(),
                         rs.getDate("reservationPlacedDate").toLocalDate(),
                         rs.getTime("reservationPlacedTime").toLocalTime(),
-                        ReservationStatus.valueOf(rs.getString("status"))
+                        ReservationStatus.valueOf(rs.getString("status")),
+                        notified
                     );
 
                     if (rs.getTime("actualarrivaltime") != null) {
@@ -221,14 +225,20 @@ public class ReservationDAO extends DBController {
     }
     
     
-    public boolean cancelReservationInDB(int reservationID) {
-        String sql = "UPDATE reservation SET status = ? WHERE reservationID = ?";
+    public boolean cancelReservationInDB(int reservationID, boolean needsNotification) {
+        // needsNotification = true  -> isNotified becomes 0 (Show popup later)
+        // needsNotification = false -> isNotified becomes 1 (No popup needed)
+        int notifiedValue = needsNotification ? 0 : 1;
+
+        // Updated SQL to include the isNotified column
+        String sql = "UPDATE reservation SET status = ?, isNotified = ? WHERE reservationID = ?";
 
         try (Connection con = getConnection();
              PreparedStatement pst = con.prepareStatement(sql)) {
 
             pst.setString(1, enums.ReservationStatus.CANCELLED.name());
-            pst.setInt(2, reservationID);
+            pst.setInt(2, notifiedValue); // This is the new part!
+            pst.setInt(3, reservationID);
 
             int rows = pst.executeUpdate();
             return rows > 0;
@@ -258,32 +268,34 @@ public class ReservationDAO extends DBController {
 			
 	        if (rs.next()) {
 	        	
-    			int reservationID  = rs.getInt("reservationID");
-    			Date reservationDate  = rs.getDate("reservationDate"); 
-    			Time reservationTime  = rs.getTime("reservationTime");
-    			int numOfGuests  = rs.getInt("numOfGuests");
-    			int confirmation_code = rs.getInt("confirmationCode");
-    			enums.ReservationStatus status = enums.ReservationStatus.valueOf(rs.getString("status"));
-    			int customerID  = rs.getInt("customerID");
-    			int tableID  = rs.getInt("TableId");
-    			int billID  = rs.getInt("BillId");
-    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
-    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
-
-    			
-    			//conver date and time to local
-    			LocalDate resDate = reservationDate.toLocalDate();
-    			LocalTime resTime = reservationTime.toLocalTime();
-    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
-    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
-	        
-
-	            
-	            
-    			r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
-    											,resDate,resTime,placedDate,placedTime,status);
-	        }
-	        	        
+		        	boolean notified = rs.getInt("isNotified") == 1;
+		        	
+	    			int reservationID  = rs.getInt("reservationID");
+	    			Date reservationDate  = rs.getDate("reservationDate"); 
+	    			Time reservationTime  = rs.getTime("reservationTime");
+	    			int numOfGuests  = rs.getInt("numOfGuests");
+	    			int confirmation_code = rs.getInt("confirmationCode");
+	    			enums.ReservationStatus status = enums.ReservationStatus.valueOf(rs.getString("status"));
+	    			int customerID  = rs.getInt("customerID");
+	    			int tableID  = rs.getInt("TableId");
+	    			int billID  = rs.getInt("BillId");
+	    			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
+	    			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
+	
+	    			
+	    			//conver date and time to local
+	    			LocalDate resDate = reservationDate.toLocalDate();
+	    			LocalTime resTime = reservationTime.toLocalTime();
+	    			LocalDate placedDate = reservationPlacedDate.toLocalDate();
+	    			LocalTime placedTime = reservationPlacedTime.toLocalTime();
+		        
+	
+		            
+		            
+	    			r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
+	    											,resDate,resTime,placedDate,placedTime,status,notified);
+		        }
+		        	        
 		}
 					
 		 catch (SQLException e) {
@@ -314,6 +326,7 @@ public class ReservationDAO extends DBController {
 
 	        ResultSet rs = pst.executeQuery();
 	        while (rs.next()) {
+	        		boolean notified = rs.getInt("isNotified") == 1;
 	            list.add(new Reservation(
 	                rs.getInt("reservationID"),
 	                rs.getInt("customerID"),
@@ -325,7 +338,8 @@ public class ReservationDAO extends DBController {
 	                rs.getTime("reservationTime").toLocalTime(),
 	                rs.getDate("reservationPlacedDate").toLocalDate(),
 	                rs.getTime("reservationPlacedTime").toLocalTime(),
-	                enums.ReservationStatus.valueOf(rs.getString("status"))
+	                enums.ReservationStatus.valueOf(rs.getString("status")),
+	                notified
 	            ));
 	        }
 	    } catch (SQLException e) {
@@ -378,6 +392,7 @@ public class ReservationDAO extends DBController {
 
 	        ResultSet rs = pst.executeQuery();
 	        while (rs.next()) {
+	        		boolean notified = rs.getInt("isNotified") == 1;
 	            list.add(new Reservation(
 	                rs.getInt("reservationID"),
 	                rs.getInt("customerID"),
@@ -389,7 +404,8 @@ public class ReservationDAO extends DBController {
 	                rs.getTime("reservationTime").toLocalTime(),
 	                rs.getDate("reservationPlacedDate").toLocalDate(),
 	                rs.getTime("reservationPlacedTime").toLocalTime(),
-	                enums.ReservationStatus.valueOf(rs.getString("status"))
+	                enums.ReservationStatus.valueOf(rs.getString("status")),
+	                notified
 	            ));
 	        }
 	    } catch (SQLException e) {
@@ -415,6 +431,7 @@ public class ReservationDAO extends DBController {
 	        ResultSet rs = pst.executeQuery();
 
 	        while (rs.next()) {
+	        		boolean notified = rs.getInt("isNotified") == 1;
 
 	            int reservationID = rs.getInt("reservationID");
 
@@ -459,7 +476,8 @@ public class ReservationDAO extends DBController {
 	                    resTime,
 	                    placedDate,
 	                    placedTime,
-	                    status
+	                    status,
+	                    notified
 	            );
 
 	            r.setActualArrivalTime(actualArrivalTime);
@@ -660,7 +678,7 @@ public class ReservationDAO extends DBController {
 	        ResultSet rs = pst.executeQuery();
 
 	        while (rs.next()) {
-
+	        		boolean notified = rs.getInt("isNotified") == 1;	
 	            int reservationID = rs.getInt("reservationID");
 	            Date reservationDate = rs.getDate("reservationDate");
 	            Time reservationTime = rs.getTime("reservationTime");
@@ -673,7 +691,7 @@ public class ReservationDAO extends DBController {
 	            Date placedDate = rs.getDate("reservationPlacedDate");
 	            Time placedTime = rs.getTime("reservationPlacedTime");
 
-	            Reservation r = new Reservation(reservationID, customerID, tableID, billID, numOfGuests, confirmationCode, reservationDate.toLocalDate(), reservationTime.toLocalTime(), placedDate.toLocalDate(), placedTime.toLocalTime(), status);
+	            Reservation r = new Reservation(reservationID, customerID, tableID, billID, numOfGuests, confirmationCode, reservationDate.toLocalDate(), reservationTime.toLocalTime(), placedDate.toLocalDate(), placedTime.toLocalTime(), status, notified);
 
 
 	            reservations.add(r);
@@ -685,8 +703,24 @@ public class ReservationDAO extends DBController {
 
 	    return reservations;
 	}
-    
-    
+
+	
+	public boolean markAsNotified(int reservationID) {
+	    String sql = "UPDATE reservation SET isNotified = 1 WHERE reservationID = ?";
+	    
+	    try (Connection con = getConnection();
+	         PreparedStatement pst = con.prepareStatement(sql)) {
+	        
+	        pst.setInt(1, reservationID);
+	        int rowsAffected = pst.executeUpdate();
+	        
+	        return rowsAffected > 0;
+	        
+	    } catch (SQLException e) {
+	        System.err.println("SQL Exception during markAsNotified: " + e.getMessage());
+	        return false;
+	    }
+	}
     
     
 

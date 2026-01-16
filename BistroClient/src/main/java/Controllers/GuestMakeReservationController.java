@@ -118,7 +118,8 @@ public class GuestMakeReservationController extends BaseReservationController {
             0,
             resDate,
             selectedTime,
-            ReservationStatus.CONFIRMED
+            ReservationStatus.CONFIRMED,
+            true
         );
 
         ClientHandler.getClient().addReservation(r);

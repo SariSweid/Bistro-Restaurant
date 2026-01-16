@@ -33,7 +33,7 @@ public class SubscribersHistortOrdersController extends BaseDisplayController {
         guestsColumn.setCellValueFactory(new PropertyValueFactory<>("numOfGuests"));
         confirmationCodeColumn.setCellValueFactory(new PropertyValueFactory<>("confirmationCode"));
         statusColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getStatus().toString()));
-        statusColumn.setCellFactory(column -> new TableCell<Reservation, String>() {
+        statusColumn.setCellFactory(_ -> new TableCell<Reservation, String>() {
             @Override
             protected void updateItem(String status, boolean empty) {
                 super.updateItem(status, empty);

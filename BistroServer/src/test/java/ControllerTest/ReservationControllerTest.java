@@ -43,7 +43,8 @@ class ReservationControllerTest {
                 4422,                 
                 LocalDate.now(),       
                 LocalTime.of(19, 0),    
-                ReservationStatus.CONFIRMED
+                ReservationStatus.CONFIRMED,
+                true
         );
 
         List<Reservation> dummy = List.of(reservation);

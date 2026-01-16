@@ -25,6 +25,7 @@ public class Reservation implements Serializable {
 	private ReservationStatus status;
 	private LocalTime expectedDepartureTime;
 	private LocalTime actualArrivalTime;
+	private boolean isNotified;
 	
 	/**
 	 * Constructor for new Reservation
@@ -37,7 +38,7 @@ public class Reservation implements Serializable {
 	 * @param status
 	 */
 	public Reservation(int reservationID, int customerID, int numOfGuests, int confirmationCode, LocalDate reservationDate,
-					   LocalTime reservationTime, ReservationStatus status) {
+					   LocalTime reservationTime, ReservationStatus status, boolean isNotified) {
 		this.reservationID = reservationID;
 		this.customerID = customerID;
 		this.numOfGuests = numOfGuests;
@@ -49,6 +50,7 @@ public class Reservation implements Serializable {
 		this.status = status;	
 		this.tableID = null;
 		this.billID = null;
+		this.isNotified = isNotified;
 	}
 	
 	/**
@@ -67,7 +69,7 @@ public class Reservation implements Serializable {
 	 */
 	public Reservation(int reservationID, int customerID, Integer tableID, Integer billID, int numOfGuests,
 					   int confirmationCode, LocalDate reservationDate, LocalTime reservationTime,
-					   LocalDate reservationPlacedDate, LocalTime reservationPlacedTime, ReservationStatus status) {
+					   LocalDate reservationPlacedDate, LocalTime reservationPlacedTime, ReservationStatus status, boolean isNotified) {
 		this.reservationID = reservationID;
 		this.customerID = customerID;
 		this.tableID = tableID;
@@ -79,6 +81,7 @@ public class Reservation implements Serializable {
 		this.reservationPlacedDate = reservationPlacedDate;
 		this.reservationPlacedTime = reservationPlacedTime;
 		this.status = status;
+		this.isNotified = isNotified;
 		
 	}
 	
@@ -215,4 +218,7 @@ public class Reservation implements Serializable {
 	public LocalTime getActualArrivalTime() { 
 		return actualArrivalTime; 
 	}
+	
+	public boolean isNotified() { return isNotified; }
+	public void setNotified(boolean notified) { this.isNotified = notified; }
 }

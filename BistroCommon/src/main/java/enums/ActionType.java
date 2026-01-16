@@ -9,6 +9,7 @@ public enum ActionType {
     GET_AVAILABLE_TIMES,
     GET_NEAREST_TIMES,
     CANCEL_RESERVATION,
+    MARK_NOTIFIED,
     
     // User
     LOGIN,
@@ -30,7 +31,6 @@ public enum ActionType {
     UPDATE_CLOSING_TIME,
     CREATE_OPENING_HOURS,
     REMOVE_OPENING_HOURS,    
-
     DELETE_SPECIAL_DATE,
     
 

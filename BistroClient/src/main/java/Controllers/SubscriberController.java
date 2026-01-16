@@ -1,5 +1,8 @@
 package Controllers;
 
+import java.util.List;
+
+import Entities.Reservation;
 import handlers.ClientHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,6 +26,9 @@ public class SubscriberController extends BaseReservationController {
         boolean showBack = ClientHandler.getClient().cameFromHigherRole();
         prevButton.setVisible(showBack);
         prevButton.setManaged(showBack);
+        
+        // Request reservations from the server to check for notifications
+        ClientHandler.getClient().getUserReservations(userId);
         
     }
     
@@ -83,6 +89,32 @@ public class SubscriberController extends BaseReservationController {
     
     public int getUserId() {
         return userId;
+    }
+    
+    // Method to handle the list when it comes back from the Server
+    public void onReservationsReceived(List<Reservation> reservations) {
+        for (Reservation res : reservations) {
+            // TRIGGER: If status is CANCELLED and the user hasn't been notified yet
+            if (res.getStatus() == enums.ReservationStatus.CANCELLED && !res.isNotified()) {
+                showCancellationPopup(res);
+                break;
+            }
+        }
+    }
+
+    private void showCancellationPopup(Reservation res) {
+        javafx.application.Platform.runLater(() -> {
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+            alert.setTitle("Reservation Cancelled");
+            alert.setHeaderText("Important Update regarding your Booking");
+            alert.setContentText("Your reservation for " + res.getReservationDate() + " at " + res.getReservationTime() + 
+                                 " was cancelled due to restaurant schedule changes.\n\nPlease check your email for details.");
+            
+            alert.showAndWait();
+            
+            // Tell the server to set isNotified = 1
+            ClientHandler.getClient().markReservationAsNotified(res.getReservationID());
+        });
     }
 }
 

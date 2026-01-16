@@ -356,6 +356,7 @@ public class TableDAO extends DBController {
     			int billID  = rs.getInt("BillId");
     			Date reservationPlacedDate  = rs.getDate("reservationPlacedDate"); 
     			Time reservationPlacedTime  = rs.getTime("reservationPlacedTime");
+    			boolean isNotified = rs.getInt("isNotified") == 1;
 
     			
     			//conver date and time to local
@@ -368,7 +369,7 @@ public class TableDAO extends DBController {
 	            
 	            
     			r = new Reservation(reservationID,customerID,tableID,billID,numOfGuests,confirmation_code
-    											,resDate,resTime,placedDate,placedTime,status);
+    											,resDate,resTime,placedDate,placedTime,status, isNotified);
 	        }
 	        	        
 		}

@@ -154,7 +154,7 @@ public abstract class BaseReservationController implements AvailableTimesListene
 
         LocalDate resDate = datePicker.getValue();
         int customerId = ClientHandler.getClient().getCurrentUserId();
-        Reservation r = new Reservation(0, customerId, diners, 0, resDate, selectedTime, ReservationStatus.CONFIRMED);
+        Reservation r = new Reservation(0, customerId, diners, 0, resDate, selectedTime, ReservationStatus.CONFIRMED, true);
         ClientHandler.getClient().addReservation(r);
 
         resetForm();
@@ -170,7 +170,7 @@ public abstract class BaseReservationController implements AvailableTimesListene
         }
 
         int customerId = ClientHandler.getClient().getCurrentUserId();
-        Reservation r = new Reservation(0, customerId, diners, 0, date, time, ReservationStatus.CONFIRMED);
+        Reservation r = new Reservation(0, customerId, diners, 0, date, time, ReservationStatus.CONFIRMED, true);
         ClientHandler.getClient().addReservation(r);
 
         resetForm();

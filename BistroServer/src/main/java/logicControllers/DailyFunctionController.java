@@ -142,7 +142,8 @@ public class DailyFunctionController implements Runnable {
                 entry.getConfirmationCode(),
                 entry.getWaitDate(),
                 entry.getWaitTime(),
-                ReservationStatus.CONFIRMED
+                ReservationStatus.CONFIRMED,
+                true
         );
 
         reservationDAO.insertReservation(reservation);

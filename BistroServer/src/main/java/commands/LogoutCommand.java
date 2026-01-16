@@ -6,7 +6,6 @@ import enums.ActionType;
 import server.Command;
 import src.ocsf.server.ConnectionToClient;
 
-import commands.LoginCommand;
 
 public class LogoutCommand implements Command {
 
