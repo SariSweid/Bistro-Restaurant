@@ -45,11 +45,17 @@ public class RestaurantSettingsController {
     }
 
     /**
-     * Retrieves the current restaurant settings object.
-     * @return the RestaurantSettings instance.
+     * Retrieves the current restaurant settings from the database.
+     * Fetches both the weekly opening hours and special dates, ensuring
+     * the returned object is up-to-date with the database.
+     *
+     * @return a RestaurantSettings object populated with data from the DB.
      */
     public RestaurantSettings getRestaurantSettings() {
-        return restaurantSettings;
+        RestaurantSettings settings = new RestaurantSettings();
+        settings.setWeeklyOpeningHours(dao.getAllWeeklyOpeningHours());
+        settings.setSpecialDates(SPdao.getAllSpecialDates());
+        return settings;
     }
 
     /**

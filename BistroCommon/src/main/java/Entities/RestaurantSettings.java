@@ -42,7 +42,7 @@ public class RestaurantSettings implements Serializable {
      * Private constructor to prevent direct instantiation.
      * Initializes the weekly opening hours and special dates lists.
      */
-    private RestaurantSettings() {
+    public RestaurantSettings() {
         this.weeklyOpeningHours = new ArrayList<>();
         this.specialDates = new ArrayList<>();
     }
