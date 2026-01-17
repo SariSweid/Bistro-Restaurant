@@ -40,9 +40,14 @@ public class WeeklyWaitingListHandler implements ResponseHandler {
             @SuppressWarnings("unchecked")
             List<WaitingListEntry> list = (List<WaitingListEntry>) data;
 
+           
+            List<WaitingListEntry> filteredList = list.stream()
+                    .filter(entry -> entry.getStatus() == null)
+                    .toList(); 
+
             Platform.runLater(() -> {
                 controller.getWaitingListTable().getItems().clear();
-                controller.getWaitingListTable().getItems().addAll(list);
+                controller.getWaitingListTable().getItems().addAll(filteredList);
             });
 
         } else {
@@ -54,4 +59,5 @@ public class WeeklyWaitingListHandler implements ResponseHandler {
             });
         }
     }
+
 }

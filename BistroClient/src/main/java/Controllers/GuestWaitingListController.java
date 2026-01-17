@@ -208,7 +208,7 @@ public class GuestWaitingListController extends BaseDisplayController implements
      * @return true if it contains only digits (and optional +), false otherwise
      */
     private boolean isPhoneNumber(String input) {
-        return input.matches("\\+?\\d+");
+    	return input.matches("\\+?\\d{3}-?\\d+");
     }
 
     /**

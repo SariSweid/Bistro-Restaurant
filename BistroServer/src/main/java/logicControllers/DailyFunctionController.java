@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * A background watchdog controller that implements Runnable to perform periodic system tasks.
+ * A background  controller that implements Runnable to perform periodic system tasks.
  * It automates the lifecycle of reservations and waiting lists, including marking no-shows,
  * seating customers from the waiting list when tables become free, and auto-generating bills
  * for completed dining sessions.
@@ -54,7 +54,7 @@ public class DailyFunctionController implements Runnable {
     private final TableController tableController = new TableController();
 
     /**
-     * Starts the background watchdog thread if it is not already running.
+     * Starts the background  thread if it is not already running.
      */
     public void start() {
         if (!isRunning) {
@@ -66,7 +66,7 @@ public class DailyFunctionController implements Runnable {
     }
 
     /**
-     * Stops the background watchdog thread.
+     * Stops the background  thread.
      */
     public void stop() {
         isRunning = false;
