@@ -27,6 +27,7 @@ public class Reservation implements Serializable {
     private LocalTime expectedDepartureTime;
     private LocalTime actualArrivalTime;
     private boolean isNotified;
+    private boolean PaymentReminderSent;
 
     /**
      * Constructs a new Reservation for a customer.
@@ -346,4 +347,15 @@ public class Reservation implements Serializable {
     public void setNotified(boolean notified) {
         this.isNotified = notified;
     }
+
+	public void setPaymentReminderSent(boolean b) {
+		this.PaymentReminderSent = b;	
+		System.out.println("[Reservation] setPaymentReminderSent called for ID " + reservationID + " -> " + b);
+	}
+	
+	public boolean isPaymentReminderSent() {
+		System.out.println("[Reservation] setPaymentReminderSent called for ID " + reservationID + " -> " + PaymentReminderSent);
+		return PaymentReminderSent;
+	}
+	
 }

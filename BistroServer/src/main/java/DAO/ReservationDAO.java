@@ -29,7 +29,8 @@ public class ReservationDAO extends DBController {
         Connection con = getConnection();
 
         try (PreparedStatement pst = con.prepareStatement(
-                "UPDATE reservation SET reservationDate = ?, reservationTime = ?, numOfGuests = ?, status = ?, tableID = ?, actualarrivaltime = COALESCE(?, actualarrivaltime), departuretiime = ? WHERE reservationID = ?"
+        		"UPDATE reservation SET reservationDate = ?, reservationTime = ?, numOfGuests = ?, status = ?, tableID = ?, actualarrivaltime = COALESCE(?, actualarrivaltime), departuretiime = ?, paymentReminderSent = ? WHERE reservationID = ?"
+
             )) {
             pst.setDate(1, Date.valueOf(reservation.getReservationDate()));
             pst.setTime(2, Time.valueOf(reservation.getReservationTime()));
@@ -53,8 +54,8 @@ public class ReservationDAO extends DBController {
             } else {
                 pst.setNull(7, java.sql.Types.TIME);
             }
-
-            pst.setInt(8, reservation.getReservationID());
+            pst.setBoolean(8, reservation.isPaymentReminderSent());
+            pst.setInt(9, reservation.getReservationID());
 
             int rows = pst.executeUpdate();
             return rows > 0;
@@ -406,8 +407,9 @@ public class ReservationDAO extends DBController {
 
 	        ResultSet rs = pst.executeQuery();
 	        while (rs.next()) {
-	        		boolean notified = rs.getInt("isNotified") == 1;
-	            list.add(new Reservation(
+	            boolean notified = rs.getInt("isNotified") == 1;
+	            boolean paymentReminderSent = rs.getBoolean("paymentReminderSent"); // <-- כאן
+	            Reservation r = new Reservation(
 	                rs.getInt("reservationID"),
 	                rs.getInt("customerID"),
 	                rs.getInt("TableId"),
@@ -420,13 +422,18 @@ public class ReservationDAO extends DBController {
 	                rs.getTime("reservationPlacedTime").toLocalTime(),
 	                enums.ReservationStatus.valueOf(rs.getString("status")),
 	                notified
-	            ));
+	            );
+
+	            r.setPaymentReminderSent(paymentReminderSent); // <-- כאן
+
+	            list.add(r);
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
 	    return list;
 	}
+
 	
     /**
      * Reads every reservation record in the database.

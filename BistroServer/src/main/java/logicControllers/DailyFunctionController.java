@@ -1,3 +1,4 @@
+// DailyFunctionController.java
 package logicControllers;
 
 import DAO.BillDAO;
@@ -15,68 +16,32 @@ import util.PaymentResult;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * A background  controller that implements Runnable to perform periodic system tasks.
- * It automates the lifecycle of reservations and waiting lists, including marking no-shows,
- * seating customers from the waiting list when tables become free, and auto-generating bills
- * for completed dining sessions.
- */
 public class DailyFunctionController implements Runnable {
 
-    /** The interval at which the controller performs its checks (set to 1 minute). */
     private static final int CHECK_INTERVAL_MS = 60 * 1000;
-    
-    /** Synchronization lock for thread-safe operations within the run loop. */
     private static final Object lock = new Object();
-
-    /** Flag indicating whether the background thread is currently active. */
     private boolean isRunning = false;
-    
-    /** The actual thread executing the periodic tasks. */
     private Thread workerThread;
 
-    /** DAO for managing reservation data. */
     private final ReservationDAO reservationDAO = new ReservationDAO();
-    
-    /** DAO for managing physical table statuses. */
     private final TableDAO tableDAO = new TableDAO();
-    
-    /** DAO for managing bill and payment records. */
-	private final BillDAO billDAO = new BillDAO();
-	
-    /** DAO for managing waiting list entries. */
+    private final BillDAO billDAO = new BillDAO();
     private final WaitingListDAO waitingListDAO = new WaitingListDAO();
-    
-    /** Controller used to process payments and handle subscriber discounts. */
     private final PaymentController paymentController = new PaymentController();
-    
-    /** Controller used to retrieve and manage table state. */
     private final TableController tableController = new TableController();
 
-    /**
-     * Starts the background  thread if it is not already running.
-     */
     public void start() {
         if (!isRunning) {
             isRunning = true;
             workerThread = new Thread(this, "DailyFunctionWatchdog");
             workerThread.start();
-            System.out.println("DailyFunctionController started");
         }
     }
 
-    /**
-     * Stops the background  thread.
-     */
     public void stop() {
         isRunning = false;
-        System.out.println("DailyFunctionController stopped");
     }
 
-    /**
-     * The main execution loop of the controller. 
-     * Periodically triggers maintenance tasks every minute while the controller is running.
-     */
     @Override
     public void run() {
         while (isRunning) {
@@ -85,25 +50,17 @@ public class DailyFunctionController implements Runnable {
                     handleNoShows();
                     handleWaitingList();
                     cancelExpiredWaitingListEntries();
-                    handleBillGeneration();
+                    handleSeatedReservations();
                 }
-
                 Thread.sleep(CHECK_INTERVAL_MS);
-
             } catch (InterruptedException e) {
                 isRunning = false;
             } catch (Exception e) {
-                System.err.println(" Error: " + e.getMessage());
                 e.printStackTrace();
             }
         }
     }
 
-    /**
-     * Identifies confirmed reservations where the customer failed to arrive.
-     * If a customer is more than 15 minutes late, the reservation is marked as NOT_SHOWED
-     * and the assigned table is released.
-     */
     private void handleNoShows() {
         List<Reservation> reservations = reservationDAO.readAllReservations();
         LocalDateTime now = LocalDateTime.now();
@@ -132,11 +89,6 @@ public class DailyFunctionController implements Runnable {
         }
     }
 
-    /**
-     * Checks the waiting list for the next eligible entry and attempts to seat them.
-     * It simulates the current restaurant capacity to see if a suitable table is available
-     * for the waiting group at their requested time.
-     */
     private void handleWaitingList() {
         WaitingListEntry entry = waitingListDAO.getNextWaitingEntry();
         if (entry == null) return;
@@ -166,9 +118,8 @@ public class DailyFunctionController implements Runnable {
         }
 
         if (!canSeat) return;
-        
-        Integer uid = entry.getUserID();
 
+        Integer uid = entry.getUserID();
         Reservation reservation = new Reservation(
                 0,
                 uid == null ? 0 : uid,
@@ -184,66 +135,71 @@ public class DailyFunctionController implements Runnable {
         waitingListDAO.updateExitReasonByConfirmationCode(entry.getConfirmationCode(), ExitReason.SEATED);
     }
 
-    /**
-     * Cancels any waiting list entries whose requested time has already passed 
-     * without them being seated.
-     */
     private void cancelExpiredWaitingListEntries() {
-        List<WaitingListEntry> waitingList =
-                waitingListDAO.getWaitingEntriesWithoutExitReason();
-
+        List<WaitingListEntry> waitingList = waitingListDAO.getWaitingEntriesWithoutExitReason();
         LocalDateTime now = LocalDateTime.now();
 
         for (WaitingListEntry entry : waitingList) {
-            LocalDateTime entryDateTime =
-                    LocalDateTime.of(entry.getWaitDate(), entry.getWaitTime());
-
+            LocalDateTime entryDateTime = LocalDateTime.of(entry.getWaitDate(), entry.getWaitTime());
             if (entryDateTime.isBefore(now)) {
-                waitingListDAO.updateExitReasonByConfirmationCode(
-                        entry.getConfirmationCode(),
-                        ExitReason.CANCELLED
-                );
+                waitingListDAO.updateExitReasonByConfirmationCode(entry.getConfirmationCode(), ExitReason.CANCELLED);
             }
         }
     }
 
-    /**
-     * Automatically handles the transition from SEATED to COMPLETED.
-     * If a group has been seated for more than 2 hours, the system generates a random bill,
-     * processes the payment via PaymentController, and marks the reservation as completed.
-     */
-    private void handleBillGeneration() {
+    private void handleSeatedReservations() {
         List<Reservation> reservations = reservationDAO.readAllReservations();
         LocalDateTime now = LocalDateTime.now();
 
-        for (Reservation r : reservations) {
-            if (r.getStatus() != ReservationStatus.SEATED ||
-                r.getActualArrivalTime() == null ||
-                r.getBillID() != null)
-                
-                continue;
+        System.out.println("[handleSeatedReservations] Checking " + reservations.size() + " reservations at " + now);
 
-            LocalDateTime arrivalDateTime =
-                    LocalDateTime.of(r.getReservationDate(), r.getActualArrivalTime());
+        for (Reservation r : reservations) {
+            System.out.println("[handleSeatedReservations] Reservation ID: " + r.getReservationID() +
+                               ", status: " + r.getStatus() +
+                               ", actualArrivalTime: " + r.getActualArrivalTime());
+
+            if (r.getStatus() != ReservationStatus.SEATED || r.getActualArrivalTime() == null) {
+                System.out.println("[handleSeatedReservations] Skipping reservation, not SEATED or no arrival time");
+                continue;
+            }
+
+            LocalDateTime arrivalDateTime = LocalDateTime.of(r.getReservationDate(), r.getActualArrivalTime());
 
             if (now.isAfter(arrivalDateTime.plusHours(2))) {
-            	
+                System.out.println("[handleSeatedReservations] Reservation ID " + r.getReservationID() + " passed 2 hours, generating bill and completing");
+
+                r.setPaymentReminderSent(true);
+                System.out.println("[handleSeatedReservations] Payment reminder flag set to true");
+
                 Bill bill = new Bill(0, r.getReservationID(), generateRandomAmount());
                 PaymentResult result = paymentController.addPayment(bill);
-
                 if (result.isSuccess() && result.getBill() != null) {
                     r.setBillID(result.getBill().getBillID());
-                    r.setStatus(ReservationStatus.COMPLETED);
-                    reservationDAO.updateReservation(r);
+                    System.out.println("[handleSeatedReservations] Bill created with ID: " + r.getBillID());
                 }
+
+                r.setStatus(ReservationStatus.COMPLETED);
+                System.out.println("[handleSeatedReservations] Status set to COMPLETED");
+
+                if (r.getTableID() != null) {
+                    Table table = tableDAO.GetTable(r.getTableID());
+                    if (table != null) {
+                        table.release();
+                        tableDAO.UpdateTable(table);
+                        System.out.println("[handleSeatedReservations] Table " + table.getTableID() + " released");
+                    }
+                    r.setTableID(null);
+                }
+
+                reservationDAO.updateReservation(r);
+                System.out.println("[handleSeatedReservations] Reservation updated in database");
+            } else {
+                System.out.println("[handleSeatedReservations] Reservation ID " + r.getReservationID() + " has not yet reached 2 hours");
             }
         }
     }
 
-    /**
-     * Generates a random bill amount between 100.0 and 1000.0.
-     * @return A double representing the simulated bill total, rounded to two decimal places.
-     */
+
     private double generateRandomAmount() {
         double amount = 100 + Math.random() * 900;
         return Math.round(amount * 100.0) / 100.0;
