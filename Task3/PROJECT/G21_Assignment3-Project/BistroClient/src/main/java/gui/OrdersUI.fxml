@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="400" prefWidth="500" style="-fx-background-color: #f5f5dc;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.OrderController">
+
+	<children>
+		<VBox spacing="10" style="-fx-background-color: #f5f5dc;" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10">
+
+			<!-- Title -->
+			<Label style="-fx-font-size: 18px; -fx-font-weight:bold;" text="Your Reservations" />	
+			
+            <TableView fx:id="reservationsTable" prefHeight="250">
+                <columns>
+                    <TableColumn fx:id="idColumn" prefWidth="87" text="ID" />
+                    <TableColumn fx:id="dateColumn" prefWidth="87" text="Date" />
+                    <TableColumn fx:id="guestsColumn" prefWidth="87" text="Guests" />
+					<TableColumn fx:id="confirmationCodeColumn" prefWidth="217" text="Confirmation Code" />
+                                
+                </columns>
+            </TableView>
+
+            <HBox spacing="10">
+                        
+                <Button onAction="#onPreviousPage" prefWidth="100" style="-fx-background-radius: 15;" text="Previous page" />
+                       
+            </HBox>
+
+		</VBox>
+	</children>
+
+</AnchorPane>
