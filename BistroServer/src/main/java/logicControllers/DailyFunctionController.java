@@ -227,6 +227,7 @@ public class DailyFunctionController implements Runnable {
                     LocalDateTime.of(r.getReservationDate(), r.getActualArrivalTime());
 
             if (now.isAfter(arrivalDateTime.plusHours(2))) {
+            	
                 Bill bill = new Bill(0, r.getReservationID(), generateRandomAmount());
                 PaymentResult result = paymentController.addPayment(bill);
 

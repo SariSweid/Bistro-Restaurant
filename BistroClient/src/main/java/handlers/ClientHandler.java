@@ -27,7 +27,6 @@ import enums.UserRole;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import messages.AddReservationRequest;
 import messages.AddSpecialDateRequest;
 import messages.AddToWaitingListRequest;
@@ -360,7 +359,8 @@ public class ClientHandler extends AbstractClient {
         });
 
         handlers.put(ActionType.DELETE_TABLE, (data) -> {
-            ServerResponse resp = (ServerResponse) data;
+            @SuppressWarnings("unused")
+			ServerResponse resp = (ServerResponse) data;
             Platform.runLater(() -> {
                 tablesController.reloadTables();
             });
@@ -755,6 +755,8 @@ public class ClientHandler extends AbstractClient {
     public AvailableTimesListener getAvailableTimesListener() {
         return availableTimesListener;
     }
-
+    
+    
+  
 }
 

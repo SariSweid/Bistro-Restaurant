@@ -59,6 +59,21 @@ public class SubscriberController extends BaseReservationController {
         
         // Request reservations from the server to check for notifications
         ClientHandler.getClient().getUserReservations(userId);
+        
+        // Start a background thread to check for the 2-hour limit every 2 minutes
+        Thread refreshThread = new Thread(() -> {
+            try {
+                while (true) {
+                    Thread.sleep(120000); // Wait 2 minutes
+                    // This call triggers onReservationsReceived when the server responds
+                    ClientHandler.getClient().getUserReservations(userId);
+                }
+            } catch (InterruptedException e) {
+                System.out.println("Refresh thread stopped.");
+            }
+        });
+        refreshThread.setDaemon(true); // Thread dies the app closed
+        refreshThread.start();
     }
     
     /**
@@ -147,18 +162,44 @@ public class SubscriberController extends BaseReservationController {
         return userId;
     }
     
+    
+    private boolean paymentAlertShown = false;
     /**
      * Handles reservations received from the server.
      * Checks for cancelled reservations that the subscriber has not been notified about
      * and shows a cancellation popup if needed.
+     * also, checks if payed, or show reminder popup
      * 
      * @param reservations the list of reservations received from the server
      */
     public void onReservationsReceived(List<Reservation> reservations) {
+    		// Logic for system cancellations
         for (Reservation res : reservations) {
+        	
+        		// Logic for system cancellations
             if (res.getStatus() == enums.ReservationStatus.CANCELLED && !res.isNotified()) {
                 showCancellationPopup(res);
                 break;
+            }
+            
+            // Logic for reservation time > 2 hours
+            if (res.getStatus() == enums.ReservationStatus.SEATED && !paymentAlertShown) {
+                java.time.LocalTime now = java.time.LocalTime.now();
+                // Use Arrival Time if available, otherwise use Reservation Time
+                java.time.LocalTime startTime = (res.getActualArrivalTime() != null) 
+                                                 ? res.getActualArrivalTime() 
+                                                 : res.getReservationTime();
+
+                // If current time is after (Start Time + 2 Hours)
+                if (now.isAfter(startTime.plusHours(2))) {
+                		paymentAlertShown = true; // Prevents the popup from showing again
+                    showPaymentReminderPopup(res);
+                }
+            }
+            
+            // Reset the flag if reservation paid
+            if (res.getStatus() == enums.ReservationStatus.COMPLETED) {
+                paymentAlertShown = false;
             }
         }
     }
@@ -179,6 +220,31 @@ public class SubscriberController extends BaseReservationController {
             
             // Notify server that the user has been informed
             ClientHandler.getClient().markReservationAsNotified(res.getReservationID());
+        });
+    }
+    
+    /**
+     * Displays a reminder popup for reservation that haven't been payed
+     * 
+     * @param res the seated reservation
+     */
+    private void showPaymentReminderPopup(Reservation res) {
+        javafx.application.Platform.runLater(() -> {
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Dining Update");
+            alert.setHeaderText("Time to Settle the Bill");
+            alert.setContentText("You have been seated for over 2 hours. Would you like to pay now through the application?");
+
+            javafx.scene.control.ButtonType payNow = new javafx.scene.control.ButtonType("Pay Now");
+            javafx.scene.control.ButtonType later = new javafx.scene.control.ButtonType("Later", javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE);
+            
+            alert.getButtonTypes().setAll(payNow, later);
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response == payNow) {
+                    onDisplayOrders(); // Navigates them to their orders/payment screen
+                }
+            });
         });
     }
 }
