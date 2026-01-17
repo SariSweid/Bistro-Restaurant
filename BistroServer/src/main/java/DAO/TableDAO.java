@@ -398,46 +398,56 @@ public class TableDAO extends DBController {
      * @return A List of Reservation objects that are now invalid.
      */
 	public List<Reservation> getAffectedReservations(int tableId, int newCapacity, boolean isDeletion) {
-	    List<Reservation> affected = new ArrayList<>();
-	    int capacityToCheck = isDeletion ? 0 : newCapacity;
-
-	    // 1. First, FIND them to return the list for the popup
-	    String selectQuery = "SELECT * FROM reservation WHERE status NOT IN ('CANCELLED', 'COMPLETED') " +
-	                         "AND reservationDate >= CURDATE() AND numOfGuests > ?";
-
-	    // 2. Second, UPDATE them to 'CANCELLED' in the database
-	    String updateQuery = "UPDATE reservation SET status = 'CANCELLED', isNotified = 0 " +
-	                         "WHERE status NOT IN ('CANCELLED', 'COMPLETED') " +
-	                         "AND reservationDate >= CURDATE() AND numOfGuests > ?";
-
+	    List<Reservation> trulyAffected = new ArrayList<>();
+	    
+	    // Get all confirmed reservations where TableId IS NULL
+	    String findQuery = "SELECT * FROM reservation WHERE TableId IS NULL " +
+	                       "AND status = 'CONFIRMED' AND reservationDate >= CURDATE()";
+	    
 	    try (Connection con = getConnection()) {
 	        con.setAutoCommit(false); // Use a transaction for safety
 
-	        try (PreparedStatement selectPst = con.prepareStatement(selectQuery);
-	             PreparedStatement updatePst = con.prepareStatement(updateQuery)) {
-	            
-	            // Set params for Select
-	            selectPst.setInt(1, capacityToCheck);
-	            ResultSet rs = selectPst.executeQuery();
-	            while (rs.next()) {
-	                affected.add(mapResultSetToReservation(rs));
-	            }
-
-	            // Set params for Update - THIS changes the database!
-	            updatePst.setInt(1, capacityToCheck);
-	            updatePst.executeUpdate();
-
-	            con.commit(); // Save changes
-	        } catch (SQLException e) {
-	            con.rollback();
-	            throw e;
+	        // Temporarily mark this table as unavailable
+	        try (PreparedStatement pstHide = con.prepareStatement("UPDATE `table` SET IsAvailable = 0 WHERE TableId = ?")) {
+	            pstHide.setInt(1, tableId);
+	            pstHide.executeUpdate();
 	        }
+
+	        List<Reservation> floatingReservations = new ArrayList<>();
+	        try (PreparedStatement pst = con.prepareStatement(findQuery)) {
+	            ResultSet rs = pst.executeQuery();
+	            while (rs.next()) {
+	                floatingReservations.add(mapResultSetToReservation(rs));
+	            }
+	        }
+
+	        // Check availability
+	        for (Reservation res : floatingReservations) {
+	            // Because we set IsAvailable=0 above, this method won't see the current table
+	            Table altTable = getAvailableTableAtTime(res.getNumOfGuests(), res.getReservationDate(), res.getReservationTime());
+
+	            if (altTable == null) {
+	                // No other table can take them
+	                cancelReservation(con, res.getReservationID());
+	                trulyAffected.add(res);
+	            }
+	        }
+	        
+	        con.commit(); // Save the cancellations
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
-	    return affected;
+	    return trulyAffected;
 	}
 	
+
+	private void cancelReservation(Connection con, int resId) throws SQLException {
+	    String sql = "UPDATE reservation SET status = 'CANCELLED', isNotified = 0, TableId = NULL WHERE reservationID = ?";
+	    try (PreparedStatement pst = con.prepareStatement(sql)) {
+	        pst.setInt(1, resId);
+	        pst.executeUpdate();
+	    }
+	}
 	
 	/**
      * Helper method to map a single row from a ResultSet into a Reservation object.

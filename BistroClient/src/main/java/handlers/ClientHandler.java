@@ -341,7 +341,6 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.FORGOT_CODE, new ForgotCodeHandler());
         handlers.put(ActionType.SEAT_CUSTOMER, new SeatCustomerHandler());
         handlers.put(ActionType.GET_ALL_TABLES, new GetAllTablesHandler());
-        handlers.put(ActionType.INSERT_TABLE, new InsertTableHandler());
         handlers.put(ActionType.GET_REPORT, new ReportHandler(null));
         handlers.put(ActionType.GET_WAITING_LIST_BETWEEN_DATES, new WeeklyWaitingListHandler(null));
         handlers.put(ActionType.ADD_TO_WAITING_LIST, new AddWaitingHandler());
@@ -350,6 +349,12 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.REMOVE_OPENING_HOURS, new DeleteOpeningHoursHandler());
         handlers.put(ActionType.MARK_NOTIFIED, new MarkNotifiedHandler());
         
+        handlers.put(ActionType.INSERT_TABLE, (data) -> {
+            ServerResponse resp = (ServerResponse) data;
+            Platform.runLater(() -> {
+                tablesController.reloadTables();
+            });
+        });
         handlers.put(ActionType.UPDATE_TABLE, (data) -> {
             ServerResponse resp = (ServerResponse) data;
             Platform.runLater(() -> {
@@ -357,15 +362,13 @@ public class ClientHandler extends AbstractClient {
                 tablesController.reloadTables();
             });
         });
-
         handlers.put(ActionType.DELETE_TABLE, (data) -> {
             @SuppressWarnings("unused")
 			ServerResponse resp = (ServerResponse) data;
             Platform.runLater(() -> {
                 tablesController.reloadTables();
             });
-        });
-        
+        });   
         handlers.put(ActionType.RESERVATION_AFFECTED_BY_TABLE, (data) -> {
             String report = (String) data;
             Platform.runLater(() -> {

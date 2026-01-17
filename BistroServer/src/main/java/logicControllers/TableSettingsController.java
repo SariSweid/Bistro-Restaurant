@@ -80,10 +80,6 @@ public class TableSettingsController {
         report.append("\n");
 
         for (Entities.Reservation res : affected) {
-            // NOTE: We do NOT call db.unassignAndFlagReservation() here.
-            // Because the TableId was never assigned, we don't want to cancel the 
-            // whole reservation yet—we just want to warn the Supervisor.
-            
             report.append("• ").append(res.getReservationDate())
                   .append(" | #").append(res.getConfirmationCode())
                   .append(" (").append(res.getNumOfGuests()).append(" guests)\n");
