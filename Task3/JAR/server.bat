@@ -1,0 +1,2 @@
+cd /d "C:\" && java -Djava.library.path="G21_Server_lib" --module-path "G21_Server_lib" --add-modules javafx.controls,javafx.fxml,javafx.graphics -cp "G21_Server.jar;BistroCommon.jar;G21_Server_lib/*" server.ServerApp
+pause

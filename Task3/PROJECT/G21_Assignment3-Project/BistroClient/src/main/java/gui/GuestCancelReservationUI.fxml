@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox spacing="10" alignment="CENTER" xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.GuestCancelReservationController">
+    <Label text="Enter your reservation confirmation code:" />
+    <TextField fx:id="confirmationCodeField" promptText="Confirmation code" />
+    <Button text="Cancel Reservation" onAction="#onSubmitCancel"/>
+    <Button text="Close" onAction="#onClose"/>
+</VBox>
+

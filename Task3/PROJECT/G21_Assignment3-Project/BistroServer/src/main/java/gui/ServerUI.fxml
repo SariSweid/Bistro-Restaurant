@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="300" prefWidth="400" style="-fx-background-color: #f5f5dc;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="server.ServerUIController">
+
+    <!-- Title Label -->
+    <Label layoutX="20" layoutY="20" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Connected Clients" />
+
+    <!-- ListView for client info -->
+    <ListView fx:id="clientsListView" layoutX="20" layoutY="60" prefHeight="180" prefWidth="360" />
+
+    <!-- Status Label -->
+    <Label fx:id="statusLabel" layoutX="20" layoutY="260" text="Status: Waiting for clients..." />
+
+</AnchorPane>
