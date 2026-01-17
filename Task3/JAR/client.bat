@@ -1,2 +1,2 @@
-cd /d "C:\" && java -Djava.library.path="G21_Client_lib" --module-path "G21_Client_lib" --add-modules javafx.controls,javafx.fxml,javafx.graphics -cp "G21_Client.jar;BistroCommon.jar;G21_Client_lib/*" client.MainMenuApp 10.118.187.36
+cd /d "C:\" && java -Djava.library.path="G21_Client_lib" --module-path "G21_Client_lib" --add-modules javafx.controls,javafx.fxml,javafx.graphics -cp "G21_Client.jar;BistroCommon.jar;G21_Client_lib/*" client.MainMenuApp 10.100.102.33
 pause
