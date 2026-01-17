@@ -77,7 +77,7 @@ public class ReservationDAO extends DBController {
         List<Reservation> result = new ArrayList<>();
 
         for (Reservation r : allReservations) {
-            if (r.getStatus() == ReservationStatus.CONFIRMED &&
+            if (r.getStatus() == ReservationStatus.CONFIRMED || r.getStatus() == ReservationStatus.SEATED &&
                 r.getReservationDate().equals(date) &&
                 r.getReservationTime().equals(time)) {
                 result.add(r);
