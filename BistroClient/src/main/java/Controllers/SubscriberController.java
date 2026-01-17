@@ -113,7 +113,7 @@ public class SubscriberController extends BaseReservationController {
                                ", status: " + res.getStatus() +
                                ", paymentReminderSent: " + res.isPaymentReminderSent());
 
-            // Show cancellation popup if needed
+            // Show cancellation popup if needed.
             if (res.getStatus() == enums.ReservationStatus.CANCELLED && !res.isNotified()) {
                 System.out.println("[onReservationsReceived] Reservation CANCELLED and not notified, showing popup");
                 showCancellationPopup(res);
