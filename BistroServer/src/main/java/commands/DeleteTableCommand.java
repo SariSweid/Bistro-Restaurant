@@ -19,12 +19,14 @@ public class DeleteTableCommand implements Command {
     public void execute(Object data, ConnectionToClient client) {
         DeleteTableRequest req = (DeleteTableRequest) data;
 
-        // Check for affected reservations and update them
-        // We pass 0 for capacity and true for isDeletion
-        String conflictReport = controller.handleConflicts(req.getTableId(), 0, true);
+
 
         // Proceed with physical deletion from the database
         boolean success = controller.deleteTable(req.getTableId());
+        
+        // Check for affected reservations and update them
+        // We pass 0 for capacity and true for isDeletion
+        String conflictReport = controller.handleConflicts(req.getTableId(), 0, true);
 
         ServerResponse response = new ServerResponse(
             success,

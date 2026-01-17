@@ -39,14 +39,14 @@ import java.sql.SQLException;
 		    	
 		    	
 		            if (conn == null || conn.isClosed()) {	                
-		                conn = DriverManager.getConnection(
-		                    "jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false&allowPublicKeyRetrieval=true",
-		                    "root",
-		                    "sare1020"
-		                ); 
+//		                conn = DriverManager.getConnection(
+//		                    "jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false&allowPublicKeyRetrieval=true",
+//		                    "root",
+//		                    "sare1020"
+//		                ); 
 		            }
 	
-		              //conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
+		              conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Root1234"); //leon -db
 		                //conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant_main?serverTimezone=Asia/Jerusalem&useSSL=false","root","Vrek2logos@"); //tamer
 		                System.out.println("SQL connection initialized");	               	                	                
 		            lastUsed = System.currentTimeMillis();

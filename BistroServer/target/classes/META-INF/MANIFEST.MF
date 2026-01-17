@@ -1,10 +1,5 @@
 Manifest-Version: 1.0
-<<<<<<< HEAD
-Built-By: Admin
-Build-Jdk: 21.0.9
-=======
 Built-By: ADMIN
 Build-Jdk: 21.0.8
->>>>>>> branch 'main' of https://github.com/yarin8294/Project.git
 Created-By: Maven Integration for Eclipse
 
