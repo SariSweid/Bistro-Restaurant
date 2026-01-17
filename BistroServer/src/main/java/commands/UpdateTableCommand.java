@@ -1,8 +1,6 @@
 package commands;
 
-import common.Message;
 import common.ServerResponse;
-import enums.ActionType;
 import logicControllers.TableSettingsController;
 import messages.UpdateTableRequest;
 import server.Command;
@@ -34,19 +32,32 @@ public class UpdateTableCommand implements Command {
         // Cast the incoming data to the specific request type
         UpdateTableRequest req = (UpdateTableRequest) data;
 
+        System.out.println("DEBUG 1: Starting Conflict Check...");
+        // This finds the people who had more seats than the new updates ones
+        String conflictReport = controller.handleConflicts(req.getTableId(), req.getSeats(), false);
         // Attempt to update the table through the controller
+        System.out.println("DEBUG 2: Conflict Report is: " + (conflictReport == null ? "NULL" : "GENERATED"));
         boolean success = controller.updateTable(req.getTableId(), req.getSeats());
 
-        // Construct a response based on the outcome of the update
-        ServerResponse response = new ServerResponse(
-            success,
-            null,
-            success ? "Table updated." : "Failed to update table."
-        );
+        ServerResponse response = new common.ServerResponse(
+                success, 
+                null, 
+                success ? "Table updated." : "Update failed."
+            );
 
         try {
-            // Wrap the response in a Message object and send it to the client
-            client.sendToClient(new Message(ActionType.UPDATE_TABLE, response));
+            synchronized(client) {
+                // Always send the Update result first
+                client.sendToClient(new common.Message(enums.ActionType.UPDATE_TABLE, response));
+                
+                // Only send the conflict report if it exists
+                if (success && conflictReport != null) {
+                    
+                    Thread.sleep(50); 
+                    System.out.println("DEBUG 3: Sending Conflict Message...");
+                    client.sendToClient(new common.Message(enums.ActionType.RESERVATION_AFFECTED_BY_TABLE, conflictReport));
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -24,25 +24,26 @@ public class LogoutCommand implements Command {
      */
     @Override
     public void execute(Object data, ConnectionToClient client) {
-        try {
-            // Retrieve the stored userID from the connection session
-            Integer userID = (Integer) client.getInfo("userID");
+    	try {
+            // Use the key exactly as it was set in LoginCommand
+            Object sessionID = client.getInfo("userID");
             
-            if (userID != null) {
-                // Remove user from the global logged-in users tracking
+            if (sessionID != null) {
+                int userID = (int) sessionID;
+                
+                // This is the CRITICAL call to clear the ConcurrentHashMap
                 LoginCommand.logoutUser(userID);
                 
-                // Clear session attributes to prevent unauthorized access
                 client.setInfo("user", null);
                 client.setInfo("userID", null);
                 
-                System.out.println("DEBUG: User " + userID + " logged out");
+                System.out.println("DEBUG: User " + userID + " logged out successfully.");
+            } else {
+                System.out.println("DEBUG: Logout failed - No userID found in session info.");
             }
 
-            // Construct and send the success response
-            Message response = new Message(ActionType.LOGOUT,
-                    new ServerResponse(true, "Logout successful", null));
-            client.sendToClient(response);
+            client.sendToClient(new Message(ActionType.LOGOUT,
+                    new ServerResponse(true, null, "Logout successful")));
 
         } catch (Exception e) {
             e.printStackTrace();

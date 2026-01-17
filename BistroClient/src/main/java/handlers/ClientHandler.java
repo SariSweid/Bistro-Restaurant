@@ -19,10 +19,15 @@ import Entities.User;
 import Entities.WeeklyOpeningHours;
 import client.GuestUpdateReservationUI;
 import common.Message;
+import common.ServerResponse;
 import enums.ActionType;
 import enums.ReportType;
 import enums.ReservationStatus;
 import enums.UserRole;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import messages.AddReservationRequest;
 import messages.AddSpecialDateRequest;
 import messages.AddToWaitingListRequest;
@@ -338,8 +343,6 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.SEAT_CUSTOMER, new SeatCustomerHandler());
         handlers.put(ActionType.GET_ALL_TABLES, new GetAllTablesHandler());
         handlers.put(ActionType.INSERT_TABLE, new InsertTableHandler());
-        handlers.put(ActionType.UPDATE_TABLE, new UpdateTableHandler());
-        handlers.put(ActionType.DELETE_TABLE, new DeleteTableHandler());
         handlers.put(ActionType.GET_REPORT, new ReportHandler(null));
         handlers.put(ActionType.GET_WAITING_LIST_BETWEEN_DATES, new WeeklyWaitingListHandler(null));
         handlers.put(ActionType.ADD_TO_WAITING_LIST, new AddWaitingHandler());
@@ -347,6 +350,32 @@ public class ClientHandler extends AbstractClient {
         handlers.put(ActionType.CREATE_OPENING_HOURS, new CreateOpeningHoursHandler());
         handlers.put(ActionType.REMOVE_OPENING_HOURS, new DeleteOpeningHoursHandler());
         handlers.put(ActionType.MARK_NOTIFIED, new MarkNotifiedHandler());
+        
+        handlers.put(ActionType.UPDATE_TABLE, (data) -> {
+            ServerResponse resp = (ServerResponse) data;
+            Platform.runLater(() -> {
+                tablesController.showInfo(resp.getMessage());
+                tablesController.reloadTables();
+            });
+        });
+
+        handlers.put(ActionType.DELETE_TABLE, (data) -> {
+            ServerResponse resp = (ServerResponse) data;
+            Platform.runLater(() -> {
+                tablesController.reloadTables();
+            });
+        });
+        
+        handlers.put(ActionType.RESERVATION_AFFECTED_BY_TABLE, (data) -> {
+            String report = (String) data;
+            Platform.runLater(() -> {
+                Alert alert = new Alert(AlertType.WARNING);
+                alert.setTitle("Reservations changes");
+                alert.setHeaderText("These reservations have been cancelled due to change in capacity:");
+                alert.setContentText(report);
+                alert.showAndWait();
+            });
+        });
     }
 
     /**
@@ -571,6 +600,11 @@ public class ClientHandler extends AbstractClient {
         sendRequest(new Message(ActionType.MARK_NOTIFIED, reservationId));
     }
 
+    
+    
+    
+    
+    
     /**
      * Handles messages received from server
      */
@@ -586,6 +620,9 @@ public class ClientHandler extends AbstractClient {
         }
     }
 
+    
+    
+    
     /**
      * Returns the active restaurant settings controller
      */
@@ -721,11 +758,3 @@ public class ClientHandler extends AbstractClient {
 
 }
 
-
-
-
-    
-    
-    
-
-    

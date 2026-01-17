@@ -87,8 +87,6 @@ public class TablesController {
 
         try {
             ClientHandler.getClient().updateTable(id, seats);
-            showInfo("Table updated successfully!");
-            reloadTables();
         } catch (Exception e) {
             showError("Failed to update table: " + e.getMessage());
         }

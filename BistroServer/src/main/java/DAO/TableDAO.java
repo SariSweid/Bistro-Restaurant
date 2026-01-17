@@ -387,4 +387,107 @@ public class TableDAO extends DBController {
 		
 		return r; 
 	}
+	
+	
+	/**
+     * Identifies reservations assigned to a specific table that can no longer exist
+     * due to table deletion or a reduction in seating capacity.
+     * * @param tableId     The ID of the modified table.
+     * @param newCapacity The new seat count (ignored if isDeletion is true).
+     * @param isDeletion  True if the table is being removed entirely.
+     * @return A List of Reservation objects that are now invalid.
+     */
+	public List<Reservation> getAffectedReservations(int tableId, int newCapacity, boolean isDeletion) {
+	    List<Reservation> affected = new ArrayList<>();
+	    int capacityToCheck = isDeletion ? 0 : newCapacity;
+
+	    // 1. First, FIND them to return the list for the popup
+	    String selectQuery = "SELECT * FROM reservation WHERE status NOT IN ('CANCELLED', 'COMPLETED') " +
+	                         "AND reservationDate >= CURDATE() AND numOfGuests > ?";
+
+	    // 2. Second, UPDATE them to 'CANCELLED' in the database
+	    String updateQuery = "UPDATE reservation SET status = 'CANCELLED', isNotified = 0 " +
+	                         "WHERE status NOT IN ('CANCELLED', 'COMPLETED') " +
+	                         "AND reservationDate >= CURDATE() AND numOfGuests > ?";
+
+	    try (Connection con = getConnection()) {
+	        con.setAutoCommit(false); // Use a transaction for safety
+
+	        try (PreparedStatement selectPst = con.prepareStatement(selectQuery);
+	             PreparedStatement updatePst = con.prepareStatement(updateQuery)) {
+	            
+	            // Set params for Select
+	            selectPst.setInt(1, capacityToCheck);
+	            ResultSet rs = selectPst.executeQuery();
+	            while (rs.next()) {
+	                affected.add(mapResultSetToReservation(rs));
+	            }
+
+	            // Set params for Update - THIS changes the database!
+	            updatePst.setInt(1, capacityToCheck);
+	            updatePst.executeUpdate();
+
+	            con.commit(); // Save changes
+	        } catch (SQLException e) {
+	            con.rollback();
+	            throw e;
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return affected;
+	}
+	
+	
+	/**
+     * Helper method to map a single row from a ResultSet into a Reservation object.
+     * * @param rs The ResultSet positioned at the desired row.
+     * @return A fully populated Reservation entity.
+     * @throws SQLException If database access error occurs.
+     */
+	private Reservation mapResultSetToReservation(ResultSet rs) throws SQLException {
+	    int reservationID = rs.getInt("reservationID");
+	    Date reservationDate = rs.getDate("reservationDate"); 
+	    Time reservationTime = rs.getTime("reservationTime");
+	    int numOfGuests = rs.getInt("numOfGuests");
+	    int confirmation_code = rs.getInt("confirmationCode");
+	    
+	    // Convert status string to Enum
+	    enums.ReservationStatus status = enums.ReservationStatus.valueOf(rs.getString("status"));
+	    
+	    int customerID = rs.getInt("customerID");
+	    int tableID = rs.getInt("TableId");
+	    int billID = rs.getInt("BillId");
+	    Date reservationPlacedDate = rs.getDate("reservationPlacedDate"); 
+	    Time reservationPlacedTime = rs.getTime("reservationPlacedTime");
+	    
+	    // Boolean check: 1 is true, 0 is false
+	    boolean isNotified = rs.getInt("isNotified") == 1;
+
+	    // Conversion to Local types
+	    LocalDate resDate = reservationDate.toLocalDate();
+	    LocalTime resTime = reservationTime.toLocalTime();
+	    LocalDate placedDate = (reservationPlacedDate != null) ? reservationPlacedDate.toLocalDate() : null;
+	    LocalTime placedTime = (reservationPlacedTime != null) ? reservationPlacedTime.toLocalTime() : null;
+
+	    return new Reservation(reservationID, customerID, tableID, billID, numOfGuests, confirmation_code,
+	                           resDate, resTime, placedDate, placedTime, status, isNotified);
+	}
+	
+	/**
+	 * Updates the reservation to mark that the user has seen the change notification.
+	 * * @param resId The ID of the reservation
+	 * @return true if successful
+	 */
+	public boolean markAsNotified(int resId) {
+	    String sql = "UPDATE reservation SET isNotified = 1 WHERE reservationID = ?";
+	    try (Connection con = getConnection();
+	         PreparedStatement pst = con.prepareStatement(sql)) {
+	        pst.setInt(1, resId);
+	        return pst.executeUpdate() > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
 }

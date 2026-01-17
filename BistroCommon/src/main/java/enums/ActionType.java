@@ -45,6 +45,7 @@ public enum ActionType {
     UPDATE_TABLE,
     DELETE_TABLE,
     GET_ALL_TABLES,
+    RESERVATION_AFFECTED_BY_TABLE,
 
     // Payment actions
     PAY,

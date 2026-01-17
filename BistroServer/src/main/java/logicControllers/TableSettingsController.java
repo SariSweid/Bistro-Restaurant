@@ -1,5 +1,7 @@
 package logicControllers;
 
+import java.util.List;
+
 import DAO.TableDAO;
 
 /**
@@ -56,5 +58,37 @@ public class TableSettingsController {
             e.printStackTrace();
             return false;
         }
+    }
+    
+
+    /**
+     * Processes reservations affected by table changes. Unassigns them and flags them for notification.
+     * * @param tableId the ID of the table being changed
+     * @param newCapacity the new capacity of the table
+     * @param isDeletion true if the table is being deleted
+     * @return a formatted String report of affected reservations for the Supervisor popup
+     */
+    public String handleConflicts(int tableId, int newCapacity, boolean isDeletion) {
+        // Get the list
+        List<Entities.Reservation> affected = db.getAffectedReservations(tableId, newCapacity, isDeletion);
+        
+        if (affected.isEmpty()) {
+            return null; 
+        }
+
+        StringBuilder report = new StringBuilder();
+        report.append("\n");
+
+        for (Entities.Reservation res : affected) {
+            // NOTE: We do NOT call db.unassignAndFlagReservation() here.
+            // Because the TableId was never assigned, we don't want to cancel the 
+            // whole reservation yet—we just want to warn the Supervisor.
+            
+            report.append("• ").append(res.getReservationDate())
+                  .append(" | #").append(res.getConfirmationCode())
+                  .append(" (").append(res.getNumOfGuests()).append(" guests)\n");
+        }
+        
+        return report.toString();
     }
 }
