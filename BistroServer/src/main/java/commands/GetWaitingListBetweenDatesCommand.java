@@ -1,6 +1,7 @@
 package commands;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import common.Message;
@@ -13,42 +14,39 @@ import Entities.WaitingListEntry;
 
 /**
  * Command implementation for retrieving entries from the waiting list within a specific date range.
- * This class interfaces with the WaitingListController to fetch data for users or managers 
- * who need to review past or future waiting list records.
+ * Only entries with a null status are returned to the client.
  */
 public class GetWaitingListBetweenDatesCommand implements Command {
 
-    /**
-     * Controller responsible for managing waiting list logic and database queries.
-     */
     private WaitingListController controller = new WaitingListController();
 
     /**
-     * Executes the retrieval logic for waiting list entries.
-     * Extracts the start and end dates from the GetWaitingListBetweenDatesRequest,
-     * queries the controller for matching records, and sends the resulting list 
-     * back to the client.
+     * Executes the retrieval of waiting list entries for a given date range.
+     * Filters the results to only include entries where the status is null.
      *
-     * @param data   the GetWaitingListBetweenDatesRequest containing the date range
-     * @param client the connection to the client that requested the data
+     * @param data   the GetWaitingListBetweenDatesRequest containing start and end dates
+     * @param client the connection to the client requesting the data
      */
     @Override
     public void execute(Object data, ConnectionToClient client) {
 
-        GetWaitingListBetweenDatesRequest req =
-                (GetWaitingListBetweenDatesRequest) data;
+        GetWaitingListBetweenDatesRequest req = (GetWaitingListBetweenDatesRequest) data;
 
-        // Retrieve the list of entries from the controller
-        List<WaitingListEntry> list =
-                controller.getWaitingListBetweenDates(
-                        req.getStartDate(),
-                        req.getEndDate()
-                );
+        List<WaitingListEntry> list = controller.getWaitingListBetweenDates(
+                req.getStartDate(),
+                req.getEndDate()
+        );
+
+        List<WaitingListEntry> filteredList = new ArrayList<>();
+        for (WaitingListEntry entry : list) {
+            if (entry.getStatus() == null) {
+                filteredList.add(entry);
+            }
+        }
 
         try {
-            // Wrap the list in a Message and send it to the client
             client.sendToClient(
-                    new Message(ActionType.GET_WAITING_LIST_BETWEEN_DATES, list)
+                    new Message(ActionType.GET_WAITING_LIST_BETWEEN_DATES, filteredList)
             );
         } catch (IOException e) {
             e.printStackTrace();

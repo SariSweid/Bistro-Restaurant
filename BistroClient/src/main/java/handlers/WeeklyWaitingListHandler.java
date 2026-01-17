@@ -5,17 +5,14 @@ import Controllers.WaitingListController;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Handles server responses containing the weekly waiting list entries.
- * Updates the WaitingListController's table with the received list,
- * or shows an error alert if the data is invalid.
+ * Handles server responses containing weekly waiting list entries.
+ * Updates the WaitingListController's table with entries whose status is null.
  */
 public class WeeklyWaitingListHandler implements ResponseHandler {
 
-    /**
-     * Reference to the WaitingListController that manages the UI table.
-     */
     private WaitingListController controller;
 
     /**
@@ -29,8 +26,8 @@ public class WeeklyWaitingListHandler implements ResponseHandler {
 
     /**
      * Handles the server response for the weekly waiting list.
-     * If the data is a valid list of WaitingListEntry objects, updates
-     * the table in the controller. Otherwise, displays an error alert.
+     * Filters the entries to only include those with a null status before updating the table.
+     * Displays an error alert if the received data is invalid.
      *
      * @param data the server response object, expected to be a List of WaitingListEntry
      */
@@ -40,10 +37,9 @@ public class WeeklyWaitingListHandler implements ResponseHandler {
             @SuppressWarnings("unchecked")
             List<WaitingListEntry> list = (List<WaitingListEntry>) data;
 
-           
             List<WaitingListEntry> filteredList = list.stream()
-                    .filter(entry -> entry.getStatus() == null)
-                    .toList(); 
+                    .filter(entry -> entry.getExitReason() == null)
+                    .collect(Collectors.toList());
 
             Platform.runLater(() -> {
                 controller.getWaitingListTable().getItems().clear();
@@ -59,5 +55,4 @@ public class WeeklyWaitingListHandler implements ResponseHandler {
             });
         }
     }
-
 }
