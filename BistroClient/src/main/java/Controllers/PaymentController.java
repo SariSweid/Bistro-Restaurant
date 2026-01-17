@@ -102,10 +102,12 @@ public class PaymentController {
      */
     @FXML
     private void onPreviousPage() {
-        switch (ClientHandler.getClient().getCurrentUserRole()) {
-            case SUBSCRIBER -> SceneManager.switchTo("SubscriberUI.fxml");
+    	
+    	if (ClientHandler.getClient().getCurrentUserRole() == null)
+    		SceneManager.switchTo("MainMenuUI.fxml");
+    	
+    	else
+            SceneManager.switchTo("SubscriberUI.fxml");
 
-            default -> SceneManager.switchTo("MainMenuUI.fxml");
-        }
     }
 }
